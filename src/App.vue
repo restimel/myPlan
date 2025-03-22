@@ -7,7 +7,7 @@ import { RouterLink, RouterView } from 'vue-router';
         <header>
             <div class="wrapper">
                 <nav>
-                    <RouterLink to="/">Home</RouterLink>
+                    <RouterLink to="/build">Build plan</RouterLink>
                     <RouterLink to="/about">About</RouterLink>
                 </nav>
             </div>
@@ -23,8 +23,11 @@ main {
     display: grid;
     grid-template-rows: max-content 1fr;
     grid-template-columns: 1fr;
-    width: 100vw;
-    height: 100vh;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     overflow: hidden;
 }
 
@@ -47,6 +50,8 @@ nav {
     flex-direction: row;
     font-size: 12px;
     text-align: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
 }
 
 @media (orientation:landscape) {

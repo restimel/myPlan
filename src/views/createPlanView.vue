@@ -17,7 +17,7 @@
             <canvas
                 ref="canvasLayer"
                 id="canvasLayer"
-                @click="draw"
+                @click="setHold"
             ></canvas>
         </div>
         <footer>
@@ -31,12 +31,23 @@
             >
                 Take another photo
             </button>
+            <button v-if="mode === 'canvas' && holdList.length > 0"
+                @click="removeHold()"
+            >
+                Remove last hold
+            </button>
         </footer>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, useTemplateRef } from 'vue';
+import { ref, onMounted, useTemplateRef, watch } from 'vue';
+import {
+    addHold,
+    type Hold,
+    holdList,
+    removeHold,
+} from '@/utils/holds';
 
 const video = useTemplateRef('video');
 const canvas = useTemplateRef('canvas');
@@ -44,35 +55,50 @@ const canvasLayer = useTemplateRef('canvasLayer');
 const mode = ref<'video' | 'canvas'>('video');
 const image = ref<ImageData | null>(null);
 const threshold = ref(10);
+const selectHold = ref<Hold | null>(null);
+
+watch(holdList, drawHolds, { deep: true });
 
 onMounted(async () => {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: false,
-        });
-
-        const videoEl = video.value!;
-        const canvasEl = canvas.value!;
-
-        if (!videoEl || !canvasEl) {
-            console.log('missing elements');
-            return;
-        }
-
-        videoEl.srcObject = stream;
-
-        startVideo();
-    } catch (err) {
-        console.error('Failed to access the camera:', err);
-    }
+    startVideo();
 });
 
-const startVideo = () => {
+const startVideo = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: 'user',
+        },
+        audio: false,
+    }).catch((err) => {
+        console.error(`${err.name}: ${err.message}`);
+        return null;
+    });
+
     const videoEl = video.value!;
 
-    videoEl.play();
+    if (!videoEl || !stream) {
+        console.log('missing elements');
+        return;
+    }
+
+    videoEl.srcObject = stream;
+    videoEl.onloadedmetadata = () => {
+        videoEl.play();
+    };
+
     mode.value = 'video';
+};
+
+const stopVideo = async () => {
+    const videoEl = video.value;
+    const stream = videoEl?.srcObject as MediaStream | undefined ;
+
+    if (!stream || !videoEl) {
+        return;
+    }
+
+    videoEl.pause();
+    stream.getTracks().forEach((track) => track.stop());
 };
 
 const takePhoto = async () => {
@@ -106,6 +132,7 @@ const takePhoto = async () => {
         ));
 
         mode.value = 'canvas';
+        selectHold.value = null;
     });
 
     image.value = imgData;
@@ -124,9 +151,50 @@ const takePhoto = async () => {
         );
     };
 
-    videoEl.pause();
-    /* TODO: sop the stream */
+    stopVideo();
 };
+
+function setHold(event: MouseEvent) {
+    const canvasLayerEl = canvasLayer.value!;
+    const rect = canvasLayerEl.getBoundingClientRect();
+
+    /* position in the context of the canvas */
+    const mouseX = Math.round(event.clientX - rect.left);
+    const mouseY = Math.round(event.clientY - rect.top);
+
+    addHold(mouseX, mouseY);
+
+    // drawHolds();
+}
+
+function drawHolds() {
+    const canvasLayerEl = canvasLayer.value!;
+    const context = canvasLayerEl.getContext('2d')!;
+
+    if (!context) {
+        return;
+    }
+
+    context.clearRect(0, 0, canvasLayerEl.width, canvasLayerEl.height);
+
+    context.fillStyle = '#ffffff33';
+    context.strokeStyle = '#000000ff';
+    context.lineWidth = 1;
+    context.textBaseline = 'middle';
+    context.textAlign = 'center';
+
+    holdList.value.forEach((hold) => {
+        const {x, y} = hold;
+        const radius = 20;
+
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        context.fill();
+        context.stroke();
+
+        context.strokeText(hold.value.toString(10), x, y);
+    });
+}
 
 type Color = [number, number, number];
 
@@ -283,6 +351,7 @@ footer {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    gap: var(--spacing-sm);
 }
 button {
     padding: 10px 20px;

@@ -1,0 +1,123 @@
+
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+    --vt-c-white: #ffffff;
+    --vt-c-white-soft: #f8f8f8;
+    --vt-c-white-light: #f4f4f4;
+    --vt-c-white-mute: #f2f2f2;
+
+    --vt-c-black: #181818;
+    --vt-c-black-soft: #222222;
+    --vt-c-black-light: #242424;
+    --vt-c-black-mute: #282828;
+
+    --vt-c-grey: #666666;
+
+    --vt-c-indigo: #2c3e50;
+
+    --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
+    --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
+    --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+    --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+
+    --vt-c-text-light-1: var(--vt-c-indigo);
+    --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
+    --vt-c-text-dark-1: var(--vt-c-white);
+    --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+}
+
+/* semantic color variables for this project */
+:root {
+    /* Colors */
+    --color-primary: #123291;
+    --color-txt-primary: var(--vt-c-white);
+
+    --color-secondary: #859ce2;
+    --color-txt-secondary: var(--vt-c-black);
+
+    --color-primary-inline-hover: color(from var(--color-primary) srgb r g b / 0.2);
+    --color-primary-block-hover: hsl(from var(--color-primary) h s calc(l - 10));
+
+    --color-light: var(--vt-c-white-light);
+    --color-white: var(--vt-c-white);
+
+    --color-heading: var(--vt-c-text-light-1);
+
+    --color-text: var(--vt-c-text-light-1);
+    --color-text-information: var(--vt-c-grey);
+    --color-heading: var(--vt-c-text-light-1);
+
+    --color-background: var(--vt-c-white);
+    --color-background-soft: var(--vt-c-white-soft);
+    --color-background-light: var(--vt-c-white-light);
+    --color-background-mute: var(--vt-c-white-mute);
+
+    --color-border: var(--vt-c-divider-light-2);
+    --color-border-hover: var(--vt-c-divider-light-1);
+
+    --color-success: #4CAF50;
+    --color-error: #F44336;
+    --color-warning: #FF9800;
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-letter: 1ex;
+
+    /* Gap & padding */
+    --section-gap: 160px;
+
+    --field-padding-sm: 4px;
+    --field-padding: 8px;
+    --field-margin: 15px;
+    --section-padding: 20px;
+
+    /* Font sizes */
+    --font-size-reference: 15px; /* should not be used except by base.css */
+    --font-size-sm: 0.875rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-xxl: 2rem;
+
+    /* Font family */
+    --font-text: 'Droid Sans', 'Helvetica Neue', sans-serif;
+    --font-code: monospace;
+
+    /* Shadows */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 5px 10px 15px rgba(0, 0, 0, 0.5);
+
+    /* Border radius */
+    --border-radius: 8px;
+    --border-radius-sm: 4px;
+
+    /* Container width */
+    --container-width: 1200px;
+    --max-section-width: 800px;
+
+    /* Header & footer heights */
+    --header-height: 60px;
+    --footer-height: 30px;
+
+    /* Fields */
+    --field-border: 1px solid var(--color-border);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: var(--vt-c-black);
+        --color-background-soft: var(--vt-c-black-soft);
+        --color-background-light: var(--vt-c-black-light);
+        --color-background-mute: var(--vt-c-black-mute);
+
+        --color-border: var(--vt-c-divider-dark-2);
+        --color-border-hover: var(--vt-c-divider-dark-1);
+
+        --color-heading: var(--vt-c-text-dark-1);
+        --color-text: var(--vt-c-text-dark-2);
+    }
+}
