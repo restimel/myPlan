@@ -66,7 +66,7 @@ onMounted(async () => {
 const startVideo = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-            facingMode: 'user',
+            facingMode: 'landscape',
         },
         audio: false,
     }).catch((err) => {
