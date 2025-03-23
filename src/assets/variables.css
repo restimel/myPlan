@@ -58,6 +58,7 @@
     --color-success: #4CAF50;
     --color-error: #F44336;
     --color-warning: #FF9800;
+    --color-text-message: var(--vt-c-white-soft);
 
     /* Spacing */
     --spacing-xs: 0.5rem;

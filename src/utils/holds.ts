@@ -20,3 +20,7 @@ export function addHold(x: number, y: number) {
 export function removeHold(idx: number = -1) {
     holdList.value.splice(idx, 1);
 }
+
+export function resetHolds() {
+    holdList.value = [];
+}
