@@ -3,6 +3,10 @@
         <h1>About MyPlan</h1>
 
         <label>
+            Version:
+            <output>TODO...</output>
+        </label>
+        <label>
             Author:
             <output>Benoît Mariat</output>
         </label>
@@ -27,6 +31,11 @@
 
 label {
   display: block;
+  font-weight: 700;
+}
+
+output {
+  font-weight: normal;
 }
 
 figure {
