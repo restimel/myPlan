@@ -22,10 +22,11 @@ export function resetHolds() {
     top.value = 1;
 }
 
-export function addHold(x: number, y: number) {
+export function addHold(x: number, y: number, size: number) {
     holdList.value.push({
         position: [[x, y]],
         value: top.value,
+        size: size,
     });
 
     top.value = top.value + 1;
@@ -84,6 +85,7 @@ export function unlink(idx: number) {
     const newHold: Hold = {
         position: [newPosition],
         value: 0,
+        size: hold.size,
     };
 
     holdList.value.splice(idx + 1, 0, newHold);

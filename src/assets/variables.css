@@ -60,6 +60,8 @@
     --color-warning: #FF9800;
     --color-text-message: var(--vt-c-white-soft);
 
+    --color-bg-media: var(--vt-c-black);
+
     /* Spacing */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;

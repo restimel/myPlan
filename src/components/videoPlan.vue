@@ -138,10 +138,11 @@ function loadFile(event: Event) {
 
             img.onload = function() {
                 const canvasEl = canvas.value!;
-                const context = canvasEl.getContext('2d')!;
 
                 canvasEl.width = img.width;
                 canvasEl.height = img.height;
+
+                const context = canvasEl.getContext('2d')!;
 
                 context.drawImage(img, 0, 0);
 
@@ -176,11 +177,10 @@ function getImage(canvasEl: HTMLCanvasElement, context: CanvasRenderingContext2D
 }
 
 video {
-    border: 1px solid black;
     width: 100%;
     height: 100%;
     grid-area: content;
-    background-color: var(--vt-c-black);
+    background-color: var(--color-bg-media);
 }
 
 </style>
