@@ -5,4 +5,5 @@ type Hold = {
     position: Point[];
     value: number | [number, number];
     size: number;
+    index: number;
 };

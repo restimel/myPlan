@@ -11,8 +11,15 @@
         <canvas
             ref="canvasLayer"
             id="canvasLayer"
-            @click="setHold"
+            @mousedown="startInteraction"
+            @mouseup="stopInteraction"
+            @mousemove="move"
         ></canvas>
+        <HoldMenu v-if="selectHold && (mouseAction === 'selection' || mouseAction === 'menu')"
+            :hold="selectHold"
+            :canMove="mouseAction === 'selection'"
+            @close="mouseAction = 'none'"
+        />
     </div>
     <footer>
         <button
@@ -31,10 +38,16 @@
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 import {
     addHold,
+    doubleHold,
+    getHold,
     holdList,
+    linkHolds,
+    moveHold,
     removeHold,
     resetHolds,
 } from '@/utils/holds';
+import { getDistance } from '@/utils/geometry';
+import HoldMenu from '@/components/holdMenu.vue';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -49,8 +62,7 @@ const canvas = useTemplateRef('canvas');
 const canvasLayer = useTemplateRef('canvasLayer');
 
 const scaleRatio = ref(1);
-const threshold = ref(10);
-const selectHold = ref<Hold | null>(null);
+const holdSize = ref(20);
 
 watch(() => props.image, loadImage);
 watch(holdList, drawHolds, { deep: true });
@@ -85,24 +97,13 @@ function loadImage() {
     resetHolds(); // probably not the good place
 
     context.putImageData(imgData, 0, 0);
-}
-
-function setHold(event: MouseEvent) {
-    const canvasLayerEl = canvasLayer.value!;
-    const rect = canvasLayerEl.getBoundingClientRect();
-    const scale = scaleRatio.value;
 
     /* This is to draw around 35 holds on height */
-    const size = canvasLayerEl.height / 70;
+    holdSize.value = canvasLayerEl.height / 70;
+}
 
-    /* position in the context of the canvas */
-    const mouseX = Math.round(event.clientX - rect.left);
-    const mouseY = Math.round(event.clientY - rect.top);
-
-    const canvasX = mouseX / scale;
-    const canvasY = mouseY / scale;
-
-    addHold(canvasX, canvasY, size);
+function setHold(point: Point) {
+    addHold(point[0], point[1], holdSize.value);
 }
 
 function drawHolds() {
@@ -129,6 +130,22 @@ function drawHolds() {
         const maxTextWidth = 2 * (radius - 2 * lineWidth);
         context.font = `${radius}px serif`;
 
+        if (positions.length > 1) {
+            context.save();
+            context.strokeStyle = '#ffffff33';
+            context.lineWidth = lineWidth * 5;
+            context.beginPath();
+            positions.forEach(([x, y], idx) => {
+                if (idx) {
+                    context.lineTo(x, y);
+                } else {
+                    context.moveTo(x, y);
+                }
+            });
+            context.stroke();
+            context.restore();
+        }
+
         positions.forEach(([x, y]) => {
             context.beginPath();
             context.arc(x, y, radius, 0, Math.PI * 2);
@@ -143,6 +160,137 @@ function drawHolds() {
         });
     });
 }
+
+/* {{{ Canvas interaction */
+
+type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' | 'link';
+
+/** in ms */
+const holdMouseDuration = 500;
+const doubleMouseDuration = 200;
+
+const mouseAction = ref<MouseAction>('none');
+const lastPosition = ref<Point>([0, 0]);
+const selectHold = ref<Hold | null>(null);
+let interactionTimer = 0;
+
+function getPosition(event: MouseEvent): Point {
+    const canvasLayerEl = canvasLayer.value!;
+    const rect = canvasLayerEl.getBoundingClientRect();
+    const scale = scaleRatio.value;
+
+    /* DOM position relative to the canvas element */
+    const mouseX = Math.round(event.clientX - rect.left);
+    const mouseY = Math.round(event.clientY - rect.top);
+
+    /* position in the context of the canvas */
+    const canvasX = mouseX / scale;
+    const canvasY = mouseY / scale;
+
+    return [canvasX, canvasY];
+}
+
+function startInteraction(event: MouseEvent) {
+    const action = mouseAction.value;
+
+    if (action === 'double' && selectHold.value) {
+        doubleHold(selectHold.value?.index);
+        selectHold.value = null;
+        mouseAction.value = 'none';
+        return;
+    }
+    if (action === 'menu') {
+        mouseAction.value = 'none';
+        return;
+    }
+
+    lastPosition.value = getPosition(event);
+    mouseAction.value = 'active';
+
+    const hold = getHold(lastPosition.value);
+
+    if (hold) {
+        selectHold.value = hold;
+        interactionTimer = setTimeout(() => {
+            mouseAction.value = 'selection';
+        }, holdMouseDuration);
+    }
+}
+
+function stopInteraction(event: MouseEvent) {
+    clearTimeout(interactionTimer);
+
+    const position = getPosition(event);
+    const action = mouseAction.value;
+    const originHold = selectHold.value;
+
+    switch (action) {
+        case 'active':
+            if (originHold) {
+                mouseAction.value = 'double';
+
+                interactionTimer = setTimeout(() => {
+                    setHold(position);
+                    mouseAction.value = 'none';
+                    selectHold.value = null;
+                }, doubleMouseDuration);
+
+                return;
+            }
+
+            setHold(position);
+            break;
+        case 'selection':
+            mouseAction.value = 'menu';
+            return;
+        case 'move':
+            break;
+        case 'link': {
+            const targetHold = getHold(position);
+
+            if (targetHold && originHold) {
+                linkHolds(originHold.index, targetHold.index);
+            }
+        }
+    }
+
+    mouseAction.value = 'none';
+    selectHold.value = null;
+}
+
+function move(event: MouseEvent) {
+    const action = mouseAction.value;
+    const selectedHold = selectHold.value;
+
+    if (action === 'none' || !selectedHold) {
+        return;
+    }
+
+    const position = getPosition(event);
+    switch (action) {
+        case 'move':
+            moveHold(selectedHold.index, lastPosition.value, position);
+            lastPosition.value = position;
+        case 'active':
+            clearTimeout(interactionTimer);
+
+            /* ×2 is to reduce the threshold before moving it */
+            if (getDistance(position, lastPosition.value) * 2 < holdSize.value ) {
+                moveHold(selectedHold.index, lastPosition.value, position);
+                lastPosition.value = position;
+                mouseAction.value = 'move';
+            }
+            break;
+        case 'selection':
+            if (getDistance(position, lastPosition.value) < holdSize.value ) {
+                lastPosition.value = position;
+                mouseAction.value = 'link';
+            }
+            break;
+    }
+}
+
+/* }}} */
 
 </script>
 <style scoped>
