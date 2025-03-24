@@ -29,7 +29,6 @@
 import { onMounted, ref, useTemplateRef, watch } from 'vue';
 import {
     addHold,
-    type Hold,
     holdList,
     removeHold,
     resetHolds,
@@ -110,16 +109,23 @@ function drawHolds() {
     context.textBaseline = 'middle';
     context.textAlign = 'center';
 
+    const radius = 20; /* Todo depends on image size */
+
     holdList.value.forEach((hold) => {
-        const {x, y} = hold;
-        const radius = 20;
+        const positions = hold.position;
 
-        context.beginPath();
-        context.arc(x, y, radius, 0, Math.PI * 2);
-        context.fill();
-        context.stroke();
+        positions.forEach(([x, y]) => {
+            context.beginPath();
+            context.arc(x, y, radius, 0, Math.PI * 2);
+            context.fill();
+            context.stroke();
 
-        context.strokeText(hold.value.toString(10), x, y);
+            const text = Array.isArray(hold.value) ?
+                hold.value.map((value) => value.toString(10)).join(', ') :
+                hold.value.toString(10);
+
+            context.strokeText(text, x, y);
+        });
     });
 }
 
