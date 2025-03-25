@@ -51,6 +51,7 @@ import {
 type Props = {
     hold: Hold;
     canMove: boolean;
+    scale: number;
 };
 
 const props = defineProps<Props>();
@@ -61,10 +62,11 @@ const emit = defineEmits<{
 const style = computed(() => {
     const hold = props.hold;
     const position = hold.position[0];
+    const ratio = props.scale;
 
     return `
-        --x: ${position[0] + hold.size}px;
-        --y: ${position[1] - hold.size}px;
+        --x: ${(position[0] + hold.size) * ratio}px;
+        --y: ${(position[1] - hold.size) * ratio}px;
     `;
 });
 

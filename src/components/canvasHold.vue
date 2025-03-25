@@ -17,6 +17,7 @@
         ></canvas>
         <HoldMenu v-if="selectHold && (mouseAction === 'selection' || mouseAction === 'menu')"
             :hold="selectHold"
+            :scale="scaleRatio"
             :canMove="mouseAction === 'selection'"
             @close="mouseAction = 'none'"
         />
