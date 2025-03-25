@@ -47,6 +47,7 @@ import {
     resetHolds,
 } from '@/utils/holds';
 import { getDistance } from '@/utils/geometry';
+import { debugMessage } from '@/utils/debug';
 import HoldMenu from '@/components/holdMenu.vue';
 
 const props = defineProps<{
@@ -197,10 +198,12 @@ function startInteraction(event: MouseEvent) {
         doubleHold(selectHold.value?.index);
         selectHold.value = null;
         mouseAction.value = 'none';
+        debugMessage.value = 'Interaction: (after double) none';
         return;
     }
     if (action === 'menu') {
         mouseAction.value = 'none';
+        debugMessage.value = 'Interaction: none';
         return;
     }
 
@@ -213,8 +216,11 @@ function startInteraction(event: MouseEvent) {
         selectHold.value = hold;
         interactionTimer = setTimeout(() => {
             mouseAction.value = 'selection';
+            debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value}, ${selectHold.value?.position})`;
         }, holdMouseDuration);
     }
+
+    debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value})`;
 }
 
 function stopInteraction(event: MouseEvent) {
@@ -231,25 +237,32 @@ function stopInteraction(event: MouseEvent) {
 
                 interactionTimer = setTimeout(() => {
                     setHold(position);
+                    debugMessage.value = `Interaction (done (timed)): ${mouseAction.value} (position: ${position})`;
                     mouseAction.value = 'none';
                     selectHold.value = null;
                 }, doubleMouseDuration);
+
+                debugMessage.value = `Interaction (done): ${mouseAction.value} (position: ${position})`;
 
                 return;
             }
 
             setHold(position);
+            debugMessage.value = `Interaction (done): ${action} (position: ${position})`;
             break;
         case 'selection':
             mouseAction.value = 'menu';
+            debugMessage.value = `Interaction (done): ${mouseAction.value}`;
             return;
         case 'move':
+            debugMessage.value = `Interaction (done): ${action}`;
             break;
         case 'link': {
             const targetHold = getHold(position);
 
             if (targetHold && originHold) {
                 linkHolds(originHold.index, targetHold.index);
+                debugMessage.value = `Interaction (done): ${action} (position: ${position})`;
             }
         }
     }
@@ -271,6 +284,8 @@ function move(event: MouseEvent) {
         case 'move':
             moveHold(selectedHold.index, lastPosition.value, position);
             lastPosition.value = position;
+            debugMessage.value = `Interaction: move (hold: ${selectHold.value?.value} ${selectHold.value?.position})`;
+            break;
         case 'active':
             clearTimeout(interactionTimer);
 

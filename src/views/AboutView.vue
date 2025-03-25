@@ -6,7 +6,7 @@
             Version:
             <output>TODO...</output>
         </label>
-        <label>
+        <label @dblclick="openDebug">
             Author:
             <output>Benoît Mariat</output>
         </label>
@@ -24,21 +24,30 @@
     </div>
 </template>
 
+<script lang="ts" setup>
+import { debug, debugMessage } from '@/utils/debug';
+
+function openDebug() {
+    debug.value = true;
+    debugMessage.value = 'Debug "on"';
+}
+</script>
+
 <style scoped>
 .about {
-  padding: var(--section-padding);
+    padding: var(--section-padding);
 }
 
 label {
-  display: block;
-  font-weight: 700;
+    display: block;
+    font-weight: 700;
 }
 
 output {
-  font-weight: normal;
+    font-weight: normal;
 }
 
 figure {
-  text-align: center;
+    text-align: center;
 }
 </style>
