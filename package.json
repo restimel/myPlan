@@ -11,7 +11,7 @@
         "build-only": "vite build",
         "type-check": "vue-tsc --build",
         "lint": "eslint . --fix",
-        "deploy": "npm run build && git diff --quiet dist || (git add dist && git commit -m 'update production version' && npm version minor) && git subtree push --prefix dist origin gh-pages"
+        "deploy": "npm run build && git diff --quiet dist || (npm version minor && npm run build && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages"
     },
     "dependencies": {
         "vue": "^3.5.13",
