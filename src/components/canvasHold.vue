@@ -11,9 +11,12 @@
         <canvas
             ref="canvasLayer"
             id="canvasLayer"
-            @mousedown="startInteraction"
-            @mouseup="stopInteraction"
-            @mousemove="move"
+            @mousedown="mouseDown"
+            @touchstart="touchStart"
+            @mouseup="mouseUp"
+            @touchend="touchEnd"
+            @mousemove="mouseMove"
+            @touchmove="touchMove"
         ></canvas>
         <HoldMenu v-if="selectHold && (mouseAction === 'selection' || mouseAction === 'menu')"
             :hold="selectHold"
@@ -176,7 +179,7 @@ const lastPosition = ref<Point>([0, 0]);
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
 
-function getPosition(event: MouseEvent): Point {
+function getPosition(event: MouseEvent | Touch): Point {
     const canvasLayerEl = canvasLayer.value!;
     const rect = canvasLayerEl.getBoundingClientRect();
     const scale = scaleRatio.value;
@@ -192,7 +195,51 @@ function getPosition(event: MouseEvent): Point {
     return [canvasX, canvasY];
 }
 
-function startInteraction(event: MouseEvent) {
+function touchStart(event: TouchEvent) {
+    const list = event.changedTouches;
+    const position = getPosition(list[0]);
+
+    startInteraction(position);
+
+    if (selectHold.value) {
+        event.preventDefault();
+    }
+}
+
+function touchEnd(event: TouchEvent) {
+    const list = event.changedTouches;
+    const position = getPosition(list[0]);
+
+    stopInteraction(position);
+    event.preventDefault();
+}
+
+function touchMove(event: TouchEvent) {
+    const list = event.changedTouches;
+    const position = getPosition(list[0]);
+
+    move(position);
+}
+
+function mouseDown(event: MouseEvent) {
+    const point = getPosition(event);
+
+    startInteraction(point);
+}
+
+function mouseUp(event: MouseEvent) {
+    const position = getPosition(event);
+
+    stopInteraction(position);
+}
+
+function mouseMove(event: MouseEvent) {
+    const position = getPosition(event);
+
+    move(position);
+}
+
+function startInteraction(point: Point) {
     const action = mouseAction.value;
 
     if (action === 'double' && selectHold.value) {
@@ -208,7 +255,7 @@ function startInteraction(event: MouseEvent) {
         return;
     }
 
-    lastPosition.value = getPosition(event);
+    lastPosition.value = point;
     mouseAction.value = 'active';
 
     const hold = getHold(lastPosition.value);
@@ -224,10 +271,9 @@ function startInteraction(event: MouseEvent) {
     debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value})`;
 }
 
-function stopInteraction(event: MouseEvent) {
+function stopInteraction(position: Point) {
     clearTimeout(interactionTimer);
 
-    const position = getPosition(event);
     const action = mouseAction.value;
     const originHold = selectHold.value;
 
@@ -272,7 +318,7 @@ function stopInteraction(event: MouseEvent) {
     selectHold.value = null;
 }
 
-function move(event: MouseEvent) {
+function move(position: Point) {
     const action = mouseAction.value;
     const selectedHold = selectHold.value;
 
@@ -280,7 +326,6 @@ function move(event: MouseEvent) {
         return;
     }
 
-    const position = getPosition(event);
     switch (action) {
         case 'move':
             moveHold(selectedHold.index, lastPosition.value, position);
