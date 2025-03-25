@@ -52,6 +52,7 @@ type Props = {
     hold: Hold;
     canMove: boolean;
     scale: number;
+    containerSize: DOMRect;
 };
 
 const props = defineProps<Props>();
@@ -60,13 +61,45 @@ const emit = defineEmits<{
 }>();
 
 const style = computed(() => {
+    const nbItems = 6;
     const hold = props.hold;
     const position = hold.position[0];
     const ratio = props.scale;
+    /* 5 = margin */
+    const holdSize = hold.size * ratio + 5;
+    /*
+     * 42 = 18 + 2 * (padding = 10) + 2 * (border = 2)
+     */
+    const height = nbItems * 42;
+    const width = 200;
+    const maxWidth = props.containerSize.width;
+    const maxHeight = props.containerSize.height;
+
+    let x = position[0] * ratio;
+    let y = position[1] * ratio;
+
+    if (x + holdSize + width < maxWidth) {
+        x = x + holdSize;
+    } else if (x - holdSize - width > 0) {
+        x = x - holdSize - width;
+    }
+
+    if (x === position[0] * ratio) {
+        if (y + holdSize + height < maxHeight) {
+            y = y + holdSize;
+        } else {
+            y = y - holdSize - height;
+        }
+
+        x = Math.max(5, x - 100);
+    } else {
+        y = Math.max(5, y - height / 2);
+    }
+
 
     return `
-        --x: ${(position[0] + hold.size) * ratio}px;
-        --y: ${(position[1] - hold.size) * ratio}px;
+        --x: ${x}px;
+        --y: ${y}px;
     `;
 });
 

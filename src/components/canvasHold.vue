@@ -22,6 +22,7 @@
             :hold="selectHold"
             :scale="scaleRatio"
             :canMove="mouseAction === 'selection'"
+            :containerSize="containerRect"
             @close="closeMenu"
         />
     </div>
@@ -39,7 +40,7 @@
     </footer>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import {
     addHold,
     doubleHold,
@@ -72,23 +73,36 @@ const holdSize = ref(20);
 watch(() => props.image, loadImage);
 watch(holdList, drawHolds, { deep: true });
 
+const containerRect = computed<DOMRect>(() => {
+    const containerEl = container.value!;
+    const rect = containerEl.getBoundingClientRect();
+
+    return rect;
+});
+
+const canvasRect = computed<DOMRect>(() => {
+    const canvasEl = canvas.value!;
+    const rect = canvasEl.getBoundingClientRect();
+
+    return rect;
+});
+
 onMounted(() => {
     loadImage();
 });
 
 function loadImage() {
-    const containerEl = container.value!;
     const canvasEl = canvas.value!;
     const canvasLayerEl = canvasLayer.value!;
     const imgData = props.image;
 
-    if (!containerEl || !canvasEl || !imgData) {
+    if (!canvasEl || !imgData) {
         return;
     }
 
     const { width, height } = imgData;
 
-    const rect = containerEl.getBoundingClientRect();
+    const rect = containerRect.value;
     const scale = Math.min(rect.width / width, rect.height / height);
     scaleRatio.value = scale;
 
@@ -223,8 +237,7 @@ watch(lastPosition, () => {
 });
 
 function getPosition(event: MouseEvent | Touch): Point {
-    const canvasLayerEl = canvasLayer.value!;
-    const rect = canvasLayerEl.getBoundingClientRect();
+    const rect = canvasRect.value;
     const scale = scaleRatio.value;
 
     /* DOM position relative to the canvas element */
