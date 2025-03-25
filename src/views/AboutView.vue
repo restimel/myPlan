@@ -4,7 +4,7 @@
 
         <label>
             Version:
-            <output>TODO...</output>
+            <output>{{ appVersion }}</output>
         </label>
         <label @dblclick="openDebug">
             Author:
@@ -12,7 +12,7 @@
         </label>
         <label>
             Licence:
-            <output>MIT</output>
+            <output>{{ appLicence }}</output>
         </label>
 
         <figure>
@@ -26,6 +26,9 @@
 
 <script lang="ts" setup>
 import { debug, debugMessage } from '@/utils/debug';
+
+const appVersion = __APP_VERSION__;
+const appLicence = __APP_LICENCE__;
 
 function openDebug() {
     debug.value = true;
