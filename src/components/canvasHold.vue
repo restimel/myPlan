@@ -22,7 +22,7 @@
             :hold="selectHold"
             :scale="scaleRatio"
             :canMove="mouseAction === 'selection'"
-            @close="mouseAction = 'none'"
+            @close="closeMenu"
         />
     </div>
     <footer>
@@ -111,6 +111,16 @@ function setHold(point: Point) {
     addHold(point[0], point[1], holdSize.value);
 }
 
+function closeMenu() {
+    mouseAction.value = 'none';
+    selectHold.value = null;
+}
+
+const bgHoldColor = '#ffffff33';
+const borderHoldColor = '#000000ff';
+const bgHoldHoverColor = '#fefe0033';
+const borderHoldHoverColor = '#4e3b14ff';
+
 function drawHolds() {
     const canvasLayerEl = canvasLayer.value!;
     const context = canvasLayerEl.getContext('2d')!;
@@ -123,21 +133,44 @@ function drawHolds() {
 
     context.clearRect(0, 0, canvasLayerEl.width, canvasLayerEl.height);
 
-    context.fillStyle = '#ffffff33';
-    context.strokeStyle = '#000000ff';
+    context.fillStyle = bgHoldColor;
+    context.strokeStyle = borderHoldColor;
     context.lineWidth = lineWidth;
     context.textBaseline = 'middle';
     context.textAlign = 'center';
 
+    /* draw future link */
+    if (mouseAction.value === 'link') {
+        const position = selectHold.value!.position;
+        const from = position[0];
+        const to = lastPosition.value;
+
+        context.save();
+        context.strokeStyle = bgHoldColor;
+        context.beginPath();
+        context.moveTo(...from);
+        context.lineTo(...to);
+        context.stroke();
+        context.restore();
+    }
+
     holdList.value.forEach((hold) => {
+        const isSelected = hold.index === selectHold.value?.index;
         const positions = hold.position;
-        const radius = hold.size;
+        const radius = isSelected ? hold.size * 1.05 : hold.size;
         const maxTextWidth = 2 * (radius - 2 * lineWidth);
+        context.save();
         context.font = `${radius}px serif`;
 
+        if (isSelected) {
+            context.fillStyle = bgHoldHoverColor;
+            context.strokeStyle = borderHoldHoverColor;
+        }
+
+        /* draw line between holds */
         if (positions.length > 1) {
             context.save();
-            context.strokeStyle = '#ffffff33';
+            context.strokeStyle = bgHoldColor;
             context.lineWidth = lineWidth * 5;
             context.beginPath();
             positions.forEach(([x, y], idx) => {
@@ -151,6 +184,7 @@ function drawHolds() {
             context.restore();
         }
 
+        /* draw holds */
         positions.forEach(([x, y]) => {
             context.beginPath();
             context.arc(x, y, radius, 0, Math.PI * 2);
@@ -163,6 +197,8 @@ function drawHolds() {
 
             context.strokeText(text, x, y, maxTextWidth);
         });
+
+        context.restore();
     });
 }
 
@@ -178,6 +214,13 @@ const mouseAction = ref<MouseAction>('none');
 const lastPosition = ref<Point>([0, 0]);
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
+
+watch(selectHold, drawHolds);
+watch(lastPosition, () => {
+    if (mouseAction.value === 'link') {
+        drawHolds();
+    }
+});
 
 function getPosition(event: MouseEvent | Touch): Point {
     const canvasLayerEl = canvasLayer.value!;
@@ -330,7 +373,9 @@ function move(position: Point) {
         case 'move':
             moveHold(selectedHold.index, lastPosition.value, position);
             lastPosition.value = position;
-            debugMessage.value = `Interaction: move (hold: ${selectHold.value?.value} ${selectHold.value?.position})`;
+            break;
+        case 'link':
+            lastPosition.value = position;
             break;
         case 'active':
             clearTimeout(interactionTimer);

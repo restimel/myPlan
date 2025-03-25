@@ -66,7 +66,7 @@ export function linkHolds(idx1: number, idx2: number) {
     const hold1 = holdList.value[idx1];
     const hold2 = holdList.value[idx2];
 
-    if (!hold1 || !hold2) {
+    if (!hold1 || !hold2 || hold1.index === hold2.index) {
         return false;
     }
 

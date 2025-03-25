@@ -6,13 +6,13 @@
         <span class="icon">✥</span>
         link
     </div>
-    <div v-if="canMoveUp" class="item">
-        <button @click.stop="moveUp">
+    <div class="item">
+        <button @click.stop="moveUp" :disabled="!canMoveUp">
             Move up
         </button>
     </div>
-    <div v-if="canMoveDown" class="item">
-        <button @click.stop="moveDown">
+    <div class="item">
+        <button @click.stop="moveDown" :disabled="!canMoveDown">
             Move down
         </button>
     </div>
