@@ -9,6 +9,7 @@ import DebugMessage from '@/components/debugMessage.vue';
             <div class="wrapper">
                 <nav>
                     <RouterLink to="/build">Build plan</RouterLink>
+                    <RouterLink to="/view">View</RouterLink>
                     <RouterLink to="/about">About</RouterLink>
                 </nav>
             </div>

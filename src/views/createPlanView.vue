@@ -6,14 +6,18 @@
         <CanvasHold v-if="mode === 'canvas'"
             :image="image"
             @back="mode = 'video'"
+            @view="toView"
         />
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import VideoPlan from '@/components/videoPlan.vue';
 import CanvasHold from '@/components/canvasHold.vue';
+
+const router = useRouter();
 
 const mode = ref<'video' | 'canvas'>('video');
 const image = ref<ImageData | null>(null);
@@ -27,6 +31,9 @@ function getImage(data: ImageData | null) {
     mode.value = 'canvas';
 }
 
+function toView() {
+    router.push('/view');
+}
 </script>
 
 <style scoped>

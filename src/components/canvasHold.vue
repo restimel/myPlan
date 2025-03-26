@@ -32,13 +32,15 @@
         >
             Take another photo
         </button>
-        <button v-if="holdList.length > 0"
+        <button
+            :disabled="holdList.length === 0"
             @click="removeHold()"
         >
             Remove last hold
         </button>
         <button
             @click="save()"
+            :disabled="holdList.length === 0"
         >
             Save
         </button>
@@ -59,6 +61,7 @@ import {
 } from '@/utils/holds';
 import { getDistance } from '@/utils/geometry';
 import { log } from '@/utils/debug';
+import { saveRoute } from '@/utils/storage';
 import HoldMenu from '@/components/holdMenu.vue';
 
 const props = defineProps<{
@@ -67,6 +70,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     back: [];
+    view: [];
 }>();
 
 const container = useTemplateRef('container');
@@ -136,8 +140,15 @@ function closeMenu() {
 }
 
 function save() {
-    console.log('todo');
-    log('save', `size: ${props.image?.width} × ${props.image?.height} = ${(props.image?.width ?? 1) * (props.image?.height ?? 1)}`);
+    const image = props.image;
+
+    if (!image) {
+        return;
+    }
+
+    if (saveRoute(props.image, holdList.value)) {
+        emit('view');
+    }
 }
 
 const bgHoldColor = '#ffffff33';

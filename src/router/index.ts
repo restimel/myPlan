@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import CreatePlanView from '@/views/createPlanView.vue';
+import ViewPlanView from '@/views/viewPlanView.vue';
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -12,6 +13,11 @@ const router = createRouter({
             path: '/build',
             name: 'build',
             component: CreatePlanView,
+        },
+        {
+            path: '/view',
+            name: 'view',
+            component: ViewPlanView,
         },
         {
             path: '/about',
