@@ -223,11 +223,13 @@ type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' 
 /** in ms */
 const holdMouseDuration = 500;
 const doubleMouseDuration = 200;
+const touchMultiEventDuration = 50;
 
 const mouseAction = ref<MouseAction>('none');
 const lastPosition = ref<Point>([0, 0]);
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
+let startTouch = true;
 
 watch(selectHold, drawHolds);
 watch(lastPosition, () => {
@@ -259,6 +261,8 @@ function touchStart(event: TouchEvent) {
 
     if (selectHold.value) {
         event.preventDefault();
+        startTouch = true;
+        setTimeout(() => startTouch = false, touchMultiEventDuration);
     }
 }
 
@@ -271,6 +275,11 @@ function touchEnd(event: TouchEvent) {
 }
 
 function touchMove(event: TouchEvent) {
+    if (startTouch) {
+        log('time', 'move dropped');
+        return;
+    }
+
     const list = event.changedTouches;
     const position = getPosition(list[0]);
 

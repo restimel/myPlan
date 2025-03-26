@@ -9,6 +9,7 @@ watch(debugMessage, () => {
     }
 });
 
+let lastTime = 0;
 export function log(category: string, message: string) {
     if (debug.value) {
         if (category !== 'time') {
@@ -16,6 +17,10 @@ export function log(category: string, message: string) {
             return;
         }
 
-        debugMessage.value += `\n --- \n${category}: ${message}`;
+        const time = Math.round(performance.now());
+        const duration = time - lastTime;
+        lastTime = time;
+
+        debugMessage.value += `\n --- \n${category} [${duration}]: ${message}`;
     }
 }
