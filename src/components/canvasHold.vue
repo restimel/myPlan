@@ -233,13 +233,11 @@ type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' 
 /** in ms */
 const holdMouseDuration = 500;
 const doubleMouseDuration = 200;
-const touchMultiEventDuration = 50;
 
 const mouseAction = ref<MouseAction>('none');
 const lastPosition = ref<Point>([0, 0]);
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
-let startTouch = true;
 
 watch(selectHold, drawHolds);
 watch(lastPosition, () => {
@@ -264,19 +262,20 @@ function getPosition(event: MouseEvent | Touch): Point {
 }
 
 function touchStart(event: TouchEvent) {
-    const list = event.changedTouches;
+    const list = event.touches;
+
+    if (list.length > 1) {
+        mouseAction.value = 'none';
+        return;
+    }
+
     const position = getPosition(list[0]);
 
     startInteraction(position);
 
     if (selectHold.value) {
         event.preventDefault();
-        startTouch = true;
         log('time', `touchStart {${event.changedTouches[0].identifier}} (with hold)`);
-        setTimeout(() => {
-            startTouch = false;
-            log('time', 'touchStart (timeout)');
-        }, touchMultiEventDuration);
     } else {
         log('time', 'touchStart (no hold)');
     }
@@ -293,14 +292,19 @@ function touchEnd(event: TouchEvent) {
 }
 
 function touchMove(event: TouchEvent) {
-    if (startTouch) {
-        log('time', 'touch move dropped');
+    if (mouseAction.value === 'none') {
         return;
     }
 
-    const list = event.changedTouches;
+    const list = event.touches;
     const position = getPosition(list[0]);
-    log('time', `touch move {${event.changedTouches[0].identifier}} (${getDistance(lastPosition.value, position)})`);
+    const distance = getDistance(lastPosition.value, position);
+
+    if (distance * 2 < holdSize.value) {
+        return;
+    }
+
+    log('time', `touch move {${event.changedTouches[0].identifier}} (${distance})`);
 
     move(position);
 }
@@ -409,7 +413,12 @@ function move(position: Point) {
     const action = mouseAction.value;
     const selectedHold = selectHold.value;
 
-    if (action === 'none' || !selectedHold) {
+    if (action === 'none') {
+        return;
+    }
+
+    if (!selectedHold) {
+        mouseAction.value = 'none';
         return;
     }
 
@@ -422,6 +431,11 @@ function move(position: Point) {
             lastPosition.value = position;
             break;
         case 'active':
+            if (!holdSize.value) {
+                mouseAction.value = 'none';
+                return;
+            }
+
             clearTimeout(interactionTimer);
             log('time', '(stopped) move');
 
