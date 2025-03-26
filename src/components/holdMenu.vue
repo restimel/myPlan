@@ -32,6 +32,11 @@
         </button>
     </div>
     <div class="item">
+        <label>
+            Size: {{ hold.size }}
+        </label>
+    </div>
+    <div class="item">
         <button @click.stop="remove">
             Remove
         </button>
@@ -61,7 +66,7 @@ const emit = defineEmits<{
 }>();
 
 const style = computed(() => {
-    const nbItems = 6;
+    const nbItems = 7;
     const hold = props.hold;
     const position = hold.position[0];
     const ratio = props.scale;
@@ -167,5 +172,10 @@ function moveDown() {
 
     .item button {
         width: 100%;
+    }
+
+    .item label {
+        display: block;
+        height: 42px;
     }
 </style>

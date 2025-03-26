@@ -37,6 +37,11 @@
         >
             Remove last hold
         </button>
+        <button
+            @click="save()"
+        >
+            Save
+        </button>
     </footer>
 </template>
 <script lang="ts" setup>
@@ -68,7 +73,7 @@ const canvas = useTemplateRef('canvas');
 const canvasLayer = useTemplateRef('canvasLayer');
 
 const scaleRatio = ref(1);
-const holdSize = ref(20);
+const holdSize = ref(25);
 
 watch(() => props.image, loadImage);
 watch(holdList, drawHolds, { deep: true });
@@ -117,8 +122,8 @@ function loadImage() {
 
     context.putImageData(imgData, 0, 0);
 
-    /* This is to draw around 35 holds on height */
-    holdSize.value = canvasLayerEl.height / 70;
+    /* This is to draw around 30 holds on height */
+    holdSize.value = canvasLayerEl.height / 60;
 }
 
 function setHold(point: Point) {
@@ -128,6 +133,11 @@ function setHold(point: Point) {
 function closeMenu() {
     mouseAction.value = 'none';
     selectHold.value = null;
+}
+
+function save() {
+    console.log('todo');
+    log('save', `size: ${props.image?.width} × ${props.image?.height} = ${(props.image?.width ?? 1) * (props.image?.height ?? 1)}`);
 }
 
 const bgHoldColor = '#ffffff33';
@@ -262,7 +272,13 @@ function touchStart(event: TouchEvent) {
     if (selectHold.value) {
         event.preventDefault();
         startTouch = true;
-        setTimeout(() => startTouch = false, touchMultiEventDuration);
+        log('time', 'touchStart (with hold)');
+        setTimeout(() => {
+            startTouch = false;
+            log('time', 'touchStart (timeout)');
+        }, touchMultiEventDuration);
+    } else {
+        log('time', 'touchStart (no hold)');
     }
 }
 
@@ -270,15 +286,18 @@ function touchEnd(event: TouchEvent) {
     const list = event.changedTouches;
     const position = getPosition(list[0]);
 
+    log('time', 'touchEnd');
+
     stopInteraction(position);
     event.preventDefault();
 }
 
 function touchMove(event: TouchEvent) {
     if (startTouch) {
-        log('time', 'move dropped');
+        log('time', 'touch move dropped');
         return;
     }
+    log('time', 'touch move');
 
     const list = event.changedTouches;
     const position = getPosition(list[0]);
