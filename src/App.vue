@@ -62,20 +62,19 @@ nav {
     }
 }
 
-nav a.router-link-exact-active {
-    background: var(--color-secondary);
-    color: var(--color-txt-secondary);
-}
-
 nav a.router-link-exact-active:hover {
     background-color: transparent;
 }
 
 nav a {
-    color: var(--color-txt-primary);
     display: inline-block;
     padding: 0 1rem;
     border-left: 1px solid var(--color-border);
+}
+
+nav a.router-link-exact-active {
+    background: var(--color-secondary);
+    color: var(--color-txt-secondary);
 }
 
 nav a:first-of-type {

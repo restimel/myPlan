@@ -317,14 +317,16 @@ function startInteraction(point: Point) {
     const hold = getHold(lastPosition.value);
 
     if (hold) {
+        debugMessage.value = `hold: ${hold.value}`;
         selectHold.value = hold;
         interactionTimer = setTimeout(() => {
+            debugMessage.value = `change to selection: ${hold.value}`;
             mouseAction.value = 'selection';
             debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value}, ${selectHold.value?.position})`;
         }, holdMouseDuration);
+    } else {
+        debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value})`;
     }
-
-    debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value})`;
 }
 
 function stopInteraction(position: Point) {
