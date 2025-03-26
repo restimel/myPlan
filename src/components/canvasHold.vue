@@ -52,7 +52,7 @@ import {
     resetHolds,
 } from '@/utils/holds';
 import { getDistance } from '@/utils/geometry';
-import { debugMessage } from '@/utils/debug';
+import { log } from '@/utils/debug';
 import HoldMenu from '@/components/holdMenu.vue';
 
 const props = defineProps<{
@@ -302,12 +302,12 @@ function startInteraction(point: Point) {
         doubleHold(selectHold.value?.index);
         selectHold.value = null;
         mouseAction.value = 'none';
-        debugMessage.value = 'Interaction: (after double) none';
+        log('Interaction', '(after double) none');
         return;
     }
     if (action === 'menu') {
         mouseAction.value = 'none';
-        debugMessage.value = 'Interaction: none';
+        log('Interaction', 'none');
         return;
     }
 
@@ -317,20 +317,21 @@ function startInteraction(point: Point) {
     const hold = getHold(lastPosition.value);
 
     if (hold) {
-        debugMessage.value = `hold: ${hold.value}`;
         selectHold.value = hold;
         interactionTimer = setTimeout(() => {
-            debugMessage.value = `change to selection: ${hold.value}`;
+            log('time', '(called) startInteraction');
             mouseAction.value = 'selection';
-            debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value}, ${selectHold.value?.position})`;
+            log('Interaction', `${mouseAction.value} (hold: ${selectHold.value?.value}, ${selectHold.value?.position})`);
         }, holdMouseDuration);
+        log('time', 'start startInteraction');
     } else {
-        debugMessage.value = `Interaction: ${mouseAction.value} (hold: ${selectHold.value?.value})`;
+        log('Interaction', `${mouseAction.value} (hold: ${selectHold.value?.value})`);
     }
 }
 
 function stopInteraction(position: Point) {
     clearTimeout(interactionTimer);
+    log('time', '(stopped) stopInteraction');
 
     const action = mouseAction.value;
     const originHold = selectHold.value;
@@ -342,32 +343,32 @@ function stopInteraction(position: Point) {
 
                 interactionTimer = setTimeout(() => {
                     setHold(position);
-                    debugMessage.value = `Interaction (done (timed)): ${mouseAction.value} (position: ${position})`;
+                    log('Interaction', `[done (timed)] ${mouseAction.value} (position: ${position})`);
                     mouseAction.value = 'none';
                     selectHold.value = null;
                 }, doubleMouseDuration);
 
-                debugMessage.value = `Interaction (done): ${mouseAction.value} (position: ${position})`;
+                log('Interaction', `[Done] ${mouseAction.value} (position: ${position})`);
 
                 return;
             }
 
             setHold(position);
-            debugMessage.value = `Interaction (done): ${action} (position: ${position})`;
+            log('Interaction', `[Done] ${action} (position: ${position})`);
             break;
         case 'selection':
             mouseAction.value = 'menu';
-            debugMessage.value = `Interaction (done): ${mouseAction.value}`;
+            log('Interaction', `[Done] ${mouseAction.value}`);
             return;
         case 'move':
-            debugMessage.value = `Interaction (done): ${action}`;
+            log('Interaction', `[Done] ${action}`);
             break;
         case 'link': {
             const targetHold = getHold(position);
 
             if (targetHold && originHold) {
                 linkHolds(originHold.index, targetHold.index);
-                debugMessage.value = `Interaction (done): ${action} (position: ${position})`;
+                log('Interaction', `[Done] ${action} (position: ${position})`);
             }
         }
     }
@@ -394,6 +395,7 @@ function move(position: Point) {
             break;
         case 'active':
             clearTimeout(interactionTimer);
+            log('time', '(stopped) move');
 
             /* ×2 is to reduce the threshold before moving it */
             if (getDistance(position, lastPosition.value) * 2 < holdSize.value ) {

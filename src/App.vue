@@ -64,6 +64,7 @@ nav {
 
 nav a.router-link-exact-active:hover {
     background-color: transparent;
+    font-style: italic;
 }
 
 nav a {
