@@ -228,6 +228,38 @@ function drawHolds() {
 
 /* {{{ Canvas interaction */
 
+/**
+ *               start=mousedown/touchstart
+ *               move=mousemove/touchmove
+ *               end=mouseup/touchend
+ *     ┌──────┐
+ *     │ None ◄───────────────────────────────────────────┐
+ *     └──┬───┘                                           │
+ *        │start                                          │
+ *    ┌───▼────┐    end                                   │
+ *    │ active ┼──────────────────────────► setHold ──────┤
+ *    └───┬────┘                                          │
+ *  ┌ ─ ─ ┼ ─ ─ ─ ┐ end ┌────────┐ 200 ms                 │
+ *   HoldSelection ─────► double ┼────────► setHold ──────┤
+ *  └ ─ ┬ ─ ─ ─┬─ ┘     └────┬───┘ start                  │
+ *      │      │move         └────────────► doubleHold ───┤
+ * 500ms│  ┌───▼──┐ end                                   │
+ *      │  │ move ┼───────────────────────► moveHold ─────┤
+ *      │  └──────┘                                       │
+ *   ┌──▼────────┐   display                              │
+ *   │ selection ┼─── menu                                │
+ *   └──┬─────┬──┘                                        │
+ *      │     │end                                        │
+ *      │  ┌──▼───┐      actions                          │
+ *  move│  │ menu ┼──────────────────────────────────────►┤
+ *      │  └──┬───┘                                       │
+ *      │     │          start                            │
+ *      │     └──────────────────────────────────────────►┤
+ *   ┌──▼───┐       end                                   │
+ *   │ link ┼─────────────────────────────► linkHolds ────┘
+ *   └──────┘
+ */
+
 type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' | 'link';
 
 /** in ms */
@@ -292,19 +324,34 @@ function touchEnd(event: TouchEvent) {
 }
 
 function touchMove(event: TouchEvent) {
-    if (mouseAction.value === 'none') {
+    const action = mouseAction.value;
+
+    if (action === 'none') {
+        return;
+    }
+
+    const selectedHold = selectHold.value;
+
+    if (!selectedHold) {
+        mouseAction.value = 'none';
         return;
     }
 
     const list = event.touches;
     const position = getPosition(list[0]);
-    const distance = getDistance(lastPosition.value, position);
 
-    if (distance * 2 < defaultHoldSize.value) {
-        return;
+    if (action === 'active' || action === 'selection') {
+        const distance = getDistance(lastPosition.value, position);
+        const thresholdSize = selectedHold.size;
+
+        if (distance * 2 < thresholdSize) {
+            return;
+        }
+
+        log('time', `touch move {${event.changedTouches[0].identifier}} (${position} / ${distance})`);
+    } else {
+        log('time', `touch move {${event.changedTouches[0].identifier}} (${position})`);
     }
-
-    log('time', `touch move {${event.changedTouches[0].identifier}} (${distance})`);
 
     move(position);
 }
@@ -430,24 +477,21 @@ function move(position: Point) {
         case 'link':
             lastPosition.value = position;
             break;
-        case 'active':
-            if (!defaultHoldSize.value) {
-                mouseAction.value = 'none';
-                return;
-            }
-
+        case 'active': {
+            const distance = getDistance(position, lastPosition.value);
             clearTimeout(interactionTimer);
             log('time', '(stopped) move');
 
             /* ×2 is to reduce the threshold before moving it */
-            if (getDistance(position, lastPosition.value) * 2 < defaultHoldSize.value ) {
+            if (distance * 2 > defaultHoldSize.value ) {
                 moveHold(selectedHold.index, lastPosition.value, position);
                 lastPosition.value = position;
                 mouseAction.value = 'move';
             }
             break;
+        }
         case 'selection':
-            if (getDistance(position, lastPosition.value) < defaultHoldSize.value ) {
+            if (getDistance(position, lastPosition.value) > defaultHoldSize.value ) {
                 lastPosition.value = position;
                 mouseAction.value = 'link';
             }

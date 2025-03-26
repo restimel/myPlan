@@ -209,6 +209,8 @@ function changeSizeDown() {
         flex-direction: row;
         align-items: center;
         height: 42px;
+        padding: 0 var(--spacing-sm);
+        gap: var(--spacing-xs);
     }
 
     label > .label {
