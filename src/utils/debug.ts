@@ -12,10 +12,13 @@ watch(debugMessage, () => {
 let lastTime = 0;
 export function log(category: string, message: string) {
     if (debug.value) {
-        if (category !== 'time') {
-            console.log(category, message);
-            return;
-        }
+        if (category === 'save') {
+            debugMessage.value = `${category}: ${message}`;
+        } else
+            if (category !== 'time') {
+                console.log(category, message);
+                return;
+            }
 
         const time = Math.round(performance.now());
         const duration = time - lastTime;

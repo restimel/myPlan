@@ -1,5 +1,7 @@
 <template>
-<aside v-if="debug">
+<aside v-if="debug"
+    @click="debugMessage = ''"
+>
     {{ debugMessage }}
 </aside>
 </template>

@@ -272,7 +272,7 @@ function touchStart(event: TouchEvent) {
     if (selectHold.value) {
         event.preventDefault();
         startTouch = true;
-        log('time', 'touchStart (with hold)');
+        log('time', `touchStart {${event.changedTouches[0].identifier}} (with hold)`);
         setTimeout(() => {
             startTouch = false;
             log('time', 'touchStart (timeout)');
@@ -286,7 +286,7 @@ function touchEnd(event: TouchEvent) {
     const list = event.changedTouches;
     const position = getPosition(list[0]);
 
-    log('time', 'touchEnd');
+    log('time', `touchEnd {${event.changedTouches[0].identifier}}`);
 
     stopInteraction(position);
     event.preventDefault();
@@ -297,10 +297,10 @@ function touchMove(event: TouchEvent) {
         log('time', 'touch move dropped');
         return;
     }
-    log('time', 'touch move');
 
     const list = event.changedTouches;
     const position = getPosition(list[0]);
+    log('time', `touch move {${event.changedTouches[0].identifier}} (${getDistance(lastPosition.value, position)})`);
 
     move(position);
 }
