@@ -3,6 +3,7 @@ import { getDistance } from './geometry';
 
 export const holdList = ref<Hold[]>([]);
 export const top = ref<number>(1);
+export const defaultHoldSize = ref<number>(25);
 
 function resetValues() {
     let value = 1;
@@ -128,6 +129,19 @@ export function moveHold(idx: number, from: Point, to: Point) {
     const position = hold.position;
 
     hold.position = position.map(([x, y]) => [x + dx, y + dy]);
+
+    return true;
+}
+
+export function changeHoldSize(idx: number, size: number) {
+    const hold = holdList.value[idx];
+
+    if (!hold) {
+        return false;
+    }
+
+    hold.size = size;
+    defaultHoldSize.value = size;
 
     return true;
 }

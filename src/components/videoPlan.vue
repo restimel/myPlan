@@ -10,7 +10,7 @@
         ></canvas>
         <ErrorMessage v-if="doNotAllowed" />
     </div>
-    <footer>
+    <footer class="footer-actions">
         <button
             @click="capture"
         >

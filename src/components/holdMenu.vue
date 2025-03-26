@@ -33,7 +33,22 @@
     </div>
     <div class="item">
         <label>
-            Size: {{ hold.size }}
+            <span class="label">
+                Size: {{ Math.round(hold.size) }}
+            </span>
+            <button
+                class="small-btn"
+                :disabled="hold.size < 3"
+                @click.stop="changeSizeDown"
+            >
+                -
+            </button>
+            <button
+                class="small-btn"
+                @click.stop="changeSizeUp"
+            >
+                +
+            </button>
         </label>
     </div>
     <div class="item">
@@ -46,6 +61,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import {
+    changeHoldSize,
     changeValue,
     doubleHold,
     removeHold,
@@ -152,6 +168,20 @@ function moveUp() {
 function moveDown() {
     changeValue(props.hold.index, false);
 }
+
+function changeSizeUp() {
+    changeHoldSize(props.hold.index, props.hold.size + 1);
+}
+
+function changeSizeDown() {
+    const value = props.hold.size - 1;
+
+    if (value < 2) {
+        return;
+    }
+
+    changeHoldSize(props.hold.index, value);
+}
 </script>
 <style scoped>
     aside {
@@ -175,7 +205,20 @@ function moveDown() {
     }
 
     .item label {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
         height: 42px;
+    }
+
+    label > .label {
+        flex: 1;
+    }
+    label button.small-btn {
+        display: inline-block;
+        padding: initial;
+        border-radius: var(--border-radius-round);
+        width: 2em;
+        height: 2em;
     }
 </style>

@@ -29,18 +29,16 @@ function getImage(data: ImageData | null) {
 
 </script>
 
-<style>
+<style scoped>
 .container {
     display: grid;
     grid-template-rows: 1fr max-content;
     grid-template-areas: "content" "actions";
 }
 
-.canvas-container.canvas {
-    display: block;
-}
-
-footer {
+</style>
+<style>
+footer.footer-actions {
     grid-area: actions;
     background: var(--color-secondary);
     color: var(--color-txt-secondary);
@@ -49,9 +47,9 @@ footer {
     justify-content: center;
     gap: var(--spacing-sm);
 }
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+
+.footer-actions button {
+    padding: var(--spacing-xs) var(--spacing-xs);
+    font-size: var(--font-size-sm);
 }
 </style>

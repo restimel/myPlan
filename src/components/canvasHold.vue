@@ -26,7 +26,7 @@
             @close="closeMenu"
         />
     </div>
-    <footer>
+    <footer class="footer-actions">
         <button
             @click="emit('back')"
         >
@@ -48,6 +48,7 @@
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import {
     addHold,
+    defaultHoldSize,
     doubleHold,
     getHold,
     holdList,
@@ -73,7 +74,6 @@ const canvas = useTemplateRef('canvas');
 const canvasLayer = useTemplateRef('canvasLayer');
 
 const scaleRatio = ref(1);
-const holdSize = ref(25);
 
 watch(() => props.image, loadImage);
 watch(holdList, drawHolds, { deep: true });
@@ -123,11 +123,11 @@ function loadImage() {
     context.putImageData(imgData, 0, 0);
 
     /* This is to draw around 30 holds on height */
-    holdSize.value = canvasLayerEl.height / 60;
+    defaultHoldSize.value = canvasLayerEl.height / 60;
 }
 
 function setHold(point: Point) {
-    addHold(point[0], point[1], holdSize.value);
+    addHold(point[0], point[1], defaultHoldSize.value);
 }
 
 function closeMenu() {
@@ -300,7 +300,7 @@ function touchMove(event: TouchEvent) {
     const position = getPosition(list[0]);
     const distance = getDistance(lastPosition.value, position);
 
-    if (distance * 2 < holdSize.value) {
+    if (distance * 2 < defaultHoldSize.value) {
         return;
     }
 
@@ -431,7 +431,7 @@ function move(position: Point) {
             lastPosition.value = position;
             break;
         case 'active':
-            if (!holdSize.value) {
+            if (!defaultHoldSize.value) {
                 mouseAction.value = 'none';
                 return;
             }
@@ -440,14 +440,14 @@ function move(position: Point) {
             log('time', '(stopped) move');
 
             /* ×2 is to reduce the threshold before moving it */
-            if (getDistance(position, lastPosition.value) * 2 < holdSize.value ) {
+            if (getDistance(position, lastPosition.value) * 2 < defaultHoldSize.value ) {
                 moveHold(selectedHold.index, lastPosition.value, position);
                 lastPosition.value = position;
                 mouseAction.value = 'move';
             }
             break;
         case 'selection':
-            if (getDistance(position, lastPosition.value) < holdSize.value ) {
+            if (getDistance(position, lastPosition.value) < defaultHoldSize.value ) {
                 lastPosition.value = position;
                 mouseAction.value = 'link';
             }
