@@ -2,10 +2,10 @@
 
 ## TODO
 
-* [ ] use icons instead of text
+* [x] use icons instead of text
     * [x] footer
     * [x] menu
-    * [ ] header
+    * [x] header
 * [x] create a common Icon component to handle all Icons
 * [ ] i18n (mainly to support French)
 * [ ] In viewer

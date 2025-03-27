@@ -1,16 +1,11 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
-import DebugMessage from '@/components/debugMessage.vue';
-</script>
-
 <template>
     <main class="app">
         <header>
             <div class="wrapper">
                 <nav>
-                    <RouterLink to="/build">Build plan</RouterLink>
-                    <RouterLink to="/view">View</RouterLink>
-                    <RouterLink to="/about">About</RouterLink>
+                    <RouterLink to="/build"><MyIcon icon="edit" /> Build plan</RouterLink>
+                    <RouterLink to="/view"><MyIcon icon="view" /> View</RouterLink>
+                    <RouterLink to="/about"><MyIcon icon="question" /> About</RouterLink>
                 </nav>
             </div>
         </header>
@@ -19,6 +14,12 @@ import DebugMessage from '@/components/debugMessage.vue';
     </main>
     <DebugMessage />
 </template>
+
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router';
+import DebugMessage from '@/components/debugMessage.vue';
+import MyIcon from '@/components/myIcon.vue';
+</script>
 
 <style scoped>
 

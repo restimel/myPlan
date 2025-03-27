@@ -8,6 +8,7 @@ import { computed } from 'vue';
 type Icons =
     | 'delete'
     | 'down'
+    | 'edit'
     | 'file'
     | 'link'
     | 'merge'
@@ -29,6 +30,7 @@ const props = defineProps<Props>();
 const mapElement = {
     delete: import('@/components/icons/IconDelete.vue'),
     down: import('@/components/icons/IconDelete.vue'),
+    edit: import('@/components/icons/IconEdit.vue'),
     file: import('@/components/icons/IconFile.vue'),
     link: import('@/components/icons/IconLink.vue'),
     merge: import('@/components/icons/IconMerge.vue'),
