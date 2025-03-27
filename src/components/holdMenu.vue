@@ -36,8 +36,9 @@
     </div>
     <div class="item">
         <label>
+            <MyIcon icon="size" />
+            <span> </span>
             <span class="label">
-                <MyIcon icon="size" />
                 Size: {{ Math.round(hold.size) }}
             </span>
             <button

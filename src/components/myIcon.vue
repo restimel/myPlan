@@ -1,9 +1,22 @@
 <template>
-    <Component :is="iconComponent" class="icon" />
+    <component :is="iconComponent" class="icon"  :style="style" />
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import IconDelete from '@/components/icons/IconDelete.vue';
+import IconDown from '@/components/icons/IconDown.vue';
+import IconEdit from '@/components/icons/IconEdit.vue';
+import IconFile from '@/components/icons/IconFile.vue';
+import IconLink from '@/components/icons/IconLink.vue';
+import IconMerge from '@/components/icons/IconMerge.vue';
+import IconPhoto from '@/components/icons/IconPhoto.vue';
+import IconQuestion from '@/components/icons/IconQuestion.vue';
+import IconSize from '@/components/icons/IconSize.vue';
+import IconSplit from '@/components/icons/IconSplit.vue';
+import IconUnlink from '@/components/icons/IconUnlink.vue';
+import IconUp from '@/components/icons/IconUp.vue';
+import IconView from '@/components/icons/IconView.vue';
 
 type Icons =
     | 'delete'
@@ -23,24 +36,25 @@ type Icons =
 
 type Props = {
     icon: Icons;
+    size?: number;
 }
 
 const props = defineProps<Props>();
 
 const mapElement = {
-    delete: import('@/components/icons/IconDelete.vue'),
-    down: import('@/components/icons/IconDelete.vue'),
-    edit: import('@/components/icons/IconEdit.vue'),
-    file: import('@/components/icons/IconFile.vue'),
-    link: import('@/components/icons/IconLink.vue'),
-    merge: import('@/components/icons/IconMerge.vue'),
-    photo: import('@/components/icons/IconPhoto.vue'),
-    question: import('@/components/icons/IconQuestion.vue'),
-    size: import('@/components/icons/IconSize.vue'),
-    split: import('@/components/icons/IconSplit.vue'),
-    unlink: import('@/components/icons/IconUnlink.vue'),
-    up: import('@/components/icons/IconUp.vue'),
-    view: import('@/components/icons/IconView.vue'),
+    delete: IconDelete,
+    down: IconDown,
+    edit: IconEdit,
+    file: IconFile,
+    link: IconLink,
+    merge: IconMerge,
+    photo: IconPhoto,
+    question: IconQuestion,
+    size: IconSize,
+    split: IconSplit,
+    unlink: IconUnlink,
+    up: IconUp,
+    view: IconView,
 };
 
 const iconComponent = computed(() => {
@@ -52,4 +66,17 @@ const iconComponent = computed(() => {
 
     return mapElement.question;
 });
+
+const style = computed(() => {
+    return `
+        --size: ${props.size ?? 15}px;
+    `;
+});
 </script>
+
+<style scoped>
+.icon {
+    height: var(--size);
+    width: var(--size);
+}
+</style>

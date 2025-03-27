@@ -3,9 +3,9 @@
         <header>
             <div class="wrapper">
                 <nav>
-                    <RouterLink to="/build"><MyIcon icon="edit" /> Build plan</RouterLink>
-                    <RouterLink to="/view"><MyIcon icon="view" /> View</RouterLink>
-                    <RouterLink to="/about"><MyIcon icon="question" /> About</RouterLink>
+                    <RouterLink to="/build"><MyIcon icon="edit" :size="12" /> Build plan</RouterLink>
+                    <RouterLink to="/view"><MyIcon icon="view" :size="12" /> View</RouterLink>
+                    <RouterLink to="/about"><MyIcon icon="question" :size="12" /> About</RouterLink>
                 </nav>
             </div>
         </header>
