@@ -1,7 +1,8 @@
 <template>
     <div class="container">
-        <CanvasHold
+        <RouteViewer
             :image="image"
+            :holds="holds"
         />
     </div>
 </template>
@@ -10,7 +11,7 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { loadRoute } from '@/utils/storage';
-import CanvasHold from '@/components/canvasHold.vue';
+import RouteViewer from '@/components/routeViewer.vue';
 
 const router = useRouter();
 
@@ -29,9 +30,10 @@ onMounted(() => {
     image.value = data.image;
     holds.value = data.holds;
 });
-</script>
 
+</script>
 <style scoped>
+
 .container {
     display: grid;
     grid-template-rows: 1fr max-content;
