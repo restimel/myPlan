@@ -31,21 +31,21 @@
             @click="emit('back')"
             title="take another photo"
         >
-            <IconPhoto />
+            <MyIcon icon="photo" />
         </button>
         <button
             :disabled="holdList.length === 0"
             @click="removeHold()"
             title="Remove last hold"
         >
-            <IconDelete />
+            <MyIcon icon="delete" />
         </button>
         <button
             @click="save()"
             :disabled="holdList.length === 0"
             title="Save this route"
         >
-            <IconView />
+            <MyIcon icon="view" />
         </button>
     </footer>
 </template>
@@ -66,9 +66,7 @@ import { getDistance } from '@/utils/geometry';
 import { log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
 import HoldMenu from '@/components/holdMenu.vue';
-import IconDelete from '@/components/icons/IconDelete.vue';
-import IconPhoto from '@/components/icons/IconPhoto.vue';
-import IconView from '@/components/icons/IconView.vue';
+import MyIcon from '@/components/myIcon.vue';
 
 const props = defineProps<{
     image: ImageData | null;

@@ -3,41 +3,41 @@
     :style="style"
 >
     <div v-if="canMove" class="head">
-        <IconLink />
+        <MyIcon icon="link" />
         <span>
             link
-            <span class="icon">✥</span>
+            <span class="text-icon">✥</span>
         </span>
     </div>
     <div class="item">
         <button @click.stop="moveUp" :disabled="!canMoveUp">
-           <IconUp /> Move up
+           <MyIcon icon="up" /> Move up
         </button>
     </div>
     <div class="item">
         <button @click.stop="moveDown" :disabled="!canMoveDown">
-            <IconDown /> Move down
+            <MyIcon icon="down" /> Move down
         </button>
     </div>
     <div v-if="isLink" class="item">
         <button @click.stop="unlink">
-            <IconUnlink /> Unlink
+            <MyIcon icon="unlink" /> Unlink
         </button>
     </div>
     <div v-if="isDouble" class="item">
         <button @click.stop="double">
-            <IconMerge /> Remove double
+            <MyIcon icon="merge" /> Remove double
         </button>
     </div>
     <div v-if="!isDouble" class="item">
         <button @click.stop="double">
-           <IconSplit /> Double hold
+           <MyIcon icon="split" /> Double hold
         </button>
     </div>
     <div class="item">
         <label>
             <span class="label">
-                <IconSize />
+                <MyIcon icon="size" />
                 Size: {{ Math.round(hold.size) }}
             </span>
             <button
@@ -57,7 +57,7 @@
     </div>
     <div class="item">
         <button @click.stop="remove">
-            <IconDelete /> Remove
+            <MyIcon icon="delete" /> Remove
         </button>
     </div>
 </aside>
@@ -72,14 +72,7 @@ import {
     top,
     unlinkHolds,
 } from '@/utils/holds';
-import IconDelete from '@/components/icons/IconDelete.vue';
-import IconDown from '@/components/icons/IconDown.vue';
-import IconLink from '@/components/icons/IconLink.vue';
-import IconMerge from '@/components/icons/IconMerge.vue';
-import IconSize from '@/components/icons/IconSize.vue';
-import IconSplit from '@/components/icons/IconSplit.vue';
-import IconUnlink from '@/components/icons/IconUnlink.vue';
-import IconUp from '@/components/icons/IconUp.vue';
+import MyIcon from '@/components/myIcon.vue';
 
 type Props = {
     hold: Hold;

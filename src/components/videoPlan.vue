@@ -15,7 +15,7 @@
             @click="capture"
             title="Capture photo"
         >
-            <IconPhoto />
+            <MyIcon icon="photo" />
         </button>
         <input
             class="hidden"
@@ -29,15 +29,14 @@
             @click="inputFile?.click()"
             title="Use a file"
         >
-            <IconFile />
+            <MyIcon icon="file" />
         </button>
     </footer>
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, useTemplateRef, onBeforeUnmount } from 'vue';
+import MyIcon from '@/components/myIcon.vue';
 import ErrorMessage from '@/components/errorMessage.vue';
-import IconFile from '@/components/icons/IconFile.vue';
-import IconPhoto from '@/components/icons/IconPhoto.vue';
 
 const video = useTemplateRef('video');
 const canvas = useTemplateRef('canvas');

@@ -6,7 +6,7 @@
     * [x] footer
     * [x] menu
     * [ ] header
-* [ ] create a common Icon component to handle all Icons
+* [x] create a common Icon component to handle all Icons
 * [ ] i18n (mainly to support French)
 * [ ] In viewer
     * [ ] Display TOP
