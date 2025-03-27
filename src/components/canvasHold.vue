@@ -29,20 +29,23 @@
     <footer class="footer-actions">
         <button
             @click="emit('back')"
+            title="take another photo"
         >
-            Take another photo
+            <IconPhoto />
         </button>
         <button
             :disabled="holdList.length === 0"
             @click="removeHold()"
+            title="Remove last hold"
         >
-            Remove last hold
+            <IconDelete />
         </button>
         <button
             @click="save()"
             :disabled="holdList.length === 0"
+            title="Save this route"
         >
-            Save
+            <IconView />
         </button>
     </footer>
 </template>
@@ -63,6 +66,9 @@ import { getDistance } from '@/utils/geometry';
 import { log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
 import HoldMenu from '@/components/holdMenu.vue';
+import IconDelete from '@/components/icons/IconDelete.vue';
+import IconPhoto from '@/components/icons/IconPhoto.vue';
+import IconView from '@/components/icons/IconView.vue';
 
 const props = defineProps<{
     image: ImageData | null;

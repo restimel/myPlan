@@ -190,6 +190,7 @@ function changeSizeDown() {
         top: var(--y);
         background: var(--color-background);
         border: var(--field-border);
+        box-shadow: var(--shadow-md);
     }
 
     .head {

@@ -13,8 +13,9 @@
     <footer class="footer-actions">
         <button
             @click="capture"
+            title="Capture photo"
         >
-            Capture photo
+            <IconPhoto />
         </button>
         <input
             class="hidden"
@@ -26,14 +27,17 @@
         />
         <button
             @click="inputFile?.click()"
+            title="Use a file"
         >
-            Use a file
+            <IconFile />
         </button>
     </footer>
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, useTemplateRef, onBeforeUnmount } from 'vue';
 import ErrorMessage from '@/components/errorMessage.vue';
+import IconFile from '@/components/icons/IconFile.vue';
+import IconPhoto from '@/components/icons/IconPhoto.vue';
 
 const video = useTemplateRef('video');
 const canvas = useTemplateRef('canvas');
