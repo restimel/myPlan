@@ -159,8 +159,8 @@ function save() {
 
 const bgHoldColor = '#ffffff33';
 const borderHoldColor = '#000000ff';
-const bgHoldHoverColor = '#fefe0033';
-const borderHoldHoverColor = '#4e3b14ff';
+const bgHoldHoverColor = '#fefe0022';
+const borderHoldHoverColor = '#786238ff';
 
 function drawHolds() {
     const canvasLayerEl = canvasLayer.value!;

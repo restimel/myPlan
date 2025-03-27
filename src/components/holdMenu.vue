@@ -3,37 +3,41 @@
     :style="style"
 >
     <div v-if="canMove" class="head">
-        <span class="icon">✥</span>
-        link
+        <IconLink />
+        <span>
+            link
+            <span class="icon">✥</span>
+        </span>
     </div>
     <div class="item">
         <button @click.stop="moveUp" :disabled="!canMoveUp">
-            Move up
+           <IconUp /> Move up
         </button>
     </div>
     <div class="item">
         <button @click.stop="moveDown" :disabled="!canMoveDown">
-            Move down
+            <IconDown /> Move down
         </button>
     </div>
     <div v-if="isLink" class="item">
         <button @click.stop="unlink">
-            Unlink
+            <IconUnlink /> Unlink
         </button>
     </div>
     <div v-if="isDouble" class="item">
         <button @click.stop="double">
-            Remove double
+            <IconMerge /> Remove double
         </button>
     </div>
     <div v-if="!isDouble" class="item">
         <button @click.stop="double">
-            Double hold
+           <IconSplit /> Double hold
         </button>
     </div>
     <div class="item">
         <label>
             <span class="label">
+                <IconSize />
                 Size: {{ Math.round(hold.size) }}
             </span>
             <button
@@ -53,7 +57,7 @@
     </div>
     <div class="item">
         <button @click.stop="remove">
-            Remove
+            <IconDelete /> Remove
         </button>
     </div>
 </aside>
@@ -68,6 +72,14 @@ import {
     top,
     unlinkHolds,
 } from '@/utils/holds';
+import IconDelete from '@/components/icons/IconDelete.vue';
+import IconDown from '@/components/icons/IconDown.vue';
+import IconLink from '@/components/icons/IconLink.vue';
+import IconMerge from '@/components/icons/IconMerge.vue';
+import IconSize from '@/components/icons/IconSize.vue';
+import IconSplit from '@/components/icons/IconSplit.vue';
+import IconUnlink from '@/components/icons/IconUnlink.vue';
+import IconUp from '@/components/icons/IconUp.vue';
 
 type Props = {
     hold: Hold;
@@ -194,7 +206,10 @@ function changeSizeDown() {
     }
 
     .head {
+        display: grid;
+        grid-template-columns: 25px 1fr;
         text-align: center;
+        padding: 0 var(--spacing-sm);
     }
 
     .item {
@@ -203,6 +218,8 @@ function changeSizeDown() {
 
     .item button {
         width: 100%;
+        display: grid;
+        grid-template-columns: 25px 1fr;
     }
 
     .item label {

@@ -4,8 +4,9 @@
 
 * [ ] use icons instead of text
     * [x] footer
-    * [ ] menu
+    * [x] menu
     * [ ] header
+* [ ] create a common Icon component to handle all Icons
 * [ ] i18n (mainly to support French)
 * [ ] In viewer
     * [ ] Display TOP
@@ -18,5 +19,7 @@
 
 ## Known bugs
 
-* canvas dimensions
+* [ ]canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
+* [ ]Menu on bottom holds is displayed outside the canvas
+* [ ]Menu on linked hold can be hover the selected hold
