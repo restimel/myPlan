@@ -12,6 +12,7 @@
     * [x] Display TOP
     * [ ] May edit the route
     * [ ] May allow to use it in competition (associate number with holds)
+* [ ] Add Youtube video capture
 
 ## Maybe to be done
 
@@ -19,6 +20,7 @@
 
 ## Known bugs
 
+* [ ] Header too long (in French)
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio

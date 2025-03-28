@@ -3,7 +3,7 @@ export default {
         title: 'Créer un plan',
     },
     view: {
-        title: 'Observer',
+        title: 'Voir',
     },
     about: {
         title: 'À propos',
