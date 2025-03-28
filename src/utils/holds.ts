@@ -1,5 +1,8 @@
 import { ref } from 'vue';
-import { getDistance } from './geometry';
+import {
+    getDistance,
+    isInRect,
+} from '@/utils/geometry';
 
 export const holdList = ref<Hold[]>([]);
 export const top = ref<number>(1);
@@ -161,4 +164,17 @@ export function getHold(point: Point): Hold | null {
     });
 
     return selectedHold;
+}
+
+export function getHoldInArea(point1: Point, point2: Point, holds?: Hold[]): Hold[] {
+    const list = holds ?? holdList.value;
+    const rect: [Point, Point] = [point1, point2];
+
+    const inside = list.filter((hold) => {
+        return hold.position.some((position) => {
+            return isInRect(position, rect, hold.size);
+        });
+    });
+
+    return inside;
 }

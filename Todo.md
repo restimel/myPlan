@@ -9,7 +9,7 @@
 * [x] create a common Icon component to handle all Icons
 * [x] i18n (mainly to support French)
 * [ ] In viewer
-    * [ ] Display TOP
+    * [x] Display TOP
     * [ ] May edit the route
     * [ ] May allow to use it in competition (associate number with holds)
 

@@ -11,6 +11,7 @@
     </div>
 </template>
 <script lang="ts" setup>
+import { defaultHoldSize, getHoldInArea } from '@/utils/holds';
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 
 const props = defineProps<{
@@ -59,6 +60,7 @@ function loadImage() {
     context.putImageData(imgData, 0, 0);
 
     drawHolds();
+    drawInformation();
 }
 
 const bgHoldColor = '#ffffff33';
@@ -121,6 +123,77 @@ function drawHolds() {
 
         context.restore();
     });
+}
+
+function drawInformation() {
+    const canvasEl = canvas.value!;
+    const context = canvasEl.getContext('2d')!;
+
+    if (!context) {
+        return;
+    }
+
+    const holds = props.holds;
+    const lastValue = props.holds[holds.length - 1].value;
+    const top = (Array.isArray(lastValue) ? lastValue[lastValue.length - 1] : lastValue) + 1;
+
+    const size = defaultHoldSize.value * 1.5;
+    const margin = 5;
+    const maxWidth = canvasEl.width;
+    const maxHeight = canvasEl.height;
+    let x = margin;
+    let y = margin;
+    const w = 5 * size;
+    const h = size;
+
+    context.save();
+
+    console.log(getHoldInArea([margin, margin], [margin + w, margin + h], holds));
+    console.log(getHoldInArea([margin, margin], [margin + w, margin + h], holds).length);
+    console.log(!getHoldInArea([margin, margin], [margin + w, margin + h], holds).length);
+
+    if (!getHoldInArea([margin, margin], [margin + w, margin + h], holds).length) {
+        /* Top left */
+        x = margin;
+        y = margin;
+    } else if (!getHoldInArea([maxWidth - margin - w, margin], [maxWidth - margin, margin + h], holds).length) {
+        /* Top right */
+        x = maxWidth - margin - w;
+        y = margin;
+    } else if (!getHoldInArea([maxWidth / 2 - w / 2, margin], [maxWidth / 2 + w / 2, margin + h], holds).length) {
+        /* Top middle */
+        x = maxWidth / 2 - w / 2;
+        y = margin;
+    } else if (!getHoldInArea([margin, maxHeight /2 - h / 2], [margin + w, maxHeight /2 + h / 2], holds).length) {
+        /* middle left */
+        x = margin;
+        y = maxHeight /2 - h / 2;
+    } else if (!getHoldInArea([maxWidth - margin - w, maxHeight /2 - h / 2], [maxWidth - margin, maxHeight /2 + h / 2], holds).length) {
+        /* middle right */
+        x = maxWidth - margin - w;
+        y = maxHeight /2 - h / 2;
+    } else {
+        console.log('by default :/');
+        x = margin;
+        y = margin;
+        context.globalAlpha = 0.5;
+    }
+
+    context.fillStyle = bgHoldColor;
+    context.strokeStyle = borderHoldColor;
+    context.font = `${size}px serif`;
+
+    context.rect(x, y, w, h);
+
+    context.fill();
+    context.stroke();
+
+    context.textBaseline = 'middle';
+    context.textAlign = 'center';
+    context.fillStyle = borderHoldColor;
+    /* TODO i18n */
+    context.fillText(`TOP = ${top}`, x + w / 2, y + 2 + h / 2, w);
+    context.restore();
 }
 
 </script>

@@ -94,7 +94,21 @@ export function saveRoute(image: ImageData, holdList: Hold[], retry = 5): boolea
         const resized = reduceSize(image2D, ratioReduceFactor);
         const newImgData = table2Dto1D(resized);
 
-        return saveRoute(newImgData, holdList, retry - 1);
+        const newHoldList = holdList.map((hold) => {
+            return {
+                position: hold.position.map(([x, y]) => {
+                    return [
+                        x / ratioReduceFactor,
+                        y / ratioReduceFactor,
+                    ] as Point;
+                }),
+                value: hold.value,
+                size: hold.size,
+                index: hold.index,
+            } as Hold;
+        });
+
+        return saveRoute(newImgData, newHoldList, retry - 1);
     }
 
     console.log('size:', json.length);
