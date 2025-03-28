@@ -1,3 +1,9 @@
+import {
+    convertToImageData,
+    reduceSize,
+    table1Dto2D,
+    table2Dto1D,
+} from '@/utils/image';
 
 type StoredImage = {
     image: string;
@@ -36,7 +42,7 @@ function dataToString(data: Uint8ClampedArray<ArrayBufferLike>): string {
     return text.join('');
 }
 
-function stringToData(text: string): Uint8ClampedArray<ArrayBufferLike> {
+function stringToData(text: string): number[] {
     const data: number[] = [];
     const list = Array.from(text);
     const length = list.length;
@@ -51,15 +57,10 @@ function stringToData(text: string): Uint8ClampedArray<ArrayBufferLike> {
         }
     }
 
-    const buffer = new ArrayBuffer(data.length);
-    const clampedArray = new Uint8ClampedArray(buffer);
-
-    clampedArray.set(data);
-
-    return clampedArray;
+    return data;
 }
 
-export function saveRoute(image: ImageData, holdList: Hold[]): boolean {
+export function saveRoute(image: ImageData, holdList: Hold[], retry = 5): boolean {
     const storage: StoredImage = {
         image: dataToString(image.data),
         width: image.width,
@@ -70,9 +71,21 @@ export function saveRoute(image: ImageData, holdList: Hold[]): boolean {
     const json = JSON.stringify(storage);
 
     if (json.length > STORAGE_LIMIT) {
-        return false;
+        const ratioReduceFactor = Math.ceil(json.length * 10 / STORAGE_LIMIT) / 10;
+
+        if (retry <= 0) {
+            console.log('save route failed', json.length, ratioReduceFactor);
+            return false;
+        }
+
+        const image2D = table1Dto2D(image);
+        const resized = reduceSize(image2D, ratioReduceFactor);
+        const newImgData = table2Dto1D(resized);
+
+        return saveRoute(newImgData, holdList, retry - 1);
     }
 
+    console.log('size:', json.length);
     localStorage.setItem(STORAGE_NAME, json);
 
     return true;
@@ -87,7 +100,7 @@ export function loadRoute(): StoredRoute | null {
 
     try {
         const data: StoredImage = JSON.parse(json);
-        const imgData = new ImageData(
+        const imgData = convertToImageData(
             stringToData(data.image),
             data.width,
             data.height
