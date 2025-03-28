@@ -17,10 +17,21 @@ type StoredRoute = {
     holds: Hold[];
 }
 
+/** Name of the localStorage saved on browser */
 const STORAGE_NAME = 'plan';
-const CHAR_OFFSET = 35;
-const STORAGE_LIMIT = 3_000_000;
 
+/**
+ * This offset is to avoid controls and non printable characters (before 32)
+ * and character to escape such as " (code 34)
+ * Unfortunately, the \ character (code 92) is higher. But we can hope it does
+ * not appear as often.
+ */
+const CHAR_OFFSET = 35;
+
+/** Localstorage limit is around 5M */
+const STORAGE_LIMIT = 2_400_000;
+
+/** Used for compression */
 function dataToString(data: Uint8ClampedArray<ArrayBufferLike>): string {
     const length = data.length;
     const text: string[] = [];
@@ -42,6 +53,7 @@ function dataToString(data: Uint8ClampedArray<ArrayBufferLike>): string {
     return text.join('');
 }
 
+/** Uncompress the stored data */
 function stringToData(text: string): number[] {
     const data: number[] = [];
     const list = Array.from(text);
@@ -99,16 +111,17 @@ export function loadRoute(): StoredRoute | null {
     }
 
     try {
-        const data: StoredImage = JSON.parse(json);
+        const stored: StoredImage = JSON.parse(json);
+        const data = stringToData(stored.image);
         const imgData = convertToImageData(
-            stringToData(data.image),
-            data.width,
-            data.height
+            data,
+            stored.width,
+            stored.height
         );
 
         const result: StoredRoute = {
             image: imgData,
-            holds: data.holds,
+            holds: stored.holds,
         };
 
         return result;

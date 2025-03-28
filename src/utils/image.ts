@@ -65,6 +65,7 @@ export function table2Dto1D(image: Color[][]): ImageData {
     );
 }
 
+/* Bilinear reduction */
 export function reduceSize(image: Color[][], reduceRatio: number): Color[][] {
     if (reduceRatio < 1) {
         throw new Error('reduceRatio must be greater than 1');

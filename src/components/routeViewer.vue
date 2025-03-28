@@ -24,7 +24,7 @@ const canvas = useTemplateRef('canvas');
 const scaleRatio = ref(1);
 
 watch(() => props.image, loadImage);
-watch(() => props.holds, drawHolds, { deep: true });
+watch(() => props.holds, loadImage, { deep: true });
 
 const containerRect = computed<DOMRect>(() => {
     const containerEl = container.value!;
@@ -57,6 +57,8 @@ function loadImage() {
     const context = canvasEl.getContext('2d')!;
 
     context.putImageData(imgData, 0, 0);
+
+    drawHolds();
 }
 
 const bgHoldColor = '#ffffff33';
@@ -72,8 +74,6 @@ function drawHolds() {
 
     const holdList = props.holds;
     const lineWidth = Math.max(1, canvasEl.height / 1000);
-
-    context.clearRect(0, 0, canvasEl.width, canvasEl.height);
 
     context.fillStyle = bgHoldColor;
     context.strokeStyle = borderHoldColor;
