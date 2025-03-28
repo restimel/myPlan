@@ -1,17 +1,17 @@
 <template>
     <div class="about">
-        <h1>About MyPlan</h1>
+        <h1>{{  t('about.header') }}</h1>
 
         <label>
-            Version:
+            {{ t('label.version') }}
             <output>{{ appVersion }}</output>
         </label>
         <label @dblclick="openDebug">
-            Author:
+            {{ t('label.author') }}
             <output>Benoît Mariat</output>
         </label>
         <label>
-            Licence:
+            {{ t('label.licence') }}
             <output>{{ appLicence }}</output>
         </label>
 
@@ -26,6 +26,9 @@
 
 <script lang="ts" setup>
 import { debug, debugMessage } from '@/utils/debug';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const appVersion = __APP_VERSION__;
 const appLicence = __APP_LICENCE__;

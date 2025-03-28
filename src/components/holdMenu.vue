@@ -5,33 +5,33 @@
     <div v-if="canMove" class="head">
         <MyIcon icon="link" />
         <span>
-            link
+            {{ t('action.link') }}
             <span class="text-icon">✥</span>
         </span>
     </div>
     <div class="item">
         <button @click.stop="moveUp" :disabled="!canMoveUp">
-           <MyIcon icon="up" /> Move up
+           <MyIcon icon="up" /> {{ t('action.moveUp') }}
         </button>
     </div>
     <div class="item">
         <button @click.stop="moveDown" :disabled="!canMoveDown">
-            <MyIcon icon="down" /> Move down
+            <MyIcon icon="down" /> {{ t('action.moveDown') }}
         </button>
     </div>
     <div v-if="isLink" class="item">
         <button @click.stop="unlink">
-            <MyIcon icon="unlink" /> Unlink
+            <MyIcon icon="unlink" /> {{ t('action.unlink') }}
         </button>
     </div>
     <div v-if="isDouble" class="item">
         <button @click.stop="double">
-            <MyIcon icon="merge" /> Remove double
+            <MyIcon icon="merge" /> {{ t('action.removeDouble') }}
         </button>
     </div>
     <div v-if="!isDouble" class="item">
         <button @click.stop="double">
-           <MyIcon icon="split" /> Double hold
+           <MyIcon icon="split" /> {{ t('action.double') }}
         </button>
     </div>
     <div class="item">
@@ -39,7 +39,7 @@
             <MyIcon icon="size" />
             <span> </span>
             <span class="label">
-                Size: {{ Math.round(hold.size) }}
+                {{ t('label.size') }} {{ Math.round(hold.size) }}
             </span>
             <button
                 class="small-btn"
@@ -58,13 +58,14 @@
     </div>
     <div class="item">
         <button @click.stop="remove">
-            <MyIcon icon="delete" /> Remove
+            <MyIcon icon="delete" /> {{ t('action.remove') }}
         </button>
     </div>
 </aside>
 </template>
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
     changeHoldSize,
     changeValue,
@@ -86,6 +87,8 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
     close: [];
 }>();
+
+const { t } = useI18n();
 
 const style = computed(() => {
     const nbItems = 7;

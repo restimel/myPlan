@@ -29,21 +29,21 @@
     <footer class="footer-actions">
         <button
             @click="emit('back')"
-            title="take another photo"
+            :title="t('action.anotherPhoto')"
         >
             <MyIcon icon="photo" />
         </button>
         <button
             :disabled="holdList.length === 0"
             @click="removeHold()"
-            title="Remove last hold"
+            :title="t('action.removeLast')"
         >
             <MyIcon icon="delete" />
         </button>
         <button
             @click="save()"
             :disabled="holdList.length === 0"
-            title="Save this route"
+            :title="t('action.save')"
         >
             <MyIcon icon="view" />
         </button>
@@ -51,6 +51,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
     addHold,
     defaultHoldSize,
@@ -76,6 +77,8 @@ const emit = defineEmits<{
     back: [];
     view: [];
 }>();
+
+const { t } = useI18n();
 
 const container = useTemplateRef('container');
 const canvas = useTemplateRef('canvas');
@@ -126,7 +129,7 @@ function loadImage() {
 
     const context = canvasEl.getContext('2d')!;
 
-    resetHolds(); // probably not the good place
+    resetHolds(); // probably not the good place (if we want to edit saved)
 
     context.putImageData(imgData, 0, 0);
 

@@ -13,7 +13,7 @@
     <footer class="footer-actions">
         <button
             @click="capture"
-            title="Capture photo"
+            :title="t('action.photo')"
         >
             <MyIcon icon="photo" />
         </button>
@@ -27,7 +27,7 @@
         />
         <button
             @click="inputFile?.click()"
-            title="Use a file"
+            :title="t('action.file')"
         >
             <MyIcon icon="file" />
         </button>
@@ -35,8 +35,11 @@
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, useTemplateRef, onBeforeUnmount } from 'vue';
+import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import ErrorMessage from '@/components/errorMessage.vue';
+
+const { t } = useI18n();
 
 const video = useTemplateRef('video');
 const canvas = useTemplateRef('canvas');

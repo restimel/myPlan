@@ -1,13 +1,7 @@
 <template>
     <main class="app">
         <header>
-            <div class="wrapper">
-                <nav>
-                    <RouterLink to="/build"><MyIcon icon="edit" :size="12" /> Build plan</RouterLink>
-                    <RouterLink to="/view"><MyIcon icon="view" :size="12" /> View</RouterLink>
-                    <RouterLink to="/about"><MyIcon icon="question" :size="12" /> About</RouterLink>
-                </nav>
-            </div>
+            <AppHeader />
         </header>
 
         <RouterView />
@@ -16,9 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterView } from 'vue-router';
 import DebugMessage from '@/components/debugMessage.vue';
-import MyIcon from '@/components/myIcon.vue';
+import AppHeader from '@/components/appHeader.vue';
+
 </script>
 
 <style scoped>
@@ -45,39 +40,6 @@ main {
 header {
     background: var(--color-primary);
     color: var(--color-txt-primary);
-}
-
-nav {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    font-size: 12px;
-    text-align: center;
-    justify-content: center;
-    gap: var(--spacing-sm);
-}
-
-@media (orientation:landscape) {
-    nav {
-        flex-direction: column;
-    }
-}
-
-nav a {
-    color: var(--color-txt-primary);
-    display: inline-block;
-    padding: 0 1rem;
-    border-left: 1px solid var(--color-border);
-}
-
-nav a.router-link-exact-active {
-    background: var(--color-secondary);
-    color: var(--color-txt-secondary);
-}
-
-nav a:first-of-type {
-    border: 0;
 }
 
 </style>

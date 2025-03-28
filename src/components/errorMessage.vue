@@ -1,9 +1,12 @@
 <template>
     <aside>
-        Allow the access to the camera in order to take a picture of the route.
+        {{ t('message.cameraDenied') }}
     </aside>
 </template>
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 </script>
 <style scoped>
 aside {

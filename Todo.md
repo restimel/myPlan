@@ -7,7 +7,7 @@
     * [x] menu
     * [x] header
 * [x] create a common Icon component to handle all Icons
-* [ ] i18n (mainly to support French)
+* [x] i18n (mainly to support French)
 * [ ] In viewer
     * [ ] Display TOP
     * [ ] May edit the route
