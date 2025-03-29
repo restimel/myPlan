@@ -11,12 +11,18 @@
 * [ ] In viewer
     * [x] Display TOP
     * [ ] May edit the route
-    * [ ] May allow to use it in competition (associate number with holds)
+* [ ] Add link to github contribution/bugs
+* [ ] keep work in memory (when changing page)
 * [ ] Add Youtube video capture
+* [ ] save as file (export image)
+    * [ ] the captured route
+    * [ ] the route with holds
 
 ## Maybe to be done
 
-* [ ] Rename project (MyRoute ?)
+* [ ] Rename project (MyRoute ?) -- but it may be issue about first communications
+* [ ] In viewer
+    * [ ] May allow to use it in competition (associate number with holds)
 
 ## Known bugs
 
