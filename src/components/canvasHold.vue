@@ -41,11 +41,18 @@
             <MyIcon icon="delete" />
         </button>
         <button
+            @click="validate()"
+            :disabled="holdList.length === 0"
+            :title="t('action.validate')"
+        >
+            <MyIcon icon="view" />
+        </button>
+        <button
             @click="save()"
             :disabled="holdList.length === 0"
             :title="t('action.save')"
         >
-            <MyIcon icon="view" />
+            <MyIcon icon="save" />
         </button>
     </footer>
 </template>
@@ -147,7 +154,7 @@ function closeMenu() {
     selectHold.value = null;
 }
 
-function save() {
+function validate() {
     const image = props.image;
 
     if (!image) {
@@ -157,6 +164,26 @@ function save() {
     if (saveRoute(props.image, holdList.value)) {
         emit('view');
     }
+}
+
+function save() {
+    /* Prepare the image (in only one canvas) */
+    const imgData = props.image!;
+    const canvasLayerEl = canvasLayer.value!;
+    const context = canvasLayerEl.getContext('2d')!;
+    context.putImageData(imgData, 0, 0);
+    drawHolds(holdList.value, canvasLayerEl);
+
+    /* Create the file an download it */
+    const link: HTMLAnchorElement = document.createElement('a');
+    link.href = canvasLayer.value!.toDataURL('image/png');
+    link.download = 'myPlan.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    /* restore the canvas */
+    drawRoute();
 }
 
 function drawRoute() {
@@ -180,9 +207,10 @@ function drawRoute() {
  *     ┌──────┐
  *     │ None ◄───────────────────────────────────────────┐
  *     └──┬───┘                                           │
- *        │start                                          │
- *    ┌───▼────┐    end                                   │
- *    │ active ┼──────────────────────────► setHold ──────┤
+ *        │         start / move (let default behavior)   │
+ *        │start ┌──────────────────────────────────────►─┤
+ *    ┌───▼────┐ │  end                                   │
+ *    │ active ┼─┼────────────────────────► setHold ──────┤
  *    └───┬────┘                                          │
  *  ┌ ─ ─ ┼ ─ ─ ─ ┐ end ┌────────┐ 200 ms                 │
  *   HoldSelection ─────► double ┼────────► setHold ──────┤

@@ -15,8 +15,9 @@
 * [ ] keep work in memory (when changing page)
 * [ ] Add Youtube video capture
 * [ ] save as file (export image)
-    * [ ] the captured route
-    * [ ] the route with holds
+    * [x] the route with holds
+    * [ ] the final route with holds and details
+* [ ] Add route information (name/description)
 
 ## Maybe to be done
 

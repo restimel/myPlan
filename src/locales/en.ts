@@ -23,8 +23,9 @@ export default {
         remove: 'Remove',
         removeDouble: 'Remove double',
         removeLast: 'Remove last hold',
-        save: 'Save this route',
+        save: 'Save to picture file',
         unlink: 'Unlink',
+        validate: 'Validate this route',
     },
     label: {
         author: 'Author:',

@@ -23,8 +23,9 @@ export default {
         remove: 'Supprimer',
         removeDouble: 'Supprimer le doublon',
         removeLast: 'Supprimer la dernière prise',
-        save: 'Enregistrer ce plan',
+        save: 'Enregistrer dans un fichier image',
         unlink: 'Dissocier',
+        validate: 'Valider ce plan',
     },
     label: {
         author: 'Auteur :',

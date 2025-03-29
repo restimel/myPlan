@@ -12,6 +12,7 @@ import IconLink from '@/components/icons/IconLink.vue';
 import IconMerge from '@/components/icons/IconMerge.vue';
 import IconPhoto from '@/components/icons/IconPhoto.vue';
 import IconQuestion from '@/components/icons/IconQuestion.vue';
+import IconSave from '@/components/icons/IconSave.vue';
 import IconSize from '@/components/icons/IconSize.vue';
 import IconSplit from '@/components/icons/IconSplit.vue';
 import IconUnlink from '@/components/icons/IconUnlink.vue';
@@ -27,6 +28,7 @@ type Icons =
     | 'merge'
     | 'photo'
     | 'question'
+    | 'save'
     | 'size'
     | 'split'
     | 'unlink'
@@ -50,6 +52,7 @@ const mapElement = {
     merge: IconMerge,
     photo: IconPhoto,
     question: IconQuestion,
+    save: IconSave,
     size: IconSize,
     split: IconSplit,
     unlink: IconUnlink,
