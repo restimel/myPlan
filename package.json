@@ -1,8 +1,14 @@
 {
     "name": "myplan",
     "version": "0.10.1",
-    "private": false,
     "license": "MIT",
+    "author": "Benoît Mariat (https://github.com/restimel)",
+    "contributors": [],
+    "private": false,
+    "homepage": "https://github.com/restimel/myPlan#readme",
+    "bugs": {
+        "url": "https://github.com/restimel/myPlan/issues"
+    },
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -11,7 +17,8 @@
         "build-only": "vite build",
         "type-check": "vue-tsc --build",
         "lint": "eslint . --fix",
-        "deploy": "npm run build && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version minor && npm run build && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages"
+        "deploy": "npm run build && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version minor && npm run build && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages",
+        "deployBuild": "npm run build && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version patch && npm run build && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages"
     },
     "dependencies": {
         "vue": "^3.5.13",
