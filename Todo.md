@@ -2,7 +2,10 @@
 
 ## TODO
 
+* [ ] create a logo icon
 * [ ] factorize canvas draw
+    * [x] draw holds
+    * [ ] initialization (load image)
 * [ ] factorize mouse/touch events
 * [ ] add actions in viewer
 * [ ] In viewer

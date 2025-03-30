@@ -56,6 +56,7 @@
         >
             <MyIcon icon="save" />
         </button>
+        <input type="range" min="0.1" max="10" step="0.1" v-model="scaleRatio" />{{ scaleRatio }}
     </footer>
 </template>
 <script lang="ts" setup>
@@ -99,7 +100,17 @@ const updateRect = ref(0);
 
 watch(() => props.image, loadImage);
 watch(holdList, drawRoute, { deep: true });
-watch(scaleRatio, forceUpdate);
+watch(scaleRatio, (value, oldValue) => {
+    if (value < 0.1) {
+        scaleRatio.value = 0.1;
+    } else if (value > 10) {
+        scaleRatio.value = 10;
+    }
+
+    if (scaleRatio.value !== oldValue) {
+        forceUpdate();
+    }
+});
 
 const containerRect = computed<DOMRect>(() => {
     /* eslint-disable-next-line @typescript-eslint/no-unused-expressions -- used to force computation again */
@@ -234,11 +245,12 @@ function drawRoute() {
  *               end=mouseup/touchend
  *     ┌──────┐
  *     │ None ◄───────────────────────────────────────────┐
- *     └──┬───┘                                           │
- *        │         start / move (let default behavior)   │
- *        │start ┌──────────────────────────────────────►─┤
- *    ┌───▼────┐ │  end                                   │
- *    │ active ┼─┼────────────────────────► setHold ──────┤
+ *     └──┬───┘     move (default behavior: scroll)       │
+ *        │      ┌───────────────────────────────────────►│
+ *        │      │  start   ┌──────┐        end           │
+ *        │start ├─────────►│ zoom ├─────────────────────►┤
+ *    ┌───▼────┐ │  end     └──────┘                      │
+ *    │ active ├─┼────────────────────────► setHold ──────┤
  *    └───┬────┘                                          │
  *  ┌ ─ ─ ┴ ─ ─ ─ ┐ end ┌────────┐ 200 ms                 │
  *   HoldSelection ─────► double ┼────────► setHold ──────┤
@@ -261,14 +273,16 @@ function drawRoute() {
  *   └──────┘
  */
 
-type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' | 'link';
+ type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' | 'link' | 'zoom';
 
 /** in ms */
 const holdMouseDuration = 500;
 const doubleMouseDuration = 200;
 
+const defaultPosition: Point = [0, 0];
 const mouseAction = ref<MouseAction>('none');
-const lastPosition = ref<Point>([0, 0]);
+const lastPosition = ref<Point>(defaultPosition);
+const lastPosition2 = ref<Point>(defaultPosition);
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
 
@@ -296,7 +310,8 @@ function getPosition(event: MouseEvent | Touch): Point {
 
 function resetAction() {
     mouseAction.value = 'none';
-    lastPosition.value = [0, 0];
+    lastPosition.value = defaultPosition;
+    lastPosition2.value = defaultPosition;
     selectHold.value = null;
 }
 
@@ -304,7 +319,18 @@ function touchStart(event: TouchEvent) {
     const list = event.touches;
 
     if (list.length > 1) {
-        mouseAction.value = 'none';
+        if (mouseAction.value === 'active' && list.length === 2) {
+            const position = getPosition(list[1]);
+
+            lastPosition2.value = position;
+
+            mouseAction.value = 'zoom';
+            event.preventDefault();
+
+            return;
+        }
+
+        resetAction();
         return;
     }
 
@@ -337,14 +363,33 @@ function touchMove(event: TouchEvent) {
         return;
     }
 
+    const list = event.touches;
     const selectedHold = selectHold.value;
+
+    if (action === 'zoom') {
+        event.preventDefault();
+
+        const lastP1 = lastPosition.value;
+        const lastP2 = lastPosition2.value;
+        const newP1 = getPosition(list[0]);
+        const newP2 = getPosition(list[1]);
+
+        const oldDist = getDistance(lastP1, lastP2);
+        const newDist = getDistance(newP1, newP2);
+
+        scaleRatio.value = scaleRatio.value * newDist / oldDist;
+
+        lastPosition.value = newP1;
+        lastPosition2.value = newP2;
+
+        return;
+    }
 
     if (!selectedHold) {
         resetAction();
         return;
     }
 
-    const list = event.touches;
     const position = getPosition(list[0]);
 
     if (action === 'active' || action === 'selection') {

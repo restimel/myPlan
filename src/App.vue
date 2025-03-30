@@ -14,6 +14,12 @@ import { RouterView } from 'vue-router';
 import DebugMessage from '@/components/debugMessage.vue';
 import AppHeader from '@/components/appHeader.vue';
 
+/* Hides mobile browser's address bar when page is done loading. */
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        window.scrollTo(0, 1);
+    }, 1);
+}, false);
 </script>
 
 <style scoped>
