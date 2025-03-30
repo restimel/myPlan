@@ -3,6 +3,7 @@
         ref="container"
         class="canvas-container"
         :style="`--scale: ${scaleRatio};`"
+        @scroll="forceUpdate"
     >
         <canvas
             ref="canvas"
@@ -57,7 +58,7 @@
     </footer>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import {
     addHold,
@@ -93,11 +94,16 @@ const canvas = useTemplateRef('canvas');
 const canvasLayer = useTemplateRef('canvasLayer');
 
 const scaleRatio = ref(1);
+const updateRect = ref(0);
 
 watch(() => props.image, loadImage);
 watch(holdList, drawRoute, { deep: true });
+watch(scaleRatio, forceUpdate);
 
 const containerRect = computed<DOMRect>(() => {
+    /* eslint-disable-next-line @typescript-eslint/no-unused-expressions -- used to force computation again */
+    updateRect.value;
+
     const containerEl = container.value!;
     const rect = containerEl.getBoundingClientRect();
 
@@ -105,14 +111,35 @@ const containerRect = computed<DOMRect>(() => {
 });
 
 const canvasRect = computed<DOMRect>(() => {
+    /* eslint-disable-next-line @typescript-eslint/no-unused-expressions -- used to force computation again */
+    updateRect.value;
+
     const canvasEl = canvas.value!;
     const rect = canvasEl.getBoundingClientRect();
 
     return rect;
 });
 
+function forceUpdate() {
+    updateRect.value++;
+}
+
+let observer: ResizeObserver;
+
 onMounted(() => {
+    observer = new ResizeObserver(() => {
+        forceUpdate();
+    });
+
+    if (container.value) {
+        observer.observe(container.value);
+    }
+
     loadImage();
+});
+
+onBeforeUnmount(() => {
+    observer?.disconnect();
 });
 
 function loadImage() {
