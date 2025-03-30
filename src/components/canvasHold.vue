@@ -282,7 +282,7 @@ const holdMouseDuration = 500;
 const doubleMouseDuration = 200;
 
 /** The minimum ratio before applying the zoom */
-const minimalZoomRatio = 1e-6;
+const minimalZoomRatio = 1e-5;
 
 const defaultPosition: Point = [0, 0];
 const mouseAction = ref<MouseAction>('none');
@@ -400,12 +400,16 @@ function touchMove(event: TouchEvent) {
             const orientation = newDist > oldDist ? 1 : -1;
 
             if (debugZoom) {
-                if (orientation !== debugZoom) {
-                    log('zoom', `dir: ${orientation}|value:${Math.round(ratio * 1_000_000) / 1_000_000}`);
-                }
-            }
+                if (orientation * debugZoom < 0) {
+                    log('zoom', `count: ${debugZoom}|value:${Math.round(ratio * 1_000_000) / 1_000_000}`);
 
-            debugZoom = orientation;
+                    debugZoom = orientation;
+                } else {
+                    debugZoom += orientation;
+                }
+            } else {
+                debugZoom = orientation;
+            }
         }
 
         return;
