@@ -24,3 +24,8 @@ button {
     transition: 0.3s;
     cursor: pointer;
 }
+
+.info {
+    font-size: 0.8em;
+    color: var(--color-text-details)
+}

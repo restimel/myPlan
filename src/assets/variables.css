@@ -57,6 +57,7 @@
     --color-error: #F44336;
     --color-warning: #FF9800;
     --color-text-message: var(--vt-c-white-soft);
+    --color-text-details: var(--vt-c-grey);
 
     --color-bg-media: var(--vt-c-black);
 

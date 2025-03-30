@@ -16,17 +16,43 @@
         </label>
 
         <figure>
-            <img src="@/assets/url.png" alt="url to https://restimel.github.io/myPlan">
+            <img
+                src="@/assets/url.png"
+                alt="url to https://restimel.github.io/myPlan"
+            >
             <figcaption>
                 https://restimel.github.io/myPlan
             </figcaption>
         </figure>
+
+        <label>
+            <MyIcon icon="github" />
+            {{ t('label.contribution') }}
+            <output>
+                <a href="https://github.com/restimel/myPlan" target="_blank">
+                    https://github.com/restimel/myPlan
+                </a>
+            </output>
+        </label>
+        <label>
+            <MyIcon icon="bug" />
+            {{ t('label.bug') }}
+            <output>
+                <a href="https://github.com/restimel/myPlan/issues/new" target="_blank">
+                    https://github.com/restimel/myPlan/issues/new
+                </a>
+                <span class="info">
+                    ({{ t('about.toReportBug') }})
+                </span>
+            </output>
+        </label>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { debug, debugMessage } from '@/utils/debug';
 import { useI18n } from 'vue-i18n';
+import MyIcon from '@/components/myIcon.vue';
 
 const { t } = useI18n();
 
@@ -44,6 +70,10 @@ function openDebug() {
     padding: var(--section-padding);
 }
 
+h1 {
+    text-align: center;
+}
+
 label {
     display: block;
     font-weight: 700;
@@ -55,5 +85,18 @@ output {
 
 figure {
     text-align: center;
+    margin-top: var(--field-margin);
+    margin-bottom: var(--field-margin);
+}
+
+@media (max-width: 400px) {
+    figure {
+        text-align: start;
+    }
+}
+
+img {
+    max-width: calc(100vw - 2 * var(--section-padding));
+    max-height: 90vh;
 }
 </style>

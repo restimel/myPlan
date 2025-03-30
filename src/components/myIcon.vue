@@ -4,10 +4,12 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import IconBug from '@/components/icons/IconBug.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconDown from '@/components/icons/IconDown.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import IconFile from '@/components/icons/IconFile.vue';
+import IconGithub from '@/components/icons/IconGithub.vue';
 import IconLink from '@/components/icons/IconLink.vue';
 import IconMerge from '@/components/icons/IconMerge.vue';
 import IconPhoto from '@/components/icons/IconPhoto.vue';
@@ -20,10 +22,12 @@ import IconUp from '@/components/icons/IconUp.vue';
 import IconView from '@/components/icons/IconView.vue';
 
 type Icons =
+    | 'bug'
     | 'delete'
     | 'down'
     | 'edit'
     | 'file'
+    | 'github'
     | 'link'
     | 'merge'
     | 'photo'
@@ -44,10 +48,12 @@ type Props = {
 const props = defineProps<Props>();
 
 const mapElement = {
+    bug: IconBug,
     delete: IconDelete,
     down: IconDown,
     edit: IconEdit,
     file: IconFile,
+    github: IconGithub,
     link: IconLink,
     merge: IconMerge,
     photo: IconPhoto,

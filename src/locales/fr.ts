@@ -8,6 +8,7 @@ export default {
     about: {
         title: 'À propos',
         header: 'À propos de MyPlan',
+        toReportBug: 'Pour rapporter un bug, il vous faut un compte Github',
     },
     message: {
         cameraDenied: 'Autorisez l\'accès à la caméra pour prendre une photo de la voie.',
@@ -29,6 +30,8 @@ export default {
     },
     label: {
         author: 'Auteur :',
+        bug: 'Pour rapporter des bugs :',
+        contribution: 'Pour contribuer :',
         licence: 'Licence :',
         size: 'Taille :',
         version: 'Version :',
