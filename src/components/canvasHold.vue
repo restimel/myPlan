@@ -281,6 +281,9 @@ function drawRoute() {
 const holdMouseDuration = 500;
 const doubleMouseDuration = 200;
 
+/** The minimum ratio before applying the zoom */
+const minimalZoomRatio = 1e-6;
+
 const defaultPosition: Point = [0, 0];
 const mouseAction = ref<MouseAction>('none');
 const lastPosition = ref<Point>(defaultPosition);
@@ -384,7 +387,7 @@ function touchMove(event: TouchEvent) {
         const ratio = newDist / oldDist;
 
         /* Avoid too small changes */
-        if (Math.abs(1 - ratio) < 1e6) {
+        if (Math.abs(1 - ratio) < minimalZoomRatio) {
             return;
         }
 
