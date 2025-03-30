@@ -2,8 +2,9 @@
 
 ## TODO
 
-* factorize canvas draw
-* add actions in viewer
+* [ ] factorize canvas draw
+* [ ] factorize mouse/touch events
+* [ ] add actions in viewer
 * [ ] In viewer
     * [x] Display TOP
     * [ ] May edit the route
@@ -15,6 +16,13 @@
 * [ ] Add route information (name/description)
 * [ ] Add Youtube video capture
 * [ ] Shrink image size to allow sending editable route
+
+## To improve
+
+* [ ] Actions
+    * [ ] move: also move when "selection"
+    * [ ] link: create a Link selection
+    * [ ] link: starting on hold and restarting on hold
 
 ## Maybe to be done
 

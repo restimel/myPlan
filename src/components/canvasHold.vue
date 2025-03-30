@@ -239,24 +239,24 @@ function drawRoute() {
  *    ┌───▼────┐ │  end                                   │
  *    │ active ┼─┼────────────────────────► setHold ──────┤
  *    └───┬────┘                                          │
- *  ┌ ─ ─ ┼ ─ ─ ─ ┐ end ┌────────┐ 200 ms                 │
+ *  ┌ ─ ─ ┴ ─ ─ ─ ┐ end ┌────────┐ 200 ms                 │
  *   HoldSelection ─────► double ┼────────► setHold ──────┤
  *  └ ─ ┬ ─ ─ ─┬─ ┘     └────┬───┘ start                  │
  *      │      │move         └────────────► doubleHold ───┤
  * 500ms│  ┌───▼──┐ end                                   │
  *      │  │ move ┼───────────────────────► moveHold ─────┤
  *      │  └──────┘                                       │
- *   ┌──▼────────┐   display                              │
- *   │ selection ┼─── menu                                │
- *   └──┬─────┬──┘                                        │
- *      │     │end                                        │
- *      │  ┌──▼───┐      actions                          │
- *  move│  │ menu ┼──────────────────────────────────────►┤
+ *   ┌──▼────────┐                                        │
+ *   │ selection ├────────┐                               │
+ *   └──┬─────┬──┘      display             actions       │
+ *      │     │end       menu   ─────────────────────────►┤
+ *      │  ┌──▼───┐       │                               │
+ *  move│  │ menu ├───────┘                               │
  *      │  └──┬───┘                                       │
  *      │     │          start                            │
  *      │     └──────────────────────────────────────────►┤
  *   ┌──▼───┐       end                                   │
- *   │ link ┼─────────────────────────────► linkHolds ────┘
+ *   │ link ├─────────────────────────────► linkHolds ────┘
  *   └──────┘
  */
 
@@ -291,6 +291,12 @@ function getPosition(event: MouseEvent | Touch): Point {
     const canvasY = mouseY / scale;
 
     return [canvasX, canvasY];
+}
+
+function resetAction() {
+    mouseAction.value = 'none';
+    lastPosition.value = [0, 0];
+    selectHold.value = null;
 }
 
 function touchStart(event: TouchEvent) {
@@ -333,7 +339,7 @@ function touchMove(event: TouchEvent) {
     const selectedHold = selectHold.value;
 
     if (!selectedHold) {
-        mouseAction.value = 'none';
+        resetAction();
         return;
     }
 
@@ -380,12 +386,12 @@ function startInteraction(point: Point) {
     if (action === 'double' && selectHold.value) {
         doubleHold(selectHold.value?.index);
         selectHold.value = null;
-        mouseAction.value = 'none';
+        resetAction();
         log('Interaction', '(after double) none');
         return;
     }
     if (action === 'menu') {
-        mouseAction.value = 'none';
+        resetAction();
         log('Interaction', 'none');
         return;
     }
@@ -423,8 +429,7 @@ function stopInteraction(position: Point) {
                 interactionTimer = setTimeout(() => {
                     setHold(position);
                     log('Interaction', `[done (timed)] ${mouseAction.value} (position: ${position})`);
-                    mouseAction.value = 'none';
-                    selectHold.value = null;
+                    resetAction();
                 }, doubleMouseDuration);
 
                 log('Interaction', `[Done] ${mouseAction.value} (position: ${position})`);
@@ -452,8 +457,7 @@ function stopInteraction(position: Point) {
         }
     }
 
-    mouseAction.value = 'none';
-    selectHold.value = null;
+    resetAction();
 }
 
 function move(position: Point) {
@@ -465,7 +469,7 @@ function move(position: Point) {
     }
 
     if (!selectedHold) {
-        mouseAction.value = 'none';
+        resetAction();
         return;
     }
 
