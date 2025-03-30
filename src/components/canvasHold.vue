@@ -56,7 +56,9 @@
         >
             <MyIcon icon="save" />
         </button>
-        <input type="range" min="0.1" max="10" step="0.1" v-model="scaleRatio" />{{ scaleRatio }}
+        <span class="info" v-if="debug">
+            <input type="range" min="0.1" max="10" step="0.1" v-model="scaleRatio" />{{ Math.round(scaleRatio * 10) / 10 }}
+        </span>
     </footer>
 </template>
 <script lang="ts" setup>
@@ -74,7 +76,7 @@ import {
     resetHolds,
 } from '@/utils/holds';
 import { getDistance } from '@/utils/geometry';
-import { log } from '@/utils/debug';
+import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
 import { drawHolds } from '@/utils/canvas/draw';
 import HoldMenu from '@/components/holdMenu.vue';
@@ -286,6 +288,8 @@ const lastPosition2 = ref<Point>(defaultPosition);
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
 
+let debugZoom = 0;
+
 watch(selectHold, drawRoute);
 watch(lastPosition, () => {
     if (mouseAction.value === 'link') {
@@ -313,6 +317,7 @@ function resetAction() {
     lastPosition.value = defaultPosition;
     lastPosition2.value = defaultPosition;
     selectHold.value = null;
+    debugZoom = 0;
 }
 
 function touchStart(event: TouchEvent) {
@@ -376,11 +381,29 @@ function touchMove(event: TouchEvent) {
 
         const oldDist = getDistance(lastP1, lastP2);
         const newDist = getDistance(newP1, newP2);
+        const ratio = newDist / oldDist;
 
-        scaleRatio.value = scaleRatio.value * newDist / oldDist;
+        /* Avoid too small changes */
+        if (Math.abs(1 - ratio) < 1e6) {
+            return;
+        }
+
+        scaleRatio.value = scaleRatio.value * ratio;
 
         lastPosition.value = newP1;
         lastPosition2.value = newP2;
+
+        if (debug.value) {
+            const orientation = newDist > oldDist ? 1 : -1;
+
+            if (debugZoom) {
+                if (orientation !== debugZoom) {
+                    log('zoom', `dir: ${orientation}|value:${Math.round(ratio * 1_000_000) / 1_000_000}`);
+                }
+            }
+
+            debugZoom = orientation;
+        }
 
         return;
     }
@@ -576,5 +599,9 @@ function move(position: Point) {
 
 .separator {
     width: var(--spacing-sm);
+}
+.info {
+    font-size: 0.8em;
+    color: var(--color-text-secondary);
 }
 </style>
