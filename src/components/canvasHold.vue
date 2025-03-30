@@ -41,6 +41,7 @@
         >
             <MyIcon icon="delete" />
         </button>
+        <span class="separator"></span>
         <button
             @click="validate()"
             :disabled="holdList.length === 0"
@@ -526,5 +527,9 @@ function move(position: Point) {
     height: 100%;
     overflow: auto;
     background: var(--color-bg-media);
+}
+
+.separator {
+    width: var(--spacing-sm);
 }
 </style>

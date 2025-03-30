@@ -11,7 +11,7 @@ export default {
         toReportBug: 'To report a bug, you need a Github account',
     },
     message: {
-        cameraDenied: 'Allow the access to the camera in order to take a picture of the route.',
+        cameraDenied: 'Allow the access to the camera in order to take a picture of the route. Or you can upload an image.',
     },
     action: {
         anotherPhoto: 'take another photo',
