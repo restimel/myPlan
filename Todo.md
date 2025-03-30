@@ -2,28 +2,26 @@
 
 ## TODO
 
-* [x] use icons instead of text
-    * [x] footer
-    * [x] menu
-    * [x] header
-* [x] create a common Icon component to handle all Icons
-* [x] i18n (mainly to support French)
+* factorize canvas draw
+* add actions in viewer
 * [ ] In viewer
     * [x] Display TOP
     * [ ] May edit the route
-* [ ] Add link to github contribution/bugs
+* [x] Add link to github contribution/bugs
 * [ ] keep work in memory (when changing page)
-* [ ] Add Youtube video capture
 * [ ] save as file (export image)
     * [x] the route with holds
-    * [ ] the final route with holds and details
+    * [ ] the final route with holds and details (in viewer)
 * [ ] Add route information (name/description)
+* [ ] Add Youtube video capture
+* [ ] Shrink image size to allow sending editable route
 
 ## Maybe to be done
 
 * [ ] Rename project (MyRoute ?) -- but it may be issue about first communications
 * [ ] In viewer
     * [ ] May allow to use it in competition (associate number with holds)
+    * [ ] save the result
 
 ## Known bugs
 
