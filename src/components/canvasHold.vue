@@ -3,7 +3,7 @@
         ref="container"
         class="canvas-container"
         :style="`--scale: ${scaleRatio};`"
-        @scroll="forceUpdate"
+        @scroll="scrollContainer"
     >
         <canvas
             ref="canvas"
@@ -76,7 +76,7 @@ import {
     removeHold,
     resetHolds,
 } from '@/utils/holds';
-import { getDistance } from '@/utils/geometry';
+import { getDistance, getMiddle } from '@/utils/geometry';
 import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
 import { drawHolds } from '@/utils/canvas/draw';
@@ -101,9 +101,13 @@ const canvasLayer = useTemplateRef('canvasLayer');
 
 const scaleRatio = ref(1);
 const updateRect = ref(0);
+const offsetX = ref(0);
+const offsetY = ref(0);
 
 watch(() => props.image, loadImage);
 watch(holdList, drawRoute, { deep: true });
+
+/* assert ratio is in bound */
 watch(scaleRatio, (value, oldValue) => {
     if (value < 0.1) {
         scaleRatio.value = 0.1;
@@ -114,6 +118,16 @@ watch(scaleRatio, (value, oldValue) => {
     if (scaleRatio.value !== oldValue) {
         forceUpdate();
     }
+});
+
+/* update the offset (related to zoom) */
+watch([offsetX, offsetY], () => {
+    if (debug.value) {
+        const containerEl = container.value;
+
+        containerEl?.scrollTo(offsetX.value, offsetY.value);
+    }
+    forceUpdate();
 });
 
 const containerRect = computed<DOMRect>(() => {
@@ -138,6 +152,13 @@ const canvasRect = computed<DOMRect>(() => {
 
 function forceUpdate() {
     updateRect.value++;
+}
+
+function scrollContainer() {
+    const containerEl = container.value!;
+
+    offsetX.value = containerEl.scrollLeft;
+    offsetY.value = containerEl.scrollTop;
 }
 
 let observer: ResizeObserver;
@@ -366,6 +387,55 @@ function touchEnd(event: TouchEvent) {
     event.preventDefault();
 }
 
+function zoom(list: TouchList) {
+    const lastP1 = lastPosition.value;
+    const lastP2 = lastPosition2.value;
+    const newP1 = getPosition(list[0]);
+    const newP2 = getPosition(list[1]);
+
+    const oldDist = getDistance(lastP1, lastP2);
+    const newDist = getDistance(newP1, newP2);
+    const ratio = newDist / oldDist;
+
+    /* Avoid too small changes */
+    if (Math.abs(1 - ratio) < minimalZoomRatio) {
+        return;
+    }
+
+    const oldRatio = scaleRatio.value;
+    const newRatio = oldRatio * ratio;
+
+    const center = getMiddle(newP1, newP2);
+    const offsetDx = center[0] * (newRatio - oldRatio);
+    const offsetDy = center[1] * (newRatio - oldRatio);
+
+    /* Apply transformation */
+    scaleRatio.value = newRatio;
+    offsetX.value += offsetDx;
+    offsetY.value += offsetDy;
+
+    /* save state for future event */
+    lastPosition.value = newP1;
+    lastPosition2.value = newP2;
+
+    /* Debug */
+    if (debug.value) {
+        const orientation = newDist > oldDist ? 1 : -1;
+
+        if (debugZoom) {
+            if (orientation * debugZoom < 0) {
+                log('zoom', `count: ${debugZoom}|value:${Math.round(ratio * 1_000_000) / 1_000_000}`);
+
+                debugZoom = orientation;
+            } else {
+                debugZoom += orientation;
+            }
+        } else {
+            debugZoom = orientation;
+        }
+    }
+}
+
 function touchMove(event: TouchEvent) {
     const action = mouseAction.value;
 
@@ -379,40 +449,7 @@ function touchMove(event: TouchEvent) {
     if (action === 'zoom') {
         event.preventDefault();
 
-        const lastP1 = lastPosition.value;
-        const lastP2 = lastPosition2.value;
-        const newP1 = getPosition(list[0]);
-        const newP2 = getPosition(list[1]);
-
-        const oldDist = getDistance(lastP1, lastP2);
-        const newDist = getDistance(newP1, newP2);
-        const ratio = newDist / oldDist;
-
-        /* Avoid too small changes */
-        if (Math.abs(1 - ratio) < minimalZoomRatio) {
-            return;
-        }
-
-        scaleRatio.value = scaleRatio.value * ratio;
-
-        lastPosition.value = newP1;
-        lastPosition2.value = newP2;
-
-        if (debug.value) {
-            const orientation = newDist > oldDist ? 1 : -1;
-
-            if (debugZoom) {
-                if (orientation * debugZoom < 0) {
-                    log('zoom', `count: ${debugZoom}|value:${Math.round(ratio * 1_000_000) / 1_000_000}`);
-
-                    debugZoom = orientation;
-                } else {
-                    debugZoom += orientation;
-                }
-            } else {
-                debugZoom = orientation;
-            }
-        }
+        zoom(list);
 
         return;
     }

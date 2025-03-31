@@ -5,6 +5,13 @@ export function getDistance([x1, y1]: Point, [x2, y2]: Point): number {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
+export function getMiddle([x1, y1]: Point, [x2, y2]: Point): Point {
+    return [
+        (x1 + x2) / 2,
+        (y1 + y2) / 2,
+    ] as Point;
+}
+
 export function isInRect([x, y]: Point, [[x1, y1], [x2, y2]]: [Point, Point], margin = 0): boolean {
     const xmin = Math.min(x1, x2) - margin;
     const xmax = Math.max(x1, x2) + margin;
