@@ -1,6 +1,8 @@
 export default {
     build: {
         title: 'Créer un plan',
+        captureVideo: 'Capturez ou chargez une image de la voie',
+        setHolds: 'Placez les prises sur la voie',
     },
     view: {
         title: 'Voir',

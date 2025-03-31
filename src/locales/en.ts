@@ -1,6 +1,8 @@
 export default {
     build: {
         title: 'Build plan',
+        captureVideo: 'Take or upload a picture of the route',
+        setHolds: 'Set holds on the route',
     },
     view: {
         title: 'View',

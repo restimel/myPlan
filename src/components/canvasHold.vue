@@ -26,6 +26,7 @@
             :containerSize="containerRect"
             @close="closeMenu"
         />
+        <GuideMessage :message="t('build.setHolds')" />
     </div>
     <footer class="footer-actions">
         <button
@@ -81,6 +82,7 @@ import { saveRoute } from '@/utils/storage';
 import { drawHolds } from '@/utils/canvas/draw';
 import HoldMenu from '@/components/holdMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
+import GuideMessage from '@/components/guideMessage.vue';
 
 const props = defineProps<{
     image: ImageData | null;

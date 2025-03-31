@@ -8,6 +8,7 @@
             ref="canvas"
             class="hidden"
         ></canvas>
+        <GuideMessage :message="t('build.captureVideo')" />
         <ErrorMessage v-if="doNotAllowed" />
     </div>
     <footer class="footer-actions">
@@ -38,6 +39,7 @@ import { ref, onMounted, useTemplateRef, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import ErrorMessage from '@/components/errorMessage.vue';
+import GuideMessage from '@/components/guideMessage.vue';
 
 const { t } = useI18n();
 
