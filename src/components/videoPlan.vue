@@ -37,6 +37,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, useTemplateRef, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { resetHolds } from '@/utils/holds';
 import MyIcon from '@/components/myIcon.vue';
 import ErrorMessage from '@/components/errorMessage.vue';
 import GuideMessage from '@/components/guideMessage.vue';
@@ -174,6 +175,7 @@ function getImage(canvasEl: HTMLCanvasElement, context: CanvasRenderingContext2D
     );
 
     if (imgData) {
+        resetHolds();
         emit('image', imgData);
     }
 }

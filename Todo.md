@@ -12,7 +12,7 @@
     * [x] Display TOP
     * [ ] May edit the route
 * [x] Add link to github contribution/bugs
-* [ ] keep work in memory (when changing page)
+* [x] keep work in memory (when changing page)
 * [ ] save as file (export image)
     * [x] the route with holds
     * [ ] the final route with holds and details (in viewer)

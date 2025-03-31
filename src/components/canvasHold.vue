@@ -199,8 +199,6 @@ function loadImage() {
 
     const context = canvasEl.getContext('2d')!;
 
-    resetHolds(); // probably not the good place (if we want to edit saved)
-
     context.putImageData(imgData, 0, 0);
 
     /* This is to draw around 30 holds on height */
