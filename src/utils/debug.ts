@@ -1,7 +1,27 @@
 import { ref, watch } from 'vue';
 
-export const debug = ref(false);
+export type Category =
+    | 'interaction'
+    | 'time'
+    | 'save'
+    | 'zoom'
+;
+
+type Logs = Record<Category, boolean>;
+type Log = {
+    ts: number;
+    msg: string;
+}
+
+type Debug = null | {
+    featureNext: boolean;
+    logs: Logs;
+};
+
+export const debug = ref<Debug>(null);
 export const debugMessage = ref('');
+
+export const logs = ref<Map<Category, Log[]>>(new Map());
 
 watch(debugMessage, () => {
     if (debug.value) {
@@ -9,23 +29,40 @@ watch(debugMessage, () => {
     }
 });
 
+export function enableDebug() {
+    debug.value = {
+        featureNext: true,
+        logs: {} as Logs,
+    };
+}
+
+export function resetDebug() {
+    logs.value = new Map();
+    debugMessage.value = '';
+}
+
 let lastTime = 0;
-export function log(category: string, message: string) {
-    if (debug.value) {
+export function log(category: Category, message: string) {
+    const dbg = debug.value;
+
+    if (dbg) {
         const time = Math.round(performance.now());
         const duration = time - lastTime;
+        const text = `[${duration}]: ${message}`;
 
-        if (category === 'zoom') {
-        } else if (category === 'save') {
-            debugMessage.value = '';
-        } else if (category === 'time') {
-        } else {
-            console.log(category, message);
-            return;
+        const logsValue = logs.value;
+        const logMessages = logsValue.get(category) ?? [];
+        logMessages.push({
+            msg: text,
+            ts: time,
+        });
+
+        logsValue.set(category, logMessages);
+
+        if (dbg.logs[category]) {
+            debugMessage.value += `\n --- \n${text}`;
         }
 
         lastTime = time;
-
-        debugMessage.value += `\n --- \n${category} [${duration}]: ${message}`;
     }
 }

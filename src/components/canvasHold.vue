@@ -502,12 +502,12 @@ function startInteraction(point: Point) {
         doubleHold(selectHold.value?.index);
         selectHold.value = null;
         resetAction();
-        log('Interaction', '(after double) none');
+        log('interaction', '(after double) none');
         return;
     }
     if (action === 'menu') {
         resetAction();
-        log('Interaction', 'none');
+        log('interaction', 'none');
         return;
     }
 
@@ -521,11 +521,11 @@ function startInteraction(point: Point) {
         interactionTimer = setTimeout(() => {
             log('time', '(called) startInteraction');
             mouseAction.value = 'selection';
-            log('Interaction', `${mouseAction.value} (hold: ${selectHold.value?.value}, ${selectHold.value?.position})`);
+            log('interaction', `${mouseAction.value} (hold: ${selectHold.value?.value}, ${selectHold.value?.position})`);
         }, holdMouseDuration);
         log('time', 'start startInteraction');
     } else {
-        log('Interaction', `${mouseAction.value} (hold: ${selectHold.value?.value})`);
+        log('interaction', `${mouseAction.value} (hold: ${selectHold.value?.value})`);
     }
 }
 
@@ -543,31 +543,31 @@ function stopInteraction(position: Point) {
 
                 interactionTimer = setTimeout(() => {
                     setHold(position);
-                    log('Interaction', `[done (timed)] ${mouseAction.value} (position: ${position})`);
+                    log('interaction', `[done (timed)] ${mouseAction.value} (position: ${position})`);
                     resetAction();
                 }, doubleMouseDuration);
 
-                log('Interaction', `[Done] ${mouseAction.value} (position: ${position})`);
+                log('interaction', `[Done] ${mouseAction.value} (position: ${position})`);
 
                 return;
             }
 
             setHold(position);
-            log('Interaction', `[Done] ${action} (position: ${position})`);
+            log('interaction', `[Done] ${action} (position: ${position})`);
             break;
         case 'selection':
             mouseAction.value = 'menu';
-            log('Interaction', `[Done] ${mouseAction.value}`);
+            log('interaction', `[Done] ${mouseAction.value}`);
             return;
         case 'move':
-            log('Interaction', `[Done] ${action}`);
+            log('interaction', `[Done] ${action}`);
             break;
         case 'link': {
             const targetHold = getHold(position);
 
             if (targetHold && originHold) {
                 linkHolds(originHold.index, targetHold.index);
-                log('Interaction', `[Done] ${action} (position: ${position})`);
+                log('interaction', `[Done] ${action} (position: ${position})`);
             }
         }
     }

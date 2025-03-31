@@ -46,12 +46,19 @@
                 </span>
             </output>
         </label>
+        <label v-if="debug">
+            Debug
+            <output>
+                <ManageDebug />
+            </output>
+        </label>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { debug, debugMessage } from '@/utils/debug';
+import { debug, debugMessage, enableDebug } from '@/utils/debug';
 import { useI18n } from 'vue-i18n';
+import ManageDebug from '@/components/debug/manageDebug.vue';
 import MyIcon from '@/components/myIcon.vue';
 
 const { t } = useI18n();
@@ -60,7 +67,7 @@ const appVersion = __APP_VERSION__;
 const appLicence = __APP_LICENCE__;
 
 function openDebug() {
-    debug.value = true;
+    enableDebug();
     debugMessage.value = 'Debug "on"';
 }
 </script>
