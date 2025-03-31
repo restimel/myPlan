@@ -122,11 +122,9 @@ watch(scaleRatio, (value, oldValue) => {
 
 /* update the offset (related to zoom) */
 watch([offsetX, offsetY], () => {
-    if (debug.value) {
-        const containerEl = container.value;
+    const containerEl = container.value;
 
-        containerEl?.scrollTo(offsetX.value, offsetY.value);
-    }
+    containerEl?.scrollTo(offsetX.value, offsetY.value);
     forceUpdate();
 });
 
@@ -323,6 +321,10 @@ watch(lastPosition, () => {
     }
 });
 
+const minimalMovement = computed(() => {
+    return defaultHoldSize.value / 2;
+});
+
 function getPosition(event: MouseEvent | Touch): Point {
     const rect = canvasRect.value;
     const scale = scaleRatio.value;
@@ -396,6 +398,16 @@ function zoom(list: TouchList) {
     const oldDist = getDistance(lastP1, lastP2);
     const newDist = getDistance(newP1, newP2);
     const ratio = newDist / oldDist;
+
+    if (debug.value?.featureNext) {
+        const dist1 = getDistance(lastP1, newP1);
+        const dist2 = getDistance(lastP2, newP2);
+
+        /* Avoid too small changes */
+        if (dist1 + dist2 < minimalMovement.value) {
+            return;
+        }
+    }
 
     /* Avoid too small changes */
     if (Math.abs(1 - ratio) < minimalZoomRatio) {
@@ -601,8 +613,7 @@ function move(position: Point) {
             clearTimeout(interactionTimer);
             log('time', '(stopped) move');
 
-            /* ×2 is to reduce the threshold before moving it */
-            if (distance * 2 > defaultHoldSize.value ) {
+            if (distance > minimalMovement.value ) {
                 moveHold(selectedHold.index, lastPosition.value, position);
                 lastPosition.value = position;
                 mouseAction.value = 'move';
