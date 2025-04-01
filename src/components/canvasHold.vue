@@ -307,6 +307,7 @@ const defaultPosition: Point = [0, 0];
 const mouseAction = ref<MouseAction>('none');
 const lastPosition = ref<Point>(defaultPosition);
 const lastPosition2 = ref<Point>(defaultPosition);
+let lastPositionIndex: number[] = [];
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
 
@@ -342,6 +343,7 @@ function resetAction() {
     mouseAction.value = 'none';
     lastPosition.value = defaultPosition;
     lastPosition2.value = defaultPosition;
+    lastPositionIndex = [];
     selectHold.value = null;
     debugZoom = 0;
 }
@@ -351,9 +353,11 @@ function touchStart(event: TouchEvent) {
 
     if (list.length > 1) {
         if (mouseAction.value === 'active' && list.length === 2) {
-            const position = getPosition(list[1]);
+            const newTouch = list[0].identifier === lastPositionIndex[0] ? list[1] : list[0];
+            const position = getPosition(newTouch);
 
             lastPosition2.value = position;
+            lastPositionIndex[1] = newTouch.identifier;
 
             mouseAction.value = 'zoom';
             event.preventDefault();
@@ -366,6 +370,7 @@ function touchStart(event: TouchEvent) {
     }
 
     const position = getPosition(list[0]);
+    lastPositionIndex[0] = list[0].identifier;
 
     startInteraction(position);
 
@@ -381,6 +386,8 @@ function touchEnd(event: TouchEvent) {
     const list = event.changedTouches;
     const position = getPosition(list[0]);
 
+    lastPositionIndex.splice(lastPositionIndex.indexOf(list[0].identifier));
+
     log('time', `touchEnd {${event.changedTouches[0].identifier}}`);
 
     stopInteraction(position);
@@ -388,8 +395,8 @@ function touchEnd(event: TouchEvent) {
 }
 
 function zoom(list: TouchList) {
-    const lastP1 = lastPosition.value;
-    const lastP2 = lastPosition2.value;
+    const lastP1 = list[0].identifier === lastPositionIndex[0] ? lastPosition.value : lastPosition2.value;
+    const lastP2 = list[0].identifier === lastPositionIndex[0] ? lastPosition2.value : lastPosition.value;
     const newP1 = getPosition(list[0]);
     const newP2 = getPosition(list[1]);
 
@@ -397,9 +404,11 @@ function zoom(list: TouchList) {
     const newDist = getDistance(newP1, newP2);
     const ratio = newDist / oldDist;
 
+    let dist1 = 0;
+    let dist2 = 0;
     if (debug.value?.featureNext) {
-        const dist1 = getDistance(lastP1, newP1);
-        const dist2 = getDistance(lastP2, newP2);
+        dist1 = getDistance(lastP1, newP1);
+        dist2 = getDistance(lastP2, newP2);
 
         /* Avoid too small changes */
         if (dist1 + dist2 < minimalMovement.value) {
@@ -434,7 +443,7 @@ function zoom(list: TouchList) {
 
         if (debugZoom) {
             if (orientation * debugZoom < 0) {
-                log('zoom', `count: ${debugZoom}|value:${Math.round(ratio * 1_000_000) / 1_000_000}`);
+                log('zoom', `count: ${debugZoom}|value:${Math.round(ratio * 1_000_000) / 1_000_000}|distance:${dist1 + dist2}`);
 
                 debugZoom = orientation;
             } else {
