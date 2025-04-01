@@ -53,7 +53,7 @@ export function log(category: Category, message: string) {
         const logsValue = logs.value;
         const logMessages = logsValue.get(category) ?? [];
         logMessages.push({
-            msg: text,
+            msg: message,
             ts: time,
         });
 

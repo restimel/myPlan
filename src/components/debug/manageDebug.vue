@@ -27,11 +27,14 @@
         </button>
         <fieldset v-if="see">
             <legend>Logs: {{ see }}</legend>
-            <div v-for="(log, index) of (logs.get(see) ?? [])"
-                :key="index"
+            <div v-for="(log, idx) of seeLogs"
+                :key="`${log.ts} ${idx}`"
             >
                 <span class="timestamp">
                     {{ log.ts }}
+                </span>
+                <span class="duration">
+                    [{{ log.duration }}]
                 </span>
                 <span class="message">
                     {{ log.msg }}
@@ -41,7 +44,7 @@
     </section>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { debug, logs, resetDebug, type Category } from '@/utils/debug';
 
 const categories: Category[] = [
@@ -52,6 +55,26 @@ const categories: Category[] = [
 ];
 
 const see = ref<Category | null>(null);
+
+const seeLogs = computed(() => {
+    const seeValue = see.value;
+
+    if (!seeValue) {
+        return [];
+    }
+
+    const list = logs.value.get(seeValue) ?? [];
+
+    return list.map((log, idx) => {
+        const previousTs = list[idx - 1]?.ts ?? 0;
+
+        return {
+            msg: log.msg,
+            ts: log.ts,
+            duration: log.ts - previousTs,
+        };
+    });
+});
 </script>
 <style scoped>
 label {

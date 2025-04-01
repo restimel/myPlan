@@ -312,7 +312,7 @@ let lastPositionIndex: number[] = [];
 const selectHold = ref<Hold | null>(null);
 let interactionTimer = 0;
 
-let debugZoom = 0;
+let debugZoom = -1;
 
 watch(selectHold, drawRoute);
 watch(lastPosition, () => {
@@ -346,7 +346,7 @@ function resetAction() {
     lastPosition2.value = defaultPosition;
     lastPositionIndex = [];
     selectHold.value = null;
-    debugZoom = 0;
+    debugZoom = -1;
 }
 
 function touchStart(event: TouchEvent) {
@@ -411,8 +411,14 @@ function zoom(list: TouchList) {
         dist1 = getDistance(lastP1, newP1);
         dist2 = getDistance(lastP2, newP2);
 
-        /* Avoid too small changes */
-        if (dist1 + dist2 < minimalMovement.value) {
+
+        const orientation = newDist > oldDist ? 1 : -1;
+        const isSameOrientation = orientation === debugZoom;
+        debugZoom = orientation;
+
+        log('zoom', `orientation: ${orientation}|d1:${dist1}|d2:${dist2}|${minimalMovement.value}`);
+
+        if (!isSameOrientation) {
             return;
         }
     }
@@ -438,22 +444,6 @@ function zoom(list: TouchList) {
     lastPosition.value = newP1;
     lastPosition2.value = newP2;
 
-    /* Debug */
-    if (debug.value) {
-        const orientation = newDist > oldDist ? 1 : -1;
-
-        if (debugZoom) {
-            if (orientation * debugZoom < 0) {
-                log('zoom', `count: ${debugZoom}|value:${Math.round(ratio * 1_000_000) / 1_000_000}|distance:${dist1 + dist2}`);
-
-                debugZoom = orientation;
-            } else {
-                debugZoom += orientation;
-            }
-        } else {
-            debugZoom = orientation;
-        }
-    }
 }
 
 function touchMove(event: TouchEvent) {
