@@ -74,7 +74,6 @@ import {
     linkHolds,
     moveHold,
     removeHold,
-    resetHolds,
 } from '@/utils/holds';
 import { getDistance, getMiddle } from '@/utils/geometry';
 import { debug, log } from '@/utils/debug';
@@ -203,6 +202,8 @@ function loadImage() {
 
     /* This is to draw around 30 holds on height */
     defaultHoldSize.value = canvasLayerEl.height / 60;
+
+    drawHolds(holdList.value, canvasLayerEl);
 }
 
 function setHold(point: Point) {
