@@ -7,6 +7,7 @@ import {
 export const holdList = ref<Hold[]>([]);
 export const top = ref<number>(1);
 export const defaultHoldSize = ref<number>(25);
+export const image = ref<ImageData | null>(null);
 
 function resetValues() {
     let value = 1;
