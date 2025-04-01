@@ -14,13 +14,15 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { loadRoute } from '@/utils/storage';
 import VideoPlan from '@/components/videoPlan.vue';
 import CanvasHold from '@/components/canvasHold.vue';
 
 const router = useRouter();
 
-const mode = ref<'video' | 'canvas'>('video');
-const image = ref<ImageData | null>(null);
+const storage = loadRoute();
+const image = ref<ImageData | null>(storage?.image ?? null);
+const mode = ref<'video' | 'canvas'>(image.value ? 'canvas' : 'video');
 
 function getImage(data: ImageData | null) {
     if (!data) {

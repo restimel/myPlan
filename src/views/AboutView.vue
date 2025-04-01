@@ -46,6 +46,7 @@
                 </span>
             </output>
         </label>
+        <hr />
         <label v-if="debug">
             Debug
             <output>
@@ -75,6 +76,7 @@ function openDebug() {
 <style scoped>
 .about {
     padding: var(--section-padding);
+    overflow: auto;
 }
 
 h1 {
