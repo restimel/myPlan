@@ -1,4 +1,5 @@
 import { getHoldInArea } from '@/utils/holds';
+import { log } from '@/utils/debug';
 
 const bgHoldColor = '#ffffff33';
 const borderHoldColor = '#000000ff';
@@ -122,10 +123,6 @@ export function drawInformation(holds: Hold[], canvasEl: HTMLCanvasElement | nul
 
     context.save();
 
-    console.log(getHoldInArea([margin, margin], [margin + w, margin + h], holds));
-    console.log(getHoldInArea([margin, margin], [margin + w, margin + h], holds).length);
-    console.log(!getHoldInArea([margin, margin], [margin + w, margin + h], holds).length);
-
     if (!getHoldInArea([margin, margin], [margin + w, margin + h], holds).length) {
         /* Top left */
         x = margin;
@@ -147,7 +144,7 @@ export function drawInformation(holds: Hold[], canvasEl: HTMLCanvasElement | nul
         x = maxWidth - margin - w;
         y = maxHeight /2 - h / 2;
     } else {
-        console.log('by default :/');
+        log('information', 'position of is by default :/');
         x = margin;
         y = margin;
         context.globalAlpha = 0.5;

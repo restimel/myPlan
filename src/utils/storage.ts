@@ -4,6 +4,7 @@ import {
     table1Dto2D,
     table2Dto1D,
 } from '@/utils/image';
+import { log } from '@/utils/debug';
 
 type StoredImage = {
     image: string;
@@ -111,7 +112,7 @@ export function saveRoute(image: ImageData, holdList: Hold[], retry = 5): boolea
         return saveRoute(newImgData, newHoldList, retry - 1);
     }
 
-    console.log('size:', json.length);
+    log('information', 'storage size: ' + json.length);
     localStorage.setItem(STORAGE_NAME, json);
 
     return true;

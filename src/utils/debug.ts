@@ -1,6 +1,7 @@
 import { ref, watch } from 'vue';
 
 export type Category =
+    | 'information'
     | 'interaction'
     | 'time'
     | 'save'

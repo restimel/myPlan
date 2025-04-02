@@ -49,6 +49,7 @@ import { computed, ref } from 'vue';
 import { debug, logs, resetDebug, type Category } from '@/utils/debug';
 
 const categories: Category[] = [
+    'information',
     'interaction',
     'time',
     'save',
