@@ -29,6 +29,7 @@
             <legend>Logs: {{ see }}</legend>
             <div v-for="(log, idx) of seeLogs"
                 :key="`${log.ts} ${idx}`"
+                class="logList"
             >
                 <span class="timestamp">
                     {{ log.ts }}
@@ -82,5 +83,11 @@ label {
 }
 button.small {
     padding: 2px;
+}
+
+.logList {
+    display: grid;
+    grid-template-columns: min-content min-content 1fr;
+    gap: var(--spacing-xs);
 }
 </style>

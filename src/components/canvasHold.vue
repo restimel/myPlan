@@ -416,7 +416,8 @@ function zoom(list: TouchList) {
         const isSameOrientation = orientation === debugZoom;
         debugZoom = orientation;
 
-        log('zoom', `orientation: ${orientation}|d1:${dist1}|d2:${dist2}|${minimalMovement.value}`);
+        const areaInfo = [list[0].radiusX, list[0].radiusY, list[0].rotationAngle, list[0].force];
+        log('zoom', `orientation: ${orientation}|d1:${dist1}(${dist1 * scaleRatio.value})|d2:${dist2}(${dist2*scaleRatio.value})|${minimalMovement.value}||${areaInfo.join(', ')}`);
 
         if (!isSameOrientation) {
             return;

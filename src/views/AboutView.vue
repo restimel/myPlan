@@ -46,7 +46,6 @@
                 </span>
             </output>
         </label>
-        <hr />
         <label v-if="debug">
             Debug
             <output>
