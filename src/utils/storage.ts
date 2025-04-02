@@ -12,7 +12,7 @@ type StoredImage = {
     holds: Hold[];
 }
 
-type StoredRoute = {
+export type StoredRoute = {
     image: ImageData;
     holds: Hold[];
 }

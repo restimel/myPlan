@@ -93,6 +93,7 @@
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.2);
     --shadow-lg: 5px 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-primary: 0 0 10px var(--color-primary);
 
     /* Border radius */
     --border-radius: 8px;

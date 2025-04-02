@@ -9,16 +9,22 @@
             id="canvasPicture"
         ></canvas>
     </div>
+    <RouteMenu @action="action" />
 </template>
 <script lang="ts" setup>
-import { defaultHoldSize } from '@/utils/holds';
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { drawHolds, drawInformation } from '@/utils/canvas/draw';
+import { exportImage } from '@/utils/files';
+import { defaultHoldSize, load } from '@/utils/holds';
+import RouteMenu, { type Action } from '@/components/viewer/routeMenu.vue';
 
 const props = defineProps<{
     image: ImageData | null;
     holds: Hold[];
 }>();
+
+const router = useRouter();
 
 const container = useTemplateRef('container');
 const canvas = useTemplateRef('canvas');
@@ -70,6 +76,25 @@ function drawRoute() {
 
 function drawDetails() {
     drawInformation(props.holds, canvas.value, defaultHoldSize.value);
+}
+
+function action(type: Action) {
+    switch (type) {
+        case 'edit':
+            load({
+                holds: props.holds,
+                image: props.image!,
+            });
+
+            router.push('/build');
+
+            break;
+        case 'exportFile': {
+            const canvasEl = canvas.value!;
+
+            exportImage(canvasEl, 'finalRoute.png');
+        }
+    }
 }
 
 </script>

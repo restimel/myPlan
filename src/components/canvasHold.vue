@@ -82,6 +82,7 @@ import { drawHolds } from '@/utils/canvas/draw';
 import HoldMenu from '@/components/holdMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
 import GuideMessage from '@/components/guideMessage.vue';
+import { exportImage } from '@/utils/files';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -236,12 +237,7 @@ function save() {
     drawHolds(holdList.value, canvasLayerEl);
 
     /* Create the file an download it */
-    const link: HTMLAnchorElement = document.createElement('a');
-    link.href = canvasLayer.value!.toDataURL('image/png');
-    link.download = 'myPlan.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportImage(canvasLayerEl);
 
     /* restore the canvas */
     drawRoute();

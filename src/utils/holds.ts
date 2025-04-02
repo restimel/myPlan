@@ -3,6 +3,7 @@ import {
     getDistance,
     isInRect,
 } from '@/utils/geometry';
+import type { StoredRoute } from '@/utils/storage';
 
 export const holdList = ref<Hold[]>([]);
 export const top = ref<number>(1);
@@ -178,4 +179,10 @@ export function getHoldInArea(point1: Point, point2: Point, holds?: Hold[]): Hol
     });
 
     return inside;
+}
+
+export function load(newRoute: StoredRoute) {
+    holdList.value = newRoute.holds;
+    image.value = newRoute.image;
+    resetValues();
 }

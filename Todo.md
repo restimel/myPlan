@@ -7,15 +7,15 @@
     * [x] draw holds
     * [ ] initialization (load image)
 * [ ] factorize mouse/touch events
-* [ ] add actions in viewer
+* [x] add actions in viewer
 * [ ] In viewer
     * [x] Display TOP
-    * [ ] May edit the route
+    * [x] May edit the route
 * [x] Add link to github contribution/bugs
 * [x] keep work in memory (when changing page)
 * [ ] save as file (export image)
     * [x] the route with holds
-    * [ ] the final route with holds and details (in viewer)
+    * [x] the final route with holds and details (in viewer)
 * [ ] Add route information (name/description)
 * [ ] Add Youtube video capture
 * [ ] Shrink image size to allow sending editable route
