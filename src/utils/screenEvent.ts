@@ -1,5 +1,6 @@
 import { computed, type Ref } from 'vue';
 import { getDistance, getMiddle } from '@/utils/geometry';
+import { log } from '@/utils/debug';
 
 type LastPositions = Map<number, Point>;
 
@@ -92,16 +93,19 @@ export function screenListener(options: ScreenEventOption) {
             isUnderMinDistance(dist1, touches[0], newDirection !== zoomDirection) &&
             isUnderMinDistance(dist2, touches[1], newDirection !== zoomDirection)
         ) {
+            log('zoom', 'drop--' +  [newDirection, zoomDirection, '--', dist1, dist2].join(','));
             /* Minimal variation not reached */
             return;
         }
+
+        log('zoom', [newDirection, zoomDirection, '--', dist1, dist2].join(','));
 
         const oldScale = options.scale.value;
         const newRatio = oldScale * ratio;
 
         const center = getMiddle(newP1, newP2);
-        const offsetDx = center[0] * (newRatio - oldScale);
-        const offsetDy = center[1] * (newRatio - oldScale);
+        const offsetDx = center[0] * (newRatio - oldScale) / oldScale;
+        const offsetDy = center[1] * (newRatio - oldScale) / oldScale;
 
         /* save state for future event */
         lastPosition.set(touches[0].identifier, newP1);
