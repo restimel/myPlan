@@ -38,7 +38,7 @@
 
 ## Known bugs
 
-* [ ] Header too long (in French)
+* [x] Header too long (in French)
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
