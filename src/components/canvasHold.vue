@@ -83,6 +83,7 @@ import HoldMenu from '@/components/holdMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
 import GuideMessage from '@/components/guideMessage.vue';
 import { exportImage } from '@/utils/files';
+import { screenListener } from '@/utils/screenEvent';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -310,6 +311,37 @@ let interactionTimer = 0;
 
 let debugZoom = -1;
 
+/* {{{ new event management */
+
+const screenEvent = screenListener({
+    rect: canvasRect,
+    scale: scaleRatio,
+    onStart: start,
+    onEnd: end,
+    onMove: moveContext,
+    onZoom: zoomContext,
+});
+
+function start(positions: Point[]) {
+    startInteraction(positions[0]);
+}
+
+function end(point: Point) {
+    stopInteraction(point);
+}
+
+function moveContext(point: Point) {
+    move(point);
+}
+
+function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
+    scaleRatio.value = newRatio;
+    offsetX.value += offsetDx;
+    offsetY.value += offsetDy;
+}
+
+/* }}} */
+
 watch(selectHold, drawRoute);
 watch(lastPosition, () => {
     if (mouseAction.value === 'link') {
@@ -346,6 +378,10 @@ function resetAction() {
 }
 
 function touchStart(event: TouchEvent) {
+    if (debug.value?.featureNext) {
+        return screenEvent(event);
+    }
+
     const list = event.touches;
 
     if (list.length > 1) {
@@ -380,6 +416,10 @@ function touchStart(event: TouchEvent) {
 }
 
 function touchEnd(event: TouchEvent) {
+    if (debug.value?.featureNext) {
+        return screenEvent(event);
+    }
+
     const list = event.changedTouches;
     const position = getPosition(list[0]);
 
@@ -444,6 +484,10 @@ function zoom(list: TouchList) {
 }
 
 function touchMove(event: TouchEvent) {
+    if (debug.value?.featureNext) {
+        return screenEvent(event);
+    }
+
     const action = mouseAction.value;
 
     if (action === 'none') {
@@ -485,18 +529,30 @@ function touchMove(event: TouchEvent) {
 }
 
 function mouseDown(event: MouseEvent) {
+    if (debug.value?.featureNext) {
+        return screenEvent(event);
+    }
+
     const point = getPosition(event);
 
     startInteraction(point);
 }
 
 function mouseUp(event: MouseEvent) {
+    if (debug.value?.featureNext) {
+        return screenEvent(event);
+    }
+
     const position = getPosition(event);
 
     stopInteraction(position);
 }
 
 function mouseMove(event: MouseEvent) {
+    if (debug.value?.featureNext) {
+        return screenEvent(event);
+    }
+
     const position = getPosition(event);
 
     move(position);

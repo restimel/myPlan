@@ -7,6 +7,8 @@
     * [x] draw holds
     * [ ] initialization (load image)
 * [ ] factorize mouse/touch events
+    * [x] create nativeEvent → screenEvent
+    * [ ] screenEvent → stateInteraction
 * [x] add actions in viewer
 * [ ] In viewer
     * [x] Display TOP
