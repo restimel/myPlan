@@ -9,29 +9,18 @@
 * [ ] factorize mouse/touch events
     * [x] create nativeEvent → screenEvent
     * [ ] screenEvent → stateInteraction
-* [x] add actions in viewer
-* [ ] In viewer
-    * [x] Display TOP
-    * [x] May edit the route
-* [x] Add link to github contribution/bugs
-* [x] keep work in memory (when changing page)
-* [ ] save as file (export image)
-    * [x] the route with holds
-    * [x] the final route with holds and details (in viewer)
-* [ ] Add route information (name/description)
-* [ ] Add Youtube video capture
-* [ ] Shrink image size to allow sending editable route
-
-## To improve
-
-* [ ] Actions
-    * [ ] move: also move when "selection"
-    * [ ] link: create a Link selection
-    * [ ] link: starting on hold and restarting on hold
+    * [ ] Manage zoom in "view" mode
+* [ ] Build
+    * [ ] Add route information (name/description)
+    * [ ] Actions
+        * [ ] move: also move when "selection"
+        * [ ] link: create a Link selection
+        * [ ] link: starting on hold and restarting on hold
+    * [ ] Shrink image size to allow sending editable route (set this as option?)
 
 ## Maybe to be done
 
-* [ ] Rename project (MyRoute ?) -- but it may be issue about first communications
+* [ ] Add Youtube video player in background (www.youtube.com/iframe_api)
 * [ ] In viewer
     * [ ] May allow to use it in competition (associate number with holds)
     * [ ] save the result

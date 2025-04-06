@@ -3,6 +3,7 @@ export default {
         title: 'Créer un plan',
         captureVideo: 'Capturez ou chargez une image de la voie',
         setHolds: 'Placez les prises sur la voie',
+        youtubeTitle: 'Choisissez la vidéo YouTube que vous voulez insérer',
     },
     view: {
         title: 'Voir',
@@ -17,6 +18,8 @@ export default {
     },
     action: {
         anotherPhoto: 'Prendre une autre photo',
+        cancel: 'Annuler',
+        confirm: 'Confirmer',
         double: 'Doubler la prise',
         file: 'Utiliser un fichier',
         link: 'lier',
@@ -29,6 +32,7 @@ export default {
         save: 'Enregistrer dans un fichier image',
         unlink: 'Dissocier',
         validate: 'Valider ce plan',
+        youtube: 'Utiliser une vidéo YouTube',
     },
     label: {
         author: 'Auteur :',
@@ -37,5 +41,6 @@ export default {
         licence: 'Licence :',
         size: 'Taille :',
         version: 'Version :',
+        video: 'Url de la vidéo :',
     },
 };

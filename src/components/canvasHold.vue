@@ -33,7 +33,7 @@
             @click="emit('back')"
             :title="t('action.anotherPhoto')"
         >
-            <MyIcon icon="photo" />
+            <MyIcon icon="recapture" />
         </button>
         <button
             :disabled="holdList.length === 0"

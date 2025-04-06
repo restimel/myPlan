@@ -15,12 +15,14 @@ import IconMenu from '@/components/icons/IconMenu.vue';
 import IconMerge from '@/components/icons/IconMerge.vue';
 import IconPhoto from '@/components/icons/IconPhoto.vue';
 import IconQuestion from '@/components/icons/IconQuestion.vue';
+import IconRecapture from '@/components/icons/IconRecapture.vue';
 import IconSave from '@/components/icons/IconSave.vue';
 import IconSize from '@/components/icons/IconSize.vue';
 import IconSplit from '@/components/icons/IconSplit.vue';
 import IconUnlink from '@/components/icons/IconUnlink.vue';
 import IconUp from '@/components/icons/IconUp.vue';
 import IconView from '@/components/icons/IconView.vue';
+import IconYouTube from '@/components/icons/IconYouTube.vue';
 
 type Icons =
     | 'bug'
@@ -34,12 +36,14 @@ type Icons =
     | 'merge'
     | 'photo'
     | 'question'
+    | 'recapture'
     | 'save'
     | 'size'
     | 'split'
     | 'unlink'
     | 'up'
     | 'view'
+    | 'youtube'
 ;
 
 type Props = {
@@ -61,12 +65,14 @@ const mapElement = {
     merge: IconMerge,
     photo: IconPhoto,
     question: IconQuestion,
+    recapture: IconRecapture,
     save: IconSave,
     size: IconSize,
     split: IconSplit,
     unlink: IconUnlink,
     up: IconUp,
     view: IconView,
+    youtube: IconYouTube,
 };
 
 const iconComponent = computed(() => {

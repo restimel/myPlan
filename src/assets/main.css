@@ -29,3 +29,8 @@ button {
     font-size: 0.8em;
     color: var(--color-text-details)
 }
+
+.primary-btn {
+    background: var(--color-primary);
+    color: var(--color-txt-primary);
+}

@@ -3,6 +3,7 @@ export default {
         title: 'Build plan',
         captureVideo: 'Take or upload a picture of the route',
         setHolds: 'Set holds on the route',
+        youtubeTitle: 'Choose the YouTube video you want to insert',
     },
     view: {
         title: 'View',
@@ -17,6 +18,8 @@ export default {
     },
     action: {
         anotherPhoto: 'take another photo',
+        cancel: 'Cancel',
+        confirm: 'Confirm',
         double: 'Double the hold',
         file: 'Use a file',
         link: 'link',
@@ -29,6 +32,7 @@ export default {
         save: 'Save to picture file',
         unlink: 'Unlink',
         validate: 'Validate this route',
+        youtube: 'Use a YouTube video',
     },
     label: {
         author: 'Author:',
@@ -37,5 +41,6 @@ export default {
         licence: 'Licence:',
         size: 'Size:',
         version: 'Version:',
+        video: 'Video url:',
     },
 };
