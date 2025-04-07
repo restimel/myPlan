@@ -95,18 +95,20 @@ const style = computed(() => {
     const hold = props.hold;
     const position = hold.position[0];
     const ratio = props.scale;
-    /* 5 = margin */
-    const holdSize = hold.size * ratio + 5;
+    const margin = 5;
+    const holdSize = hold.size * ratio + margin;
     /*
-     * 42 = 18 + 2 * (padding = 10) + 2 * (border = 2)
+     * 42 = 18 (font-size) + 2 * (padding = 10) + 2 * (border = 2)
      */
     const height = nbItems * 42;
     const width = 200;
     const maxWidth = props.containerSize.width;
     const maxHeight = props.containerSize.height;
 
-    let x = position[0] * ratio;
-    let y = position[1] * ratio;
+    const X = position[0] * ratio;
+    const Y = position[1] * ratio;
+    let x = X;
+    let y = Y;
 
     if (x + holdSize + width < maxWidth) {
         x = x + holdSize;
@@ -114,18 +116,22 @@ const style = computed(() => {
         x = x - holdSize - width;
     }
 
-    if (x === position[0] * ratio) {
+    if (x === X) {
         if (y + holdSize + height < maxHeight) {
             y = y + holdSize;
         } else {
             y = y - holdSize - height;
         }
 
-        x = Math.max(5, x - 100);
+        x = Math.max(margin, X - width / 2);
     } else {
-        y = Math.max(5, y - height / 2);
+        y = Math.max(margin, Y - height / 2);
     }
 
+    /* Ensure the menu is inside the element */
+    if (y + height > maxHeight - margin) {
+        y = maxHeight - height - margin;
+    }
 
     return `
         --x: ${x}px;

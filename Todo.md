@@ -31,5 +31,5 @@
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
-* [ ] Menu on bottom holds is displayed outside the canvas
+* [x] Menu on bottom holds is displayed outside the canvas
 * [ ] Menu on linked hold can be hover the selected hold
