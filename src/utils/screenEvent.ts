@@ -57,14 +57,13 @@ export function screenListener(options: ScreenEventOption) {
         timer = setTimeout(stopMove, 100);
     }
 
-    function isUnderMinDistance(distance: number, touch: Touch, largeArea = false): boolean {
+    function isUnderMinDistance(distance: number, touch: Touch, resizeArea = 1): boolean {
         const minDistance = Math.max(
             touch.radiusX,
             touch.radiusY
         );
-        const factor = largeArea ? 2 : 1;
 
-        return distance <= minDistance * factor;
+        return distance <= minDistance * resizeArea;
     }
 
     function touchZoom(touches: TouchList, event: TouchEvent) {
@@ -89,14 +88,24 @@ export function screenListener(options: ScreenEventOption) {
         const dist1 = getDistance(lastP1, newP1);
         const dist2 = getDistance(lastP2, newP2);
 
+        let resize = 1;
+
+        if (newDirection !== zoomDirection) {
+            resize = 2;
+        } else if (isMoving) {
+            resize = 0.1;
+        }
+
         if (
-            isUnderMinDistance(dist1, touches[0], newDirection !== zoomDirection) &&
-            isUnderMinDistance(dist2, touches[1], newDirection !== zoomDirection)
+            isUnderMinDistance(dist1, touches[0], resize) &&
+            isUnderMinDistance(dist2, touches[1], resize)
         ) {
             log('zoom', 'drop--' +  [newDirection, zoomDirection, '--', dist1, dist2].join(','));
             /* Minimal variation not reached */
             return;
         }
+
+        startMove();
 
         log('zoom', [newDirection, zoomDirection, '--', dist1, dist2].join(','));
 
@@ -144,6 +153,7 @@ export function screenListener(options: ScreenEventOption) {
         }
 
         options.onEnd(rescalePoint(point, ratio), rescale(lastPosition, ratio), event);
+        stopMove();
 
         /* To avoid triggering mouse click */
         event.preventDefault();
