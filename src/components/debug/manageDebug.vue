@@ -51,6 +51,7 @@ import { debug, logs, resetDebug, type Category } from '@/utils/debug';
 const categories: Category[] = [
     'information',
     'interaction',
+    'error',
     'time',
     'save',
     'zoom',

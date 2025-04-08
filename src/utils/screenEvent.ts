@@ -68,7 +68,12 @@ export function screenListener(options: ScreenEventOption) {
 
     function touchZoom(touches: TouchList, event: TouchEvent) {
         /* prevent mobile native zoom */
-        event.stopPropagation();
+        try {
+            event.preventDefault();
+            event.stopPropagation();
+        } catch(err) {
+            log('error', (err as Error).message);
+        }
 
         if (touches.length !== 2) {
             return;
@@ -138,6 +143,10 @@ export function screenListener(options: ScreenEventOption) {
         }
 
         options.onStart(rescale(lastPosition, ratio), event);
+
+        if (list.length > 1) {
+            event.preventDefault();
+        }
     }
 
     function touchEnd(event: TouchEvent) {

@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 export type Category =
     | 'information'
     | 'interaction'
+    | 'error'
     | 'time'
     | 'save'
     | 'zoom'
