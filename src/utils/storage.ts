@@ -87,7 +87,7 @@ export function saveRoute(image: ImageData, holdList: Hold[], retry = 5): boolea
         const ratioReduceFactor = Math.ceil(json.length * 10 / STORAGE_LIMIT) / 10;
 
         if (retry <= 0) {
-            console.log('save route failed', json.length, ratioReduceFactor);
+            log('error', `save route failed (length: ${json.length}, reduceRatio: ${ratioReduceFactor})`);
             return false;
         }
 
@@ -141,7 +141,7 @@ export function loadRoute(): StoredRoute | null {
 
         return result;
     } catch (err) {
-        console.warn('Issue while parsing JSON', err);
+        log('warning', `Issue while parsing JSON (error: ${err})`);
         return null;
     }
 }

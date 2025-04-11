@@ -37,6 +37,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, useTemplateRef, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { log } from '@/utils/debug';
 import { resetHolds } from '@/utils/holds';
 import MyIcon from '@/components/myIcon.vue';
 import ErrorMessage from '@/components/errorMessage.vue';
@@ -74,10 +75,10 @@ async function startVideo() {
         return stream;
     }).catch((err) => {
         if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-            console.log('Camera access denied.', err);
+            log('error', `Camera access denied. (error: ${err})`);
             doNotAllowed.value = true;
         } else {
-            console.error(`${err.name}: ${err.message}`);
+            log('error', `${err.name}: ${err.message}`);
         }
 
         return null;
@@ -86,7 +87,7 @@ async function startVideo() {
     const videoEl = video.value!;
 
     if (!videoEl || !stream) {
-        console.log('missing elements');
+        log('error', 'missing elements');
         return;
     }
 

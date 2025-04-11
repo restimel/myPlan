@@ -4,6 +4,7 @@ export type Category =
     | 'information'
     | 'interaction'
     | 'error'
+    | 'warning'
     | 'time'
     | 'save'
     | 'zoom'
@@ -60,7 +61,13 @@ export function log(category: Category, message: string) {
         });
 
         logsValue.set(category, logMessages);
-        console.log(category, logMessages.at(-1).msg);
+        if (category === 'error') {
+            console.error(category, logMessages.at(-1)!.msg);
+        } else if (category === 'warning') {
+            console.warn(category, logMessages.at(-1)!.msg);
+        } else {
+            console.log(category, logMessages.at(-1)!.msg);
+        }
 
         if (dbg.logs[category]) {
             debugMessage.value += `\n --- \n${text}`;

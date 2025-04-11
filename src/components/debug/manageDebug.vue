@@ -52,6 +52,7 @@ const categories: Category[] = [
     'information',
     'interaction',
     'error',
+    'warning',
     'time',
     'save',
     'zoom',
