@@ -325,18 +325,15 @@ const screenEvent = screenListener({
 });
 
 function start(positions: Point[]) {
-    // startInteraction(positions[0]);
     screenState.startInteraction(positions.at(-1)!);
 }
 
 function end(point: Point) {
-    // stopInteraction(point);
     screenState.stopInteraction(point);
 }
 
-function moveContext(point: Point) {
-    // move(point);
-    screenState.moveInteraction(point);
+function moveContext(point: Point, fromPoint: Point, distance: number, event: Event) {
+    screenState.moveInteraction(point, event);
 }
 
 function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {

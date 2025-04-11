@@ -151,7 +151,7 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
         log('interaction', `end: ${action} → ${actionState.value}`);
     }
 
-    function moveInteraction(point: Point) {
+    function moveInteraction(point: Point, event: Event) {
         const action = actionState.value;
 
         switch (action) {
@@ -161,27 +161,33 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
                 resetAction();
                 break;
             case 'target':
+                event.preventDefault();
                 clearTimeout(timerHold);
                 actionState.value = 'move';
                 onActions('moveHold', point);
                 mousePosition.value = point;
                 break;
             case 'move':
+                event.preventDefault();
                 onActions('moveHold', point);
                 mousePosition.value = point;
                 break;
             case 'link':
+                event.preventDefault();
                 mousePosition.value = point;
                 break;
             case 'zoom':
+                event.preventDefault();
                 onActions('zoom', point);
                 mousePosition.value = point;
                 break;
             case 'selection':
+                event.preventDefault();
                 actionState.value = 'link';
                 mousePosition.value = point;
                 break;
             case 'menu':
+                event.preventDefault();
                 break;
             default:
                 resetAction();
