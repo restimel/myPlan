@@ -326,7 +326,7 @@ const screenEvent = screenListener({
 
 function start(positions: Point[]) {
     // startInteraction(positions[0]);
-    screenState.startInteraction(positions.at(-1));
+    screenState.startInteraction(positions.at(-1)!);
 }
 
 function end(point: Point) {
