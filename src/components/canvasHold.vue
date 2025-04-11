@@ -24,6 +24,8 @@
             :scale="scaleRatio"
             :canMove="mouseAction === 'selection'"
             :containerSize="containerRect"
+            :offsetX="offsetX"
+            :offsetY="offsetY"
             @close="closeMenu"
         />
         <GuideMessage :message="t('build.setHolds')" />

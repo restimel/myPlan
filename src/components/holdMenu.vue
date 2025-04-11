@@ -81,6 +81,8 @@ type Props = {
     canMove: boolean;
     scale: number;
     containerSize: DOMRect;
+    offsetX: number;
+    offsetY: number;
 };
 
 const props = defineProps<Props>();
@@ -102,8 +104,10 @@ const style = computed(() => {
      */
     const height = nbItems * 42;
     const width = 200;
-    const maxWidth = props.containerSize.width;
-    const maxHeight = props.containerSize.height;
+    const minWidth = props.offsetX;
+    const maxWidth = minWidth + props.containerSize.width;
+    const minHeight = props.offsetY;
+    const maxHeight = minHeight + props.containerSize.height;
 
     const X = position[0] * ratio;
     const Y = position[1] * ratio;
@@ -112,7 +116,7 @@ const style = computed(() => {
 
     if (x + holdSize + width < maxWidth) {
         x = x + holdSize;
-    } else if (x - holdSize - width > 0) {
+    } else if (x - holdSize - width > minWidth) {
         x = x - holdSize - width;
     }
 
@@ -129,6 +133,9 @@ const style = computed(() => {
     }
 
     /* Ensure the menu is inside the element */
+    if (y < minHeight - margin) {
+        y = minHeight - margin;
+    }
     if (y + height > maxHeight - margin) {
         y = maxHeight - height - margin;
     }
