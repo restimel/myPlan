@@ -60,6 +60,7 @@ export function log(category: Category, message: string) {
         });
 
         logsValue.set(category, logMessages);
+        console.log(category, logMessages.at(-1).msg);
 
         if (dbg.logs[category]) {
             debugMessage.value += `\n --- \n${text}`;

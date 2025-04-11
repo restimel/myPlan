@@ -11,7 +11,7 @@ type ScreenEventOption = {
     scale: Ref<number>;
     onStart: (newPoints: Point[], event: Event) => void;
     onEnd: (lastPoint: Point, currentPoints: Point[], event: Event) => void;
-    onMove: (to: Point, distance: number, event: Event) => void;
+    onMove: (to: Point, from: Point, distance: number, event: Event) => void;
     onZoom: (ratio: number, offsetDx: number, offsetDy: number, event: Event) => void;
 };
 
@@ -67,13 +67,9 @@ export function screenListener(options: ScreenEventOption) {
     }
 
     function touchZoom(touches: TouchList, event: TouchEvent) {
-        /* prevent mobile native zoom */
-        try {
-            event.preventDefault();
-            event.stopPropagation();
-        } catch(err) {
-            log('error', (err as Error).message);
-        }
+        /* prevent mobile native zoom & scroll */
+        event.preventDefault();
+        event.stopPropagation();
 
         if (touches.length !== 2) {
             return;
@@ -196,7 +192,12 @@ export function screenListener(options: ScreenEventOption) {
 
         const ratio = options.scale.value;
 
-        options.onMove(rescalePoint(newPos, ratio), distance / ratio, event);
+        options.onMove(
+            rescalePoint(newPos, ratio),
+            rescalePoint(lastPos, ratio),
+            distance / ratio,
+            event
+        );
     }
 
     function mouseDown(event: MouseEvent) {
@@ -240,7 +241,12 @@ export function screenListener(options: ScreenEventOption) {
 
         const ratio = options.scale.value;
 
-        options.onMove(rescalePoint(newPos, ratio), distance / ratio, event);
+        options.onMove(
+            rescalePoint(newPos, ratio),
+            rescalePoint(lastPos, ratio),
+            distance / ratio,
+            event
+        );
     }
 
     function screenEvent(event: TouchEvent | MouseEvent) {

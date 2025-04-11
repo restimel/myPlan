@@ -84,6 +84,7 @@ import MyIcon from '@/components/myIcon.vue';
 import GuideMessage from '@/components/guideMessage.vue';
 import { exportImage } from '@/utils/files';
 import { screenListener } from '@/utils/screenEvent';
+import { setup, type ScreenAction } from '@/utils/screenStates';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -292,7 +293,7 @@ function drawRoute() {
  *   └──────┘
  */
 
- type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' | 'link' | 'zoom';
+//  type MouseAction = 'none' | 'active' | 'selection' | 'menu' | 'move' | 'double' | 'link' | 'zoom';
 
 /** in ms */
 const holdMouseDuration = 500;
@@ -302,16 +303,17 @@ const doubleMouseDuration = 200;
 const minimalZoomRatio = 1e-5;
 
 const defaultPosition: Point = [0, 0];
-const mouseAction = ref<MouseAction>('none');
-const lastPosition = ref<Point>(defaultPosition);
-const lastPosition2 = ref<Point>(defaultPosition);
 let lastPositionIndex: number[] = [];
-const selectHold = ref<Hold | null>(null);
+
+
+const lastPosition2 = ref<Point>(defaultPosition);
 let interactionTimer = 0;
 
 let debugZoom = -1;
 
 /* {{{ new event management */
+
+const screenState = setup(holdList, onAction);
 
 const screenEvent = screenListener({
     rect: canvasRect,
@@ -323,15 +325,18 @@ const screenEvent = screenListener({
 });
 
 function start(positions: Point[]) {
-    startInteraction(positions[0]);
+    // startInteraction(positions[0]);
+    screenState.startInteraction(positions.at(-1));
 }
 
 function end(point: Point) {
-    stopInteraction(point);
+    // stopInteraction(point);
+    screenState.stopInteraction(point);
 }
 
 function moveContext(point: Point) {
-    move(point);
+    // move(point);
+    screenState.moveInteraction(point);
 }
 
 function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
@@ -340,7 +345,46 @@ function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
     offsetY.value += offsetDy;
 }
 
+function onAction(action: ScreenAction, point: Point) {
+    switch (action) {
+        case 'setHold':
+            setHold(point);
+            break;
+        case 'doubleHold':
+            const holdIndex = screenState.holdSelection.value?.index ?? 0;
+            doubleHold(holdIndex);
+            break;
+        case 'linkHolds': {
+            const originHold = screenState.holdSelection.value;
+            const targetHold = screenState.holdSelection2.value;
+
+            if (originHold && targetHold) {
+                linkHolds(originHold.index, targetHold.index);
+            }
+            break;
+        }
+        case 'moveHold': {
+            const hold = screenState.holdSelection.value;
+
+            if (hold) {
+                moveHold(hold.index, screenState.mousePosition.value, point);
+                lastPosition.value = point;
+            }
+            break;
+        }
+        case 'zoom':
+            log('error', 'Zoom: should be managed by another route');
+            break;
+        default:
+            log('error', `TODO: Manage ${action}`);
+    }
+}
+
 /* }}} */
+
+const selectHold = screenState.holdSelection;
+const mouseAction = screenState.actionState;
+const lastPosition = screenState.mousePosition;
 
 watch(selectHold, drawRoute);
 watch(lastPosition, () => {

@@ -151,11 +151,12 @@ export function changeHoldSize(idx: number, size: number) {
     return true;
 }
 
-export function getHold(point: Point): Hold | null {
+export function getHold(point: Point, holds?: Hold[]): Hold | null {
+    const list = holds ?? holdList.value;
     const distance = Infinity;
     let selectedHold: Hold | null = null;
 
-    holdList.value.forEach((hold) => {
+    list.forEach((hold) => {
         hold.position.forEach((position) => {
             const dist = getDistance(point, position);
 
