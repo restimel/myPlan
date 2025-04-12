@@ -184,6 +184,8 @@ export function screenListener(options: ScreenEventOption) {
         const distance = getDistance(lastPos, newPos);
 
         if (isUnderMinDistance(distance, touch)) {
+            /* avoid default behavior for small movements */
+            event.preventDefault();
             return;
         }
 

@@ -290,7 +290,7 @@ function end(point: Point) {
 }
 
 function moveContext(point: Point, fromPoint: Point, distance: number, event: Event) {
-    screenState.moveInteraction(point, event);
+    screenState.moveInteraction(point, fromPoint, event);
 }
 
 function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
@@ -299,7 +299,7 @@ function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
     offsetY.value += offsetDy;
 }
 
-function onAction(action: ScreenAction, point: Point) {
+function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
     switch (action) {
         case 'setHold':
             setHold(point);
@@ -321,9 +321,21 @@ function onAction(action: ScreenAction, point: Point) {
             const hold = screenState.holdSelection.value;
 
             if (hold) {
-                moveHold(hold.index, screenState.mousePosition.value, point);
+                const lastPoint = fromPoint ?? screenState.mousePosition.value;
+
+                moveHold(hold.index, lastPoint, point);
                 lastPosition.value = point;
             }
+            break;
+        }
+        case 'scroll': {
+            const [x1, y1] = fromPoint ?? screenState.mousePosition.value;
+            const [x2, y2] = point;
+
+            offsetX.value += x2 - x1;
+            offsetY.value += y2 - y1;
+
+            lastPosition.value = point;
             break;
         }
         case 'zoom':

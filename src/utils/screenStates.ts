@@ -8,8 +8,9 @@ import { log } from './debug';
  *               end=mouseup/touchend
  *     ┌──────┐
  *     │ None ◄───────────────────────────────────────────┐
- *     └──┬───┘     move (default behavior: scroll)       │
- *        │start ┌───────────────────────────────────────►│
+ *     └──┬───┘     move    ┌────────┐      end           │
+ *        │      ┌──────────│ scroll ├───────────────────►┤
+ *        │start │          └────────┘                    │
  *  ┌─────┤      │  start   ┌──────┐        end           │
  *  │     │      ├─────────►│ zoom ├─────────────────────►┤
  *  │ ┌───▼────┐ │  end     └──────┘                      │
@@ -39,11 +40,11 @@ import { log } from './debug';
  *
  */
 
-type MouseState = 'none' | 'active' | 'target' | 'selection' | 'menu' | 'move' | 'double' | 'link' | 'zoom';
+type MouseState = 'none' | 'active' | 'target' | 'selection' | 'menu' | 'move' | 'double' | 'link' | 'zoom' | 'scroll';
 
 export type ScreenAction = 'doubleHold' | 'linkHolds' | 'moveHold' | 'scroll' | 'setHold' | 'zoom';
 
-type ActionCb = (action: ScreenAction, point: Point) => void;
+type ActionCb = (action: ScreenAction, point: Point, fromPoint?: Point) => void;
 
 /** in ms */
 const holdMouseDuration = 500;
@@ -98,6 +99,9 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
                 onActions('doubleHold', point);
                 resetAction();
                 break;
+            case 'scroll':
+                actionState.value = 'zoom';
+                break;
             case 'selection':
             case 'menu':
             default:
@@ -128,6 +132,10 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
                 onActions('moveHold', point);
                 resetAction();
                 break;
+            case 'scroll':
+                onActions('scroll', point);
+                resetAction();
+                break;
             case 'selection':
                 actionState.value = 'menu';
                 break;
@@ -151,7 +159,7 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
         log('interaction', `end: ${action} → ${actionState.value}`);
     }
 
-    function moveInteraction(point: Point, event: Event) {
+    function moveInteraction(point: Point, from: Point, event: Event) {
         const action = actionState.value;
 
         switch (action) {
@@ -169,7 +177,12 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
                 break;
             case 'move':
                 event.preventDefault();
-                onActions('moveHold', point);
+                onActions('moveHold', point, from);
+                mousePosition.value = point;
+                break;
+            case 'scroll':
+                event.preventDefault();
+                onActions('scroll', point, from);
                 mousePosition.value = point;
                 break;
             case 'link':
