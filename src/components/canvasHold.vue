@@ -85,6 +85,7 @@ import GuideMessage from '@/components/guideMessage.vue';
 import { exportImage } from '@/utils/files';
 import { screenListener } from '@/utils/screenEvent';
 import { setup, type ScreenAction } from '@/utils/screenStates';
+import { hysterisPoint } from '@/utils/movePoint';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -273,6 +274,7 @@ const screenEvent = screenListener({
 const selectHold = screenState.holdSelection;
 const mouseAction = screenState.actionState;
 const lastPosition = screenState.mousePosition;
+const scrollPoints = hysterisPoint(lastPosition.value);
 
 watch(selectHold, drawRoute);
 watch(lastPosition, () => {
@@ -282,7 +284,9 @@ watch(lastPosition, () => {
 });
 
 function start(positions: Point[]) {
-    screenState.startInteraction(positions.at(-1)!);
+    const lastPoint = positions.at(-1)!;
+    screenState.startInteraction(lastPoint);
+    scrollPoints.reset(lastPoint);
 }
 
 function end(point: Point) {
@@ -329,11 +333,15 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
             break;
         }
         case 'scroll': {
-            const [x1, y1] = fromPoint ?? screenState.mousePosition.value;
-            const [x2, y2] = point;
+            const [dx, dy] = scrollPoints(point);
 
-            offsetX.value += x2 - x1;
-            offsetY.value += y2 - y1;
+            console.log('scroll:', dx, dy);
+            if (!dx && !dy) {
+                return;
+            }
+
+            offsetX.value += dx * scaleRatio.value;
+            offsetY.value += dy * scaleRatio.value;
 
             lastPosition.value = point;
             break;

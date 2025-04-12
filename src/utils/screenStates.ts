@@ -166,13 +166,15 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
             case 'none': /* quick case */
                 return;
             case 'active':
-                resetAction();
+                event.preventDefault();
+                actionState.value = 'scroll';
+                onActions('scroll', point, from);
                 break;
             case 'target':
                 event.preventDefault();
                 clearTimeout(timerHold);
                 actionState.value = 'move';
-                onActions('moveHold', point);
+                onActions('moveHold', point, from);
                 mousePosition.value = point;
                 break;
             case 'move':

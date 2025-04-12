@@ -23,3 +23,21 @@ export function isInRect([x, y]: Point, [[x1, y1], [x2, y2]]: [Point, Point], ma
         y >= ymin && y <= ymax
     );
 }
+
+/** return angle [0, 2π] */
+export function getAngle(fromPoint: Point, toPoint: Point): number {
+    const [x1, y1] = fromPoint;
+    const [x2, y2] = toPoint;
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+
+    const PI2 = 2 * Math.PI;
+
+    const angle = Math.atan(dy / dx) + PI2;
+
+    if (dx < 0) {
+        return (Math.PI + angle) % PI2;
+    }
+
+    return angle % PI2;
+}
