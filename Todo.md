@@ -8,7 +8,7 @@
     * [ ] initialization (load image)
 * [ ] factorize mouse/touch events
     * [x] create nativeEvent → screenEvent
-    * [ ] screenEvent → stateInteraction
+    * [x] screenEvent → stateInteraction
     * [ ] Manage zoom in "view" mode
 * [ ] Build
     * [ ] Add route information (name/description)
