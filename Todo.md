@@ -33,3 +33,4 @@
     * [ ] It should not resize to the whole screen but preserve aspect ratio
 * [x] Menu on bottom holds is displayed outside the canvas
 * [ ] (minor) Menu on linked hold can be hover the selected hold
+* [ ] improve scroll stability (do not compute position relative to canvas for scroll)

@@ -5,9 +5,10 @@ export function hysterisPoint(point: Point) {
     let lastDistance = 0;
     let lastAngle = 0;
 
-    function movePoint(newPoint: Point) {
+    function movePoint(point: Point) {
         const [x1, y1] = lastPoint;
-        const [x2, y2] = newPoint;
+        const [x2, y2] = point;
+        const newPoint: Point = point;
 
         const deltaX = x1 - x2;
         const deltaY = y1 - y2;

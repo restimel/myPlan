@@ -29,10 +29,6 @@ export default defineConfigWithVueTs(
     },
     {
         rules: {
-            'indent': ['error', 4, { 'SwitchCase': 1 }],
-            'semi': ['error', 'always'],
-            'quotes': ['error', 'single'],
-            'multiline-comment-style': ['error', 'starred-block'],
             'comma-dangle': ['error', {
                 'arrays': 'always-multiline',
                 'objects': 'always-multiline',
@@ -40,6 +36,11 @@ export default defineConfigWithVueTs(
                 'exports': 'always-multiline',
                 'functions': 'never',
             }],
+            'indent': ['error', 4, { 'SwitchCase': 1 }],
+            'multiline-comment-style': ['error', 'starred-block'],
+            'no-console': 'error',
+            'quotes': ['error', 'single'],
+            'semi': ['error', 'always'],
         },
     }
 );

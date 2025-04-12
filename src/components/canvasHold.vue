@@ -335,7 +335,6 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
         case 'scroll': {
             const [dx, dy] = scrollPoints(point);
 
-            console.log('scroll:', dx, dy);
             if (!dx && !dy) {
                 return;
             }

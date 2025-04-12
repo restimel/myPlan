@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 export type Category =
     | 'information'
@@ -25,12 +25,6 @@ export const debug = ref<Debug>(null);
 export const debugMessage = ref('');
 
 export const logs = ref<Map<Category, Log[]>>(new Map());
-
-watch(debugMessage, () => {
-    if (debug.value) {
-        console.debug(performance.now(), debugMessage.value);
-    }
-});
 
 export function enableDebug() {
     debug.value = {
@@ -62,10 +56,13 @@ export function log(category: Category, message: string) {
 
         logsValue.set(category, logMessages);
         if (category === 'error') {
+            /* eslint-disable-next-line no-console */
             console.error(category, logMessages.at(-1)!.msg);
         } else if (category === 'warning') {
+            /* eslint-disable-next-line no-console */
             console.warn(category, logMessages.at(-1)!.msg);
         } else {
+            /* eslint-disable-next-line no-console */
             console.log(category, logMessages.at(-1)!.msg);
         }
 
