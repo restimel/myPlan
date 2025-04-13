@@ -129,9 +129,9 @@ type Settings = {
     routeName: string;
 };
 
-function closeSettings(result: Settings | undefined) {
+function closeSettings(result: Record<string, string | number> | undefined) {
     if (result) {
-        emit('settings', result);
+        emit('settings', result as Settings);
     }
 
     showSettings.value = false;
