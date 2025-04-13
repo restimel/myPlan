@@ -25,6 +25,11 @@
             >
                 <MyIcon icon="file" />
             </button>
+            <button
+                @click="action('settings')"
+            >
+                <MyIcon icon="settings" />
+            </button>
         </section>
     </aside>
 </template>
@@ -32,7 +37,7 @@
 import { ref } from 'vue';
 import MyIcon from '@/components/myIcon.vue';
 
-export type Action = 'edit' | 'exportFile';
+export type Action = 'edit' | 'exportFile' | 'settings';
 
 const emit = defineEmits<{
     action: [Action],

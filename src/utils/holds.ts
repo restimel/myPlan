@@ -10,6 +10,8 @@ export const top = ref<number>(1);
 export const defaultHoldSize = ref<number>(25);
 export const image = ref<ImageData | null>(null);
 
+export const routeName = ref('');
+
 function resetValues() {
     let value = 1;
 
@@ -185,5 +187,7 @@ export function getHoldInArea(point1: Point, point2: Point, holds?: Hold[]): Hol
 export function load(newRoute: StoredRoute) {
     holdList.value = newRoute.holds;
     image.value = newRoute.image;
+    routeName.value = newRoute.settings?.routeName ?? '';
+
     resetValues();
 }

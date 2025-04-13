@@ -11,11 +11,13 @@ type StoredImage = {
     width: number;
     height: number;
     holds: Hold[];
+    settings: RouteSettings;
 }
 
 export type StoredRoute = {
     image: ImageData;
     holds: Hold[];
+    settings: RouteSettings;
 }
 
 /** Name of the localStorage saved on browser */
@@ -31,6 +33,10 @@ const CHAR_OFFSET = 35;
 
 /** Localstorage limit is around 5M */
 const STORAGE_LIMIT = 2_400_000;
+
+const defaultSettings: RouteSettings = {
+    routeName: '',
+};
 
 /** Used for compression */
 function dataToString(data: Uint8ClampedArray<ArrayBufferLike>): string {
@@ -73,12 +79,13 @@ function stringToData(text: string): number[] {
     return data;
 }
 
-export function saveRoute(image: ImageData, holdList: Hold[], retry = 5): boolean {
+export function saveRoute(image: ImageData, holdList: Hold[], settings: RouteSettings, retry = 5): boolean {
     const storage: StoredImage = {
         image: dataToString(image.data),
         width: image.width,
         height: image.height,
         holds: holdList,
+        settings,
     };
 
     const json = JSON.stringify(storage);
@@ -109,7 +116,7 @@ export function saveRoute(image: ImageData, holdList: Hold[], retry = 5): boolea
             } as Hold;
         });
 
-        return saveRoute(newImgData, newHoldList, retry - 1);
+        return saveRoute(newImgData, newHoldList, settings, retry - 1);
     }
 
     log('information', 'storage size: ' + json.length);
@@ -137,6 +144,10 @@ export function loadRoute(): StoredRoute | null {
         const result: StoredRoute = {
             image: imgData,
             holds: stored.holds,
+            settings: {
+                ...defaultSettings,
+                ...(stored.settings ?? {}),
+            },
         };
 
         return result;

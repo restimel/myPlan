@@ -12,7 +12,7 @@ export function getMiddle([x1, y1]: Point, [x2, y2]: Point): Point {
     ] as Point;
 }
 
-export function isInRect([x, y]: Point, [[x1, y1], [x2, y2]]: [Point, Point], margin = 0): boolean {
+export function isInRect([x, y]: Point, [[x1, y1], [x2, y2]]: Rect, margin = 0): boolean {
     const xmin = Math.min(x1, x2) - margin;
     const xmax = Math.max(x1, x2) + margin;
     const ymin = Math.min(y1, y2) - margin;
@@ -22,6 +22,16 @@ export function isInRect([x, y]: Point, [[x1, y1], [x2, y2]]: [Point, Point], ma
         x >= xmin && x <= xmax &&
         y >= ymin && y <= ymax
     );
+}
+
+/** Check if 2 Rectangles intersect  */
+export function crossRect(rect1: Rect, rect2: Rect): boolean {
+    const isXCommon = rect1[0][0] <= rect2[1][0] &&
+        rect1[1][0] >= rect2[0][0];
+    const isYCommon = rect1[0][1] <= rect2[1][1] &&
+        rect1[1][1] >= rect2[0][1];
+
+    return isXCommon && isYCommon;
 }
 
 /** return angle [0, 2π] */

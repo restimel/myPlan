@@ -1,5 +1,6 @@
 import { getHoldInArea } from '@/utils/holds';
 import { log } from '@/utils/debug';
+import { crossRect } from '@/utils/geometry';
 
 const bgHoldColor = '#ffffff33';
 const borderHoldColor = '#000000ff';
@@ -102,7 +103,108 @@ export function drawHolds(holds: Hold[], canvasEl: HTMLCanvasElement, options: O
     });
 }
 
-export function drawInformation(holds: Hold[], canvasEl: HTMLCanvasElement | null, defaultHoldSize: number) {
+type Preferences = {
+    position?: 'top' | 'bottom';
+    area?: Box;
+};
+
+function getBoxPosition(boxWidth: number, boxHeight: number, holds: Hold[], canvasEl: HTMLCanvasElement, preferences: Preferences = {}): [number, number, boolean] {
+    const margin = 5;
+    const maxWidth = canvasEl.width;
+    const maxHeight = canvasEl.height;
+    const w = boxWidth;
+    const h = boxHeight;
+    let x = margin;
+    let y = margin;
+    let isOk = true;
+
+    const checkBottom = preferences.position === 'bottom';
+
+    function haveSpace(x: number, y: number): boolean {
+        const holdInArea = getHoldInArea([x, y], [x + w, y + h], holds);
+
+        const hasOtherBox = preferences.area ? crossRect(
+            [
+                [x, y],
+                [x + boxWidth, y + boxHeight],
+            ],
+            [
+                [preferences.area[0], preferences.area[1]], [preferences.area[0] + preferences.area[2], preferences.area[1] + preferences.area[3]],
+            ]
+        ) : false;
+
+        return !holdInArea.length && !hasOtherBox;
+    }
+
+    if (checkBottom && haveSpace(maxWidth / 2 - w / 2, maxHeight - margin - h)) {
+        /* Bottom center */
+        x = maxWidth / 2 - w / 2;
+        y = maxHeight - margin - h;
+    } else if (checkBottom && haveSpace(margin, maxHeight - margin - h)) {
+        /* Bottom left */
+        x = margin;
+        y = maxHeight - margin - h;
+    } else if (checkBottom && haveSpace(maxWidth - margin - w, maxHeight - margin - h)) {
+        /* Bottom right */
+        x = maxWidth - margin - w;
+        y = maxHeight - margin - h;
+    } else if (haveSpace(margin, margin)) {
+        /* Top left */
+        x = margin;
+        y = margin;
+    } else if (haveSpace(maxWidth - margin - w, margin)) {
+        /* Top right */
+        x = maxWidth - margin - w;
+        y = margin;
+    } else if (haveSpace(maxWidth / 2 - w / 2, margin)) {
+        /* Top middle */
+        x = maxWidth / 2 - w / 2;
+        y = margin;
+    } else if (haveSpace(margin, maxHeight /2 - h / 2)) {
+        /* middle left */
+        x = margin;
+        y = maxHeight /2 - h / 2;
+    } else if (haveSpace(maxWidth - margin - w, maxHeight /2 - h / 2)) {
+        /* middle right */
+        x = maxWidth - margin - w;
+        y = maxHeight /2 - h / 2;
+    } else {
+        log('information', 'box position is default :/');
+        x = margin;
+        y = margin;
+        isOk = false;
+    }
+
+    return [x, y, isOk];
+}
+
+function drawBoxText(text: string, isOk: boolean, box: Box, size: number, context: CanvasRenderingContext2D) {
+    const [x, y, w, h] = box;
+
+    context.save();
+
+    context.fillStyle = bgHoldColor;
+    context.strokeStyle = borderHoldColor;
+    context.font = `${size}px serif`;
+
+    if (!isOk) {
+        context.globalAlpha = 0.5;
+    }
+
+    context.rect(x, y, w, h);
+
+    context.fill();
+    context.stroke();
+
+    context.textBaseline = 'middle';
+    context.textAlign = 'center';
+    context.fillStyle = borderHoldColor;
+
+    context.fillText(text, x + w / 2, y + 2 + h / 2, w);
+    context.restore();
+}
+
+export function drawInformation(holds: Hold[], settings: RouteSettings, canvasEl: HTMLCanvasElement | null, defaultHoldSize: number) {
     const context = canvasEl?.getContext('2d');
 
     if (!context || !canvasEl) {
@@ -113,56 +215,22 @@ export function drawInformation(holds: Hold[], canvasEl: HTMLCanvasElement | nul
     const top = (Array.isArray(lastValue) ? lastValue[lastValue.length - 1] : lastValue) + 1;
 
     const size = defaultHoldSize * 1.5;
-    const margin = 5;
-    const maxWidth = canvasEl.width;
-    const maxHeight = canvasEl.height;
-    let x = margin;
-    let y = margin;
-    const w = 5 * size;
-    const h = size;
+    const topText = `TOP = ${top}`; /* TODO i18n */
+    const topWidth = topText.length * 0.6 * size;
+    const topHeight = size;
 
-    context.save();
+    const [xTop, yTop, isOkTop] = getBoxPosition(topWidth, topHeight, holds, canvasEl);
 
-    if (!getHoldInArea([margin, margin], [margin + w, margin + h], holds).length) {
-        /* Top left */
-        x = margin;
-        y = margin;
-    } else if (!getHoldInArea([maxWidth - margin - w, margin], [maxWidth - margin, margin + h], holds).length) {
-        /* Top right */
-        x = maxWidth - margin - w;
-        y = margin;
-    } else if (!getHoldInArea([maxWidth / 2 - w / 2, margin], [maxWidth / 2 + w / 2, margin + h], holds).length) {
-        /* Top middle */
-        x = maxWidth / 2 - w / 2;
-        y = margin;
-    } else if (!getHoldInArea([margin, maxHeight /2 - h / 2], [margin + w, maxHeight /2 + h / 2], holds).length) {
-        /* middle left */
-        x = margin;
-        y = maxHeight /2 - h / 2;
-    } else if (!getHoldInArea([maxWidth - margin - w, maxHeight /2 - h / 2], [maxWidth - margin, maxHeight /2 + h / 2], holds).length) {
-        /* middle right */
-        x = maxWidth - margin - w;
-        y = maxHeight /2 - h / 2;
-    } else {
-        log('information', 'position of is by default :/');
-        x = margin;
-        y = margin;
-        context.globalAlpha = 0.5;
-    }
+    drawBoxText(topText, isOkTop, [xTop, yTop, topWidth, topHeight], size, context);
 
-    context.fillStyle = bgHoldColor;
-    context.strokeStyle = borderHoldColor;
-    context.font = `${size}px serif`;
+    const nameText = settings.routeName;
+    const nameWidth = nameText.length * 0.6 * size;
+    const nameHeight = size;
 
-    context.rect(x, y, w, h);
+    const [xName, yName, isOkName] = getBoxPosition(nameWidth, nameHeight, holds, canvasEl, {
+        position: 'bottom',
+        area: [xTop, yTop, topWidth, topHeight],
+    });
 
-    context.fill();
-    context.stroke();
-
-    context.textBaseline = 'middle';
-    context.textAlign = 'center';
-    context.fillStyle = borderHoldColor;
-    /* TODO i18n */
-    context.fillText(`TOP = ${top}`, x + w / 2, y + 2 + h / 2, w);
-    context.restore();
+    drawBoxText(nameText, isOkName, [xName, yName, nameWidth, nameHeight], size, context);
 }

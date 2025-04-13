@@ -7,6 +7,7 @@ export default {
     },
     view: {
         title: 'Voir',
+        settingsTitle: 'Paramètres',
     },
     about: {
         title: 'À propos',
@@ -39,6 +40,7 @@ export default {
         bug: 'Pour rapporter des bugs :',
         contribution: 'Pour contribuer :',
         licence: 'Licence :',
+        routeName: 'Nom de la voie :',
         size: 'Taille :',
         version: 'Version :',
         video: 'Url de la vidéo :',

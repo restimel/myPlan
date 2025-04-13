@@ -11,7 +11,7 @@
     * [x] screenEvent → stateInteraction
     * [ ] Manage zoom in "view" mode
 * [ ] Build
-    * [ ] Add route information (name/description)
+    * [x] Add route information (name/description)
     * [ ] Actions
         * [ ] move: also move when "selection"
         * [ ] link: create a Link selection

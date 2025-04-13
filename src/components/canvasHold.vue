@@ -75,6 +75,7 @@ import {
     linkHolds,
     moveHold,
     removeHold,
+    routeName,
 } from '@/utils/holds';
 import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
@@ -226,7 +227,11 @@ function validate() {
         return;
     }
 
-    if (saveRoute(props.image, holdList.value)) {
+    const settings = {
+        routeName: routeName.value,
+    };
+
+    if (saveRoute(props.image, holdList.value, settings)) {
         emit('view');
     }
 }

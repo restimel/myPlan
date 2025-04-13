@@ -7,6 +7,7 @@ export default {
     },
     view: {
         title: 'View',
+        settingsTitle: 'Settings',
     },
     about: {
         title: 'About',
@@ -39,6 +40,7 @@ export default {
         bug: 'To report bugs:',
         contribution: 'To contribute:',
         licence: 'Licence:',
+        routeName: 'Route name:',
         size: 'Size:',
         version: 'Version:',
         video: 'Video url:',
