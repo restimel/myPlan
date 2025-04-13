@@ -50,7 +50,7 @@
             :disabled="holdList.length === 0"
             :title="t('action.validate')"
         >
-            <MyIcon icon="view" />
+            <MyIcon icon="ok" />
         </button>
         <button
             @click="save()"

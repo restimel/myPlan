@@ -1,6 +1,8 @@
 <template>
 <aside class="modal">
-    <h2>{{ title }}</h2>
+    <header>
+        {{ title }}
+    </header>
 
     <label v-for="item of items"
         :key="item.name"
@@ -17,11 +19,13 @@
             class="primary-btn"
             @click="close(true)"
         >
+            <MyIcon icon="ok" />
             {{ t('action.confirm') }}
         </button>
         <button
             @click="close(false)"
         >
+            <MyIcon icon="cancel" />
             {{ t('action.cancel') }}
         </button>
     </footer>
@@ -31,6 +35,7 @@
 <script lang="ts" setup>
 import { defineProps, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MyIcon from '@/components/myIcon.vue';
 
 type ItemText = {
     label: string;
@@ -49,7 +54,7 @@ type ItemNumber = {
 type Item = ItemText | ItemNumber;
 type Items = Item[];
 
-type Result = Record<Item['name'], Item['value']>;
+type Result = Record<string, string | number>;
 
 type Props = {
     title: string;
@@ -90,10 +95,25 @@ function close(submit = false) {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
+    box-shadow: var(--shadow-primary);
 
     background: var(--color-background);
     color: var(--color-text);
 
     padding: var(--spacing-md);
+}
+
+header {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--field-margin);
+    text-align: center;
+}
+footer {
+    margin-top: var(--field-margin);
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-xs);
 }
 </style>

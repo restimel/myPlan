@@ -5,6 +5,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import IconBug from '@/components/icons/IconBug.vue';
+import IconCancel from '@/components/icons/IconCancel.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconDown from '@/components/icons/IconDown.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
@@ -13,10 +14,12 @@ import IconGithub from '@/components/icons/IconGithub.vue';
 import IconLink from '@/components/icons/IconLink.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
 import IconMerge from '@/components/icons/IconMerge.vue';
+import IconOk from '@/components/icons/IconOk.vue';
 import IconPhoto from '@/components/icons/IconPhoto.vue';
 import IconQuestion from '@/components/icons/IconQuestion.vue';
 import IconRecapture from '@/components/icons/IconRecapture.vue';
 import IconSave from '@/components/icons/IconSave.vue';
+import IconSettings from '@/components/icons/IconSettings.vue';
 import IconSize from '@/components/icons/IconSize.vue';
 import IconSplit from '@/components/icons/IconSplit.vue';
 import IconUnlink from '@/components/icons/IconUnlink.vue';
@@ -26,6 +29,7 @@ import IconYouTube from '@/components/icons/IconYouTube.vue';
 
 type Icons =
     | 'bug'
+    | 'cancel'
     | 'delete'
     | 'down'
     | 'edit'
@@ -34,10 +38,12 @@ type Icons =
     | 'link'
     | 'menu'
     | 'merge'
+    | 'ok'
     | 'photo'
     | 'question'
     | 'recapture'
     | 'save'
+    | 'settings'
     | 'size'
     | 'split'
     | 'unlink'
@@ -55,6 +61,7 @@ const props = defineProps<Props>();
 
 const mapElement = {
     bug: IconBug,
+    cancel: IconCancel,
     delete: IconDelete,
     down: IconDown,
     edit: IconEdit,
@@ -63,10 +70,12 @@ const mapElement = {
     link: IconLink,
     menu: IconMenu,
     merge: IconMerge,
+    ok: IconOk,
     photo: IconPhoto,
     question: IconQuestion,
     recapture: IconRecapture,
     save: IconSave,
+    settings: IconSettings,
     size: IconSize,
     split: IconSplit,
     unlink: IconUnlink,
