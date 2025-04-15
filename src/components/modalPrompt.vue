@@ -4,15 +4,19 @@
         {{ title }}
     </header>
 
-    <label v-for="item of items"
-        :key="item.name"
+    <form
+        @submit.prevent.stop="submitForm"
     >
-        {{ item.label }}
-        <input
-            type="text"
-            v-model="internalValue[item.name]"
+        <label v-for="item of items"
+            :key="item.name"
         >
-    </label>
+            {{ item.label }}
+            <input
+                type="text"
+                v-model="internalValue[item.name]"
+            >
+        </label>
+    </form>
 
     <footer>
         <button
@@ -85,6 +89,16 @@ function close(submit = false) {
     } else {
         emit('close', undefined);
     }
+}
+
+function submitForm() {
+    const element = document.activeElement as HTMLElement;
+
+    if (!element) {
+        return;
+    }
+
+    element?.blur?.();
 }
 </script>
 
