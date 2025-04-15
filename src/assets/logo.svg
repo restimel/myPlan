@@ -1,1 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- circle borders -->
+  <circle cx="150" cy="150" r="140" fill="white" stroke="#03378c" stroke-width="10"/>
+  <circle cx="150" cy="150" r="130" fill="white" stroke="#01a1e5" stroke-width="6"/>
+
+  <!-- background of the circle -->
+  <circle cx="150" cy="150" r="124" fill="#f9fbff"/>
+
+  <!-- The route -->
+  <path d="M130,240 L60,150 L90,120 L130,130 L110,70 L210,80"
+        stroke="#03378c" stroke-width="6" fill="none"/>
+
+  <!-- holds -->
+  <circle cx="130" cy="240" r="13" fill="#ee1825" stroke="#03378c" stroke-width="8"/>
+  <circle cx="60" cy="150" r="13" fill="#ee1825" stroke="#03378c" stroke-width="8"/>
+  <circle cx="90" cy="120" r="13" fill="#ee1825" stroke="#03378c" stroke-width="8"/>
+  <circle cx="130" cy="130" r="13" fill="#ee1825" stroke="#03378c" stroke-width="8"/>
+  <circle cx="110" cy="70" r="13" fill="#ee1825" stroke="#03378c" stroke-width="8"/>
+  <circle cx="210" cy="80" r="13" fill="#ee1825" stroke="#03378c" stroke-width="8"/>
+
+  <!-- Title -->
+  <g transform="translate(250, 160)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-style="italic" font-size="36" text-anchor="end" fill="#ee1825">my</text>
+    <text x="0" y="40" font-family="Arial, sans-serif" font-weight="bold" font-size="45" text-anchor="end" fill="#01a1e5">PLAN</text>
+  </g>
+</svg>

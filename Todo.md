@@ -2,7 +2,7 @@
 
 ## TODO
 
-* [ ] create a logo icon
+* [x] create a logo icon
 * [ ] factorize canvas draw
     * [x] draw holds
     * [ ] initialization (load image)
