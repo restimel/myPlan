@@ -85,8 +85,8 @@ function loadImage() {
 
     context.putImageData(imgData, 0, 0);
 
-    drawRoute();
     drawDetails();
+    drawRoute();
 }
 
 function drawRoute() {

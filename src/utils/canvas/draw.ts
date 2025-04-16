@@ -170,9 +170,15 @@ function getBoxPosition(boxWidth: number, boxHeight: number, holds: Hold[], canv
         y = maxHeight /2 - h / 2;
     } else {
         log('information', 'box position is default :/');
-        x = margin;
-        y = margin;
         isOk = false;
+
+        if (checkBottom) {
+            x = maxWidth / 2 - w / 2;
+            y = maxHeight - margin - h;
+        } else {
+            x = margin;
+            y = margin;
+        }
     }
 
     return [x, y, isOk];
