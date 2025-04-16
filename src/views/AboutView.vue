@@ -19,6 +19,7 @@
             <img
                 src="@/assets/url.png"
                 alt="url to https://restimel.github.io/myPlan"
+                class="qr-code"
             >
             <figcaption>
                 https://restimel.github.io/myPlan
@@ -46,6 +47,9 @@
                 </span>
             </output>
         </label>
+
+        <img src="@/assets/logo.svg" alt="logo of myPLAN" class="logo" />
+
         <label v-if="debug">
             Debug
             <output>
@@ -103,8 +107,26 @@ figure {
     }
 }
 
-img {
+.qr-code {
     max-width: calc(100vw - 2 * var(--section-padding));
     max-height: 90vh;
 }
+
+.logo {
+    width: 200px;
+    max-width: 60vw;
+
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+@media (min-width: 750px) {
+    .logo {
+        position: absolute;
+        top: var(--section-padding);
+        right: var(--section-padding);
+    }
+}
+
 </style>

@@ -11,7 +11,7 @@ export default {
     },
     about: {
         title: 'About',
-        header: 'About MyPlan',
+        header: 'About myPLAN',
         toReportBug: 'To report a bug, you need a Github account',
     },
     message: {
