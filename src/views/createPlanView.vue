@@ -41,6 +41,7 @@ function toView() {
     display: grid;
     grid-template-rows: 1fr max-content;
     grid-template-areas: "content" "actions";
+    position: relative;
 }
 
 </style>

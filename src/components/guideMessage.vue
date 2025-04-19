@@ -1,6 +1,9 @@
 <template>
     <aside v-if="opacity > 0"
         class="message"
+        :class="{
+            small: small,
+        }"
         :style="`--opacity: ${opacity};`"
     >
         {{ message }}
@@ -16,29 +19,21 @@ type Props = {
 const props = defineProps<Props>();
 
 const opacity = ref(1);
+const small = ref(false);
 let timer = 0;
 
 const ANIMATION_DELAY = 1_200;
-const ANIMATION_STEP = 80;
 
 watch(() => props.message, animation, { immediate: true });
 
 function animation() {
     opacity.value = 1;
+    small.value = false;
     clearTimeout(timer);
 
-    function reduceOpacity() {
-        const value = opacity.value - 0.1;
-
-        if (value > 0) {
-            opacity.value = value;
-            timer = setTimeout(reduceOpacity, ANIMATION_STEP);
-        } else {
-            opacity.value = 0;
-        }
-    }
-
-    timer = setTimeout(reduceOpacity, ANIMATION_DELAY);
+    timer = setTimeout(() => {
+        small.value = true;
+    }, ANIMATION_DELAY);
 }
 </script>
 <style scoped>
@@ -53,10 +48,20 @@ function animation() {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 100%;
     pointer-events: none;
     user-select: none;
     font-size: 3em;
     font-weight: 600;
     opacity: var(--opacity, 0.3);
+
+    transition: all 1s ease;
+}
+
+.small {
+    top: 0;
+    font-size: 0.9em;
+    transform: translate(-50%, 0);
+    padding-top: 0;
 }
 </style>
