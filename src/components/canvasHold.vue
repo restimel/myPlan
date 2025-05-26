@@ -12,6 +12,9 @@
         <canvas
             ref="canvasLayer"
             id="canvasLayer"
+            :class="{
+                isDoingMagic: applyGrey,
+            }"
             @mousedown="screenEvent"
             @touchstart="screenEvent"
             @mouseup="screenEvent"
@@ -36,6 +39,16 @@
             :title="t('action.anotherPhoto')"
         >
             <MyIcon icon="recapture" />
+        </button>
+        <button v-if="debug"
+            :class="{
+                active: applyGrey,
+                applied: highlightColor && !applyGrey,
+            }"
+            @click="toggleGrey"
+            :title="t('action.magicGrey')"
+        >
+            <MyIcon icon="magic" />
         </button>
         <button
             :disabled="holdList.length === 0"
@@ -87,6 +100,7 @@ import { exportImage } from '@/utils/files';
 import { screenListener } from '@/utils/screenEvent';
 import { setup, type ScreenAction } from '@/utils/screenStates';
 import { hysterisPoint } from '@/utils/movePoint';
+import { filterToGrey, type ColorRGB } from '@/utils/image';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -103,12 +117,20 @@ const container = useTemplateRef('container');
 const canvas = useTemplateRef('canvas');
 const canvasLayer = useTemplateRef('canvasLayer');
 
+const activeImage = ref<ImageData | null>(null);
+
 const scaleRatio = ref(1);
 const updateRect = ref(0);
 const offsetX = ref(0);
 const offsetY = ref(0);
 
-watch(() => props.image, loadImage);
+const applyGrey = ref(false);
+const highlightColor = ref(false);
+
+watch(() => props.image, () => {
+    /* It will reset the effect on image and apply the image to canvas */
+    setGrey();
+});
 watch(holdList, drawRoute, { deep: true });
 
 /* assert ratio is in bound */
@@ -181,12 +203,14 @@ onBeforeUnmount(() => {
     observer?.disconnect();
 });
 
-function loadImage() {
+function loadImage(data?: ImageData) {
     const canvasEl = canvas.value!;
     const canvasLayerEl = canvasLayer.value!;
-    const imgData = props.image;
+    const imgData = data ?? props.image;
 
     if (!canvasEl || !imgData) {
+        activeImage.value = null;
+
         return;
     }
 
@@ -209,9 +233,52 @@ function loadImage() {
     defaultHoldSize.value = canvasLayerEl.height / 60;
 
     drawHolds(holdList.value, canvasLayerEl);
+
+    activeImage.value = imgData;
+}
+
+function setGrey(point?: Point) {
+    const originImage = props.image;
+
+    applyGrey.value = false;
+    highlightColor.value = false;
+
+    if (!originImage) {
+        return;
+    }
+
+    if (!point) {
+        loadImage(originImage);
+
+        return;
+    }
+
+    const pointIndex = (Math.round(point[0]) + Math.round(point[1]) * originImage.width) * 4;
+    const color: ColorRGB = [
+        originImage.data[pointIndex],
+        originImage.data[pointIndex + 1],
+        originImage.data[pointIndex + 2],
+    ];
+
+    if (color[0] === undefined) {
+        log('warning', `No color [${pointIndex} / ${originImage.data.length}]`);
+        loadImage(originImage);
+
+        return;
+    }
+
+    const image = filterToGrey(originImage, color);
+
+    loadImage(image);
+
+    highlightColor.value = true;
 }
 
 function setHold(point: Point) {
+    if (applyGrey.value) {
+        return setGrey(point);
+    }
+
     addHold(point[0], point[1], defaultHoldSize.value);
 }
 
@@ -221,7 +288,7 @@ function closeMenu() {
 }
 
 function validate() {
-    const image = props.image;
+    const image = activeImage.value;
 
     if (!image) {
         return;
@@ -231,20 +298,30 @@ function validate() {
         routeName: routeName.value,
     };
 
-    if (saveRoute(props.image, holdList.value, settings)) {
+    if (saveRoute(image, holdList.value, settings)) {
         emit('view');
     }
 }
 
+function toggleGrey() {
+    if (!applyGrey.value && highlightColor.value) {
+        setGrey();
+
+        return;
+    }
+
+    applyGrey.value = !applyGrey.value;
+}
+
 function save() {
     /* Prepare the image (in only one canvas) */
-    const imgData = props.image!;
+    const imgData = activeImage.value!;
     const canvasLayerEl = canvasLayer.value!;
     const context = canvasLayerEl.getContext('2d')!;
     context.putImageData(imgData, 0, 0);
     drawHolds(holdList.value, canvasLayerEl);
 
-    /* Create the file an download it */
+    /* Create the file and download it */
     exportImage(canvasLayerEl);
 
     /* restore the canvas */
@@ -381,6 +458,10 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
     height: 100%;
     overflow: auto;
     background: var(--color-bg-media);
+}
+
+.isDoingMagic {
+    cursor: url(@/assets/iconMagic.cur) 14 14, pointer;
 }
 
 .separator {

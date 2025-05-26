@@ -12,6 +12,7 @@ import IconEdit from '@/components/icons/IconEdit.vue';
 import IconFile from '@/components/icons/IconFile.vue';
 import IconGithub from '@/components/icons/IconGithub.vue';
 import IconLink from '@/components/icons/IconLink.vue';
+import IconMagic from '@/components/icons/IconMagic.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
 import IconMerge from '@/components/icons/IconMerge.vue';
 import IconOk from '@/components/icons/IconOk.vue';
@@ -36,6 +37,7 @@ type Icons =
     | 'file'
     | 'github'
     | 'link'
+    | 'magic'
     | 'menu'
     | 'merge'
     | 'ok'
@@ -68,6 +70,7 @@ const mapElement = {
     file: IconFile,
     github: IconGithub,
     link: IconLink,
+    magic: IconMagic,
     menu: IconMenu,
     merge: IconMerge,
     ok: IconOk,

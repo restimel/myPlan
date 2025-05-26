@@ -1,4 +1,5 @@
-type Color = [number, number, number];
+export type ColorRGB = [number, number, number];
+export type ColorHSL = [number, number, number];
 
 export function convertToImageData(data: number[], width: number, height: number): ImageData {
     const buffer = new ArrayBuffer(data.length);
@@ -15,14 +16,14 @@ export function convertToImageData(data: number[], width: number, height: number
     return imgData;
 }
 
-export function table1Dto2D(imageData: ImageData): Color[][]  {
-    const image: Color[][] = new Array(imageData.width);
+export function table1Dto2D(imageData: ImageData): ColorRGB[][]  {
+    const image: ColorRGB[][] = new Array(imageData.width);
     const width = imageData.width;
     const height = imageData.height;
     const data = imageData.data;
 
     for (let x = 0; x < width; x++) {
-        const col: Color[] = new Array(height);
+        const col: ColorRGB[] = new Array(height);
 
         for (let y = 0; y < height; y++) {
             const index = (y * width + x) * 4;
@@ -39,7 +40,7 @@ export function table1Dto2D(imageData: ImageData): Color[][]  {
     return image;
 }
 
-export function table2Dto1D(image: Color[][]): ImageData {
+export function table2Dto1D(image: ColorRGB[][]): ImageData {
     const width = image.length;
     const height = image[0]?.length ?? 0;
     const length = width * height * 4;
@@ -66,7 +67,7 @@ export function table2Dto1D(image: Color[][]): ImageData {
 }
 
 /* Bilinear reduction */
-export function reduceSize(image: Color[][], reduceRatio: number): Color[][] {
+export function reduceSize(image: ColorRGB[][], reduceRatio: number): ColorRGB[][] {
     if (reduceRatio < 1) {
         throw new Error('reduceRatio must be greater than 1');
     }
@@ -85,7 +86,7 @@ export function reduceSize(image: Color[][], reduceRatio: number): Color[][] {
     const newWidth: number = Math.max(1, Math.floor(width / reduceRatio));
     const newHeight: number = Math.max(1, Math.floor(height / reduceRatio));
 
-    const newImage: Color[][] = Array.from({ length: newWidth }, () =>
+    const newImage: ColorRGB[][] = Array.from({ length: newWidth }, () =>
         Array.from({ length: newHeight }, () => [0, 0, 0])
     );
 
@@ -108,10 +109,10 @@ export function reduceSize(image: Color[][], reduceRatio: number): Color[][] {
 
             const dy: number = srcY - y1;
 
-            const c00: Color = image[x1][y1];
-            const c10: Color = image[x2][y1];
-            const c01: Color = image[x1][y2];
-            const c11: Color = image[x2][y2];
+            const c00: ColorRGB = image[x1][y1];
+            const c10: ColorRGB = image[x2][y1];
+            const c01: ColorRGB = image[x1][y2];
+            const c11: ColorRGB = image[x2][y2];
 
             const r: number = interpolate(
                 interpolate(c00[0], c10[0], dx),
@@ -136,4 +137,126 @@ export function reduceSize(image: Color[][], reduceRatio: number): Color[][] {
     }
 
     return newImage;
+}
+
+function isAround(value1: number, value2: number, margin = 40, circleMax?: number): boolean {
+    const boundMin = value2 - margin;
+    const boundMax = value2 + margin;
+
+    if (circleMax) {
+        if (boundMin < 0 && value1 > boundMax) {
+            return value1 > boundMin + circleMax;
+        }
+
+        if (boundMax > circleMax && value1 < boundMin) {
+            return value1 < boundMax - circleMax;
+        }
+    }
+
+    return (value1 > boundMin) && (value1 < boundMax);
+}
+
+function clampValue(value: number): number {
+    return Math.max(
+        0,
+        Math.min(
+            value,
+            255
+        )
+    );
+}
+
+const RED = 0;
+const GREEN = 1;
+const BLUE = 2;
+
+const HUE = 0;
+/*
+ * const SATURATE = 1;
+ * const LIGHTNESS = 2;
+ */
+
+function rgbToHsl(color: ColorRGB): ColorHSL {
+    const [r, g, b] = color;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+    /* [0, 255] */
+    const l = (max + min) / 2;
+    /* [0, 255] */
+    const s = delta / (255 - Math.abs(2 * l - 255));
+
+    /* [0, 360] */
+    let h = 0;
+
+    if (max === r) {
+        h = ((g - b) / delta) * 60;
+    } else if (max === g) {
+        h = ((b - r) / delta) * 60 + 120;
+    } else {
+        h = ((r - g) / delta) * 60 + 240;
+    }
+
+    h = (h + 360) % 360;
+
+    return [h, s, l];
+}
+
+function meanColorValue(color?: ColorRGB): number {
+    if (color) {
+        return Math.round((color[RED] + color[GREEN] + color[BLUE]) / 3);
+    }
+
+    return 127;
+}
+
+function isSameHue(pixel: ColorRGB, hueReference: number): boolean {
+    const [h] = rgbToHsl(pixel);
+
+    return isAround(h, hueReference, 15, 360);
+}
+
+export function filterToGrey(originImage: ImageData, color?: ColorRGB): ImageData {
+    const data = Array.from(originImage.data);
+    const refMeanValue = meanColorValue(color);
+    /* Darken or lighten the greyValue at the opposite of the chosen value */
+    const modification = !color ? 1 : (
+        refMeanValue < 127 ? 1.4 : 0.6
+    );
+    const hueReference = rgbToHsl(color ?? [0, 0, 0])[HUE];
+
+    let index = 0;
+    const length = originImage.height * originImage.width * 4;
+
+    while (index < length) {
+        const red = data[index];
+        const green = data[index + 1];
+        const blue = data[index + 2];
+        const pixelColor: ColorRGB = [red, green, blue];
+
+        if (!color || !isSameHue(pixelColor, hueReference)) {
+            const meanValue = meanColorValue(pixelColor);
+            const newValue = clampValue(meanValue * modification);
+
+            data[index] = newValue;
+            data[index + 1] = newValue;
+            data[index + 2] = newValue;
+        }
+
+        index += 4;
+    }
+
+    const buffer = new ArrayBuffer(data.length);
+    const clampedArray = new Uint8ClampedArray(buffer);
+
+    clampedArray.set(data);
+
+    const image = new ImageData(
+        clampedArray,
+        originImage.width,
+        originImage.height
+    );
+
+    return image;
 }

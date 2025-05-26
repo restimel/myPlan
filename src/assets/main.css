@@ -35,7 +35,12 @@ button {
     color: var(--color-text-details)
 }
 
+button.active,
 .primary-btn {
     background: var(--color-primary);
     color: var(--color-txt-primary);
+}
+
+button.applied:not(.active) {
+    color: var(--color-primary);
 }
