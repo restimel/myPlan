@@ -13,7 +13,7 @@
             ref="canvasLayer"
             id="canvasLayer"
             :class="{
-                isDoingMagic: applyGrey,
+                isDoingMagic: willApplyGrey,
             }"
             @mousedown="screenEvent"
             @touchstart="screenEvent"
@@ -34,23 +34,56 @@
         <GuideMessage :message="t('build.setHolds')" />
     </div>
     <footer class="footer-actions">
-        <button
-            @click="emit('back')"
+        <button v-show="!menuOpen"
+            @click="menuAction('back')"
             :title="t('action.anotherPhoto')"
         >
             <MyIcon icon="recapture" />
         </button>
-        <button v-if="debug"
+        <button v-if="debug" v-show="!menuOpen"
             :class="{
-                active: applyGrey,
-                applied: highlightColor && !applyGrey,
+                active: willApplyGrey,
+                applied: highlightColor && !willApplyGrey,
             }"
             @click="toggleGrey"
             :title="t('action.magicGrey')"
         >
             <MyIcon icon="magic" />
         </button>
-        <button
+        <EditorMenu
+            :actions="[
+                {
+                    type: 'back',
+                    icon: 'recapture',
+                },
+                {
+                    type: 'magicHold',
+                    icon: 'magic',
+                },
+                {
+                    type: 'removeHold',
+                    icon: 'delete',
+                    disabled: holdList.length === 0,
+                    title: t('action.removeLast'),
+                },
+                {
+                    type: 'save',
+                    icon: 'save',
+                    disabled: holdList.length === 0,
+                    title: t('action.save'),
+                },
+                {
+                    type: 'validate',
+                    icon: 'ok',
+                    disabled: holdList.length === 0,
+                    title: t('action.validate'),
+                },
+            ]"
+            @open="(value) => menuOpen = value"
+            @action="menuAction"
+        />
+        <span class="separator"></span>
+        <button v-show="!menuOpen"
             :disabled="holdList.length === 0"
             @click="removeHold()"
             :title="t('action.removeLast')"
@@ -58,23 +91,22 @@
             <MyIcon icon="delete" />
         </button>
         <span class="separator"></span>
-        <button
+        <button v-show="!menuOpen"
             @click="validate()"
             :disabled="holdList.length === 0"
             :title="t('action.validate')"
         >
             <MyIcon icon="ok" />
         </button>
-        <button
-            @click="save()"
-            :disabled="holdList.length === 0"
-            :title="t('action.save')"
-        >
-            <MyIcon icon="save" />
-        </button>
         <span class="info" v-if="debug">
             <input type="range" min="0.1" max="10" step="0.1" v-model="scaleRatio" />{{ Math.round(scaleRatio * 10) / 10 }}
         </span>
+
+        <MyIcon v-if="highlightColor"
+            icon="magic"
+            class="status"
+            @click="setGrey()"
+        />
     </footer>
 </template>
 <script lang="ts" setup>
@@ -94,6 +126,7 @@ import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
 import { drawHolds } from '@/utils/canvas/draw';
 import HoldMenu from '@/components/holdMenu.vue';
+import EditorMenu from '@/components/viewer/editorMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
 import GuideMessage from '@/components/guideMessage.vue';
 import { exportImage } from '@/utils/files';
@@ -124,8 +157,9 @@ const updateRect = ref(0);
 const offsetX = ref(0);
 const offsetY = ref(0);
 
-const applyGrey = ref(false);
+const willApplyGrey = ref(false);
 const highlightColor = ref(false);
+const menuOpen = ref(false);
 
 watch(() => props.image, () => {
     /* It will reset the effect on image and apply the image to canvas */
@@ -203,6 +237,29 @@ onBeforeUnmount(() => {
     observer?.disconnect();
 });
 
+function menuAction(action: string) {
+    switch (action) {
+        case 'back':
+            emit('back');
+            break;
+        case 'magicHold':
+            toggleGrey();
+            break;
+        case 'removeHold':
+            removeHold();
+            break;
+        case 'save':
+            save();
+            break;
+        case 'validate':
+            validate();
+            break;
+        default:
+            /* eslint-disable-next-line no-console */
+            console.warn('action "%s" non implemented yet', action);
+    }
+}
+
 function loadImage(data?: ImageData) {
     const canvasEl = canvas.value!;
     const canvasLayerEl = canvasLayer.value!;
@@ -240,7 +297,7 @@ function loadImage(data?: ImageData) {
 function setGrey(point?: Point) {
     const originImage = props.image;
 
-    applyGrey.value = false;
+    willApplyGrey.value = false;
     highlightColor.value = false;
 
     if (!originImage) {
@@ -275,7 +332,7 @@ function setGrey(point?: Point) {
 }
 
 function setHold(point: Point) {
-    if (applyGrey.value) {
+    if (willApplyGrey.value) {
         return setGrey(point);
     }
 
@@ -304,13 +361,13 @@ function validate() {
 }
 
 function toggleGrey() {
-    if (!applyGrey.value && highlightColor.value) {
+    if (!willApplyGrey.value && highlightColor.value) {
         setGrey();
 
         return;
     }
 
-    applyGrey.value = !applyGrey.value;
+    willApplyGrey.value = !willApplyGrey.value;
 }
 
 function save() {
@@ -470,5 +527,16 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
 .info {
     font-size: 0.8em;
     color: var(--color-text-secondary);
+}
+
+.status {
+    position: absolute;
+    right: var(--spacing-lg);
+    bottom: var(--spacing-lg);
+    background: var(--color-primary);
+    color: var(--color-txt-primary);
+    border-radius: 25px;
+    cursor: pointer;
+    --icon-size: 20px;
 }
 </style>

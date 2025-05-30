@@ -28,7 +28,7 @@ import IconUp from '@/components/icons/IconUp.vue';
 import IconView from '@/components/icons/IconView.vue';
 import IconYouTube from '@/components/icons/IconYouTube.vue';
 
-type Icons =
+export type Icons =
     | 'bug'
     | 'cancel'
     | 'delete'
