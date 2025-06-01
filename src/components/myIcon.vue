@@ -98,8 +98,14 @@ const iconComponent = computed(() => {
 });
 
 const style = computed(() => {
+    if (props.size) {
+        return `
+            --size: ${props.size ?? 15}px;
+        `;
+    }
+
     return `
-        --size: ${props.size ?? 15}px;
+        --size: var(--icon-size, 15px);
     `;
 });
 </script>

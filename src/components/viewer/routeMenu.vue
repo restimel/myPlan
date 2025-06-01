@@ -16,16 +16,19 @@
             class="actions"
         >
             <button
+                class="action"
                 @click="action('edit')"
             >
                 <MyIcon icon="edit" />
             </button>
             <button
+                class="action"
                 @click="action('exportFile')"
             >
                 <MyIcon icon="file" />
             </button>
             <button
+                class="action"
                 @click="action('settings')"
             >
                 <MyIcon icon="settings" />
@@ -53,7 +56,7 @@ function action(type: Action) {
     emit('action', type);
 }
 </script>
-<style scope>
+<style scoped>
 .menu {
     position: absolute;
     bottom: 0;

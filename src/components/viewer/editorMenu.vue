@@ -1,18 +1,23 @@
 <template>
-    <aside
-        :class="{
-            menu: true,
-            open: open,
-        }"
+    <button
+        class="action"
+        v-show="!open"
+        @click="toggleMenu"
     >
-        <div
-            class="handle"
+        <MyIcon icon="menu" />
+    </button>
+
+    <aside v-if="open"
+        class="menu"
+    >
+        <button
+            class="handle-menu action"
             @click="toggleMenu"
         >
             <MyIcon icon="menu" />
-        </div>
+        </button>
 
-        <section v-if="open"
+        <section
             class="actions"
         >
             <button v-for="actionItem of actions"
@@ -61,7 +66,7 @@ function action(type: string) {
 }
 
 </script>
-<style scope>
+<style scoped>
 .menu {
     position: absolute;
     bottom: 0;
@@ -72,8 +77,12 @@ function action(type: string) {
 }
 
 .actions {
+    position: relative;
+    z-index: 2; /* to be over the handle */
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
     gap: var(--spacing-sm);
     padding: var(--spacing-xs);
 
@@ -84,9 +93,10 @@ function action(type: string) {
     color: var(--color-text);
 }
 
-.handle {
+.handle-menu {
     position: absolute;
-    top: 0;
+    z-index: 1;
+    top: 2px;
     left: 50%;
     transform: translate(-50%, -100%);
     display: flex;
@@ -102,7 +112,7 @@ function action(type: string) {
     box-shadow: var(--shadow-primary);
 }
 
-.open .handle {
+.open .handle-menu {
     box-shadow: none;
 }
 </style>

@@ -13,6 +13,7 @@
     </div>
     <footer class="footer-actions">
         <button
+            class="action"
             @click="capture"
             :title="t('action.photo')"
         >
@@ -27,6 +28,7 @@
             @change="loadFile"
         />
         <button
+            class="action"
             @click="inputFile?.click()"
             :title="t('action.file')"
         >

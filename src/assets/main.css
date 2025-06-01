@@ -30,6 +30,12 @@ button {
     cursor: pointer;
 }
 
+button.action {
+    width: 60px;
+    height: 60px;
+    --icon-size: 30px;
+}
+
 .info {
     font-size: 0.8em;
     color: var(--color-text-details)

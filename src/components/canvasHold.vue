@@ -35,20 +35,11 @@
     </div>
     <footer class="footer-actions">
         <button v-show="!menuOpen"
+            class="action"
             @click="menuAction('back')"
             :title="t('action.anotherPhoto')"
         >
             <MyIcon icon="recapture" />
-        </button>
-        <button v-if="debug" v-show="!menuOpen"
-            :class="{
-                active: willApplyGrey,
-                applied: highlightColor && !willApplyGrey,
-            }"
-            @click="toggleGrey"
-            :title="t('action.magicGrey')"
-        >
-            <MyIcon icon="magic" />
         </button>
         <EditorMenu
             :actions="[
@@ -82,8 +73,8 @@
             @open="(value) => menuOpen = value"
             @action="menuAction"
         />
-        <span class="separator"></span>
         <button v-show="!menuOpen"
+            class="action"
             :disabled="holdList.length === 0"
             @click="removeHold()"
             :title="t('action.removeLast')"
@@ -92,6 +83,7 @@
         </button>
         <span class="separator"></span>
         <button v-show="!menuOpen"
+            class="action"
             @click="validate()"
             :disabled="holdList.length === 0"
             :title="t('action.validate')"
