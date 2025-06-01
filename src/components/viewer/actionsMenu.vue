@@ -1,6 +1,6 @@
 <template>
     <button
-        class="action"
+        class="action menu-handle"
         v-show="!open"
         @click="toggleMenu"
     >
@@ -11,7 +11,7 @@
         class="menu"
     >
         <button
-            class="handle-menu action"
+            class="inner-menu-handle action"
             @click="toggleMenu"
         >
             <MyIcon icon="menu" />
@@ -93,7 +93,7 @@ function action(type: string) {
     color: var(--color-text);
 }
 
-.handle-menu {
+.inner-menu-handle {
     position: absolute;
     z-index: 1;
     top: 2px;
@@ -112,7 +112,4 @@ function action(type: string) {
     box-shadow: var(--shadow-primary);
 }
 
-.open .handle-menu {
-    box-shadow: none;
-}
 </style>

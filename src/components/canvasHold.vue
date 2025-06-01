@@ -41,7 +41,7 @@
         >
             <MyIcon icon="recapture" />
         </button>
-        <EditorMenu
+        <ActionMenu
             :actions="[
                 {
                     type: 'back',
@@ -118,7 +118,7 @@ import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
 import { drawHolds } from '@/utils/canvas/draw';
 import HoldMenu from '@/components/holdMenu.vue';
-import EditorMenu from '@/components/viewer/editorMenu.vue';
+import ActionMenu from '@/components/viewer/actionsMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
 import GuideMessage from '@/components/guideMessage.vue';
 import { exportImage } from '@/utils/files';

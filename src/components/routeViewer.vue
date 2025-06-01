@@ -9,7 +9,21 @@
             id="canvasPicture"
         ></canvas>
     </div>
-    <RouteMenu @action="action" />
+    <div class="menu">
+        <ActionMenu
+            @action="action"
+            :actions="[{
+                type: 'edit',
+                icon: 'edit',
+            }, {
+                type: 'exportFile',
+                icon: 'file',
+            }, {
+                type: 'settings',
+                icon: 'settings',
+            }]"
+        />
+    </div>
     <ModalPrompt v-if="showSettings"
         :title="t('view.settingsTitle')"
         :items="[{
@@ -28,7 +42,7 @@ import { useRouter } from 'vue-router';
 import { drawHolds, drawInformation } from '@/utils/canvas/draw';
 import { exportImage } from '@/utils/files';
 import { defaultHoldSize, load } from '@/utils/holds';
-import RouteMenu, { type Action } from '@/components/viewer/routeMenu.vue';
+import ActionMenu from '@/components/viewer/actionsMenu.vue';
 import ModalPrompt from './modalPrompt.vue';
 
 const props = defineProps<{
@@ -97,7 +111,7 @@ function drawDetails() {
     drawInformation(props.holds, props.settings, canvas.value, defaultHoldSize.value);
 }
 
-function action(type: Action) {
+function action(type: string) {
     switch (type) {
         case 'edit':
             load({
@@ -160,5 +174,18 @@ function closeSettings(result: Record<string, string | number> | undefined) {
     height: 100%;
     overflow: auto;
     background: var(--color-bg-media);
+}
+
+.menu {
+    position: absolute;
+
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+}
+
+.menu :deep(.menu-handle) {
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
 }
 </style>
