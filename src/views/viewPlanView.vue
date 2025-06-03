@@ -1,49 +1,40 @@
 <template>
     <div class="container">
         <RouteViewer
-            :image="image"
-            :holds="holds"
-            :settings="settings"
-            @settings="changeSettings"
+            :store="routeStore"
         />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { loadRoute, saveRoute } from '@/utils/storage';
 import RouteViewer from '@/components/routeViewer.vue';
+import routeStore from '@/stores/RouteStore';
 
 const router = useRouter();
 
-const image = ref<ImageData | null>(null);
-const holds = ref<Hold[]>([]);
-const settings = ref<RouteSettings>({
-    routeName: '',
-});
+const mounted = ref(false);
+
+watch(routeStore.settings, () => {
+    if (mounted.value && routeStore.image) {
+        saveRoute(routeStore.image, routeStore.holds, routeStore.settings);
+    }
+}, { deep: true });
 
 onMounted(() => {
     const data = loadRoute();
 
+    routeStore.initialize(data);
+
     if (!data) {
-        image.value = null;
         router.push('/build');
         return;
     }
 
-    image.value = data.image;
-    holds.value = data.holds;
-    settings.value = data.settings;
+    mounted.value = true;
 });
-
-function changeSettings(value: RouteSettings) {
-    settings.value = value;
-
-    if (image.value) {
-        saveRoute(image.value, holds.value, settings.value);
-    }
-}
 
 </script>
 <style scoped>

@@ -24,48 +24,36 @@
             }]"
         />
     </div>
-    <ModalPrompt v-if="showSettings"
-        :title="t('view.settingsTitle')"
-        :items="[{
-            type: 'text',
-            label: t('label.routeName'),
-            value: settings.routeName,
-            name: 'routeName',
-        }]"
-        @close="closeSettings"
+    <RouteSettings
+        :store="store"
+        :show="showSettings"
+        @close="showSettings = false"
     />
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { drawHolds, drawInformation } from '@/utils/canvas/draw';
 import { exportImage } from '@/utils/files';
 import { defaultHoldSize, load } from '@/utils/holds';
 import ActionMenu from '@/components/viewer/actionsMenu.vue';
-import ModalPrompt from './modalPrompt.vue';
+import RouteSettings from '@/components/routeSettings.vue';
+import type { RouteStore } from '@/stores/RouteStore';
 
 const props = defineProps<{
-    image: ImageData | null;
-    holds: Hold[];
-    settings: RouteSettings;
-}>();
-
-const emit = defineEmits<{
-    settings: [RouteSettings],
+    store: RouteStore;
 }>();
 
 const router = useRouter();
-const { t } = useI18n();
 
 const container = useTemplateRef('container');
 const canvas = useTemplateRef('canvas');
 
 const scaleRatio = ref(1);
 
-watch(() => props.image, loadImage);
-watch(() => props.holds, loadImage, { deep: true });
-watch(() => props.settings, loadImage, { deep: true });
+watch(() => props.store.image, loadImage);
+watch(() => props.store.holds, loadImage, { deep: true });
+watch(() => props.store.settings, loadImage, { deep: true });
 
 const containerRect = computed<DOMRect>(() => {
     const containerEl = container.value!;
@@ -80,7 +68,7 @@ onMounted(() => {
 
 function loadImage() {
     const canvasEl = canvas.value!;
-    const imgData = props.image;
+    const imgData = props.store.image;
 
     if (!canvasEl || !imgData) {
         return;
@@ -104,20 +92,20 @@ function loadImage() {
 }
 
 function drawRoute() {
-    drawHolds(props.holds, canvas.value!);
+    drawHolds(props.store.holds, canvas.value!);
 }
 
 function drawDetails() {
-    drawInformation(props.holds, props.settings, canvas.value, defaultHoldSize.value);
+    drawInformation(props.store.holds, props.store.settings, canvas.value, defaultHoldSize.value);
 }
 
 function action(type: string) {
     switch (type) {
         case 'edit':
             load({
-                holds: props.holds,
-                image: props.image!,
-                settings: props.settings,
+                holds: props.store.holds,
+                image: props.store.image!,
+                settings: props.store.settings,
             });
 
             router.push('/build');
@@ -138,18 +126,6 @@ function action(type: string) {
 /* {{{ menu settings */
 
 const showSettings = ref(false);
-
-type Settings = {
-    routeName: string;
-};
-
-function closeSettings(result: Record<string, string | number> | undefined) {
-    if (result) {
-        emit('settings', result as Settings);
-    }
-
-    showSettings.value = false;
-}
 
 /* }}} */
 

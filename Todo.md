@@ -6,6 +6,10 @@
 * [ ] factorize canvas draw
     * [x] draw holds
     * [ ] initialization (load image)
+        * [x] have a generic store
+        * [ ] apply the store to views
+            * [ ] edit
+            * [x] view
 * [ ] factorize mouse/touch events
     * [x] create nativeEvent → screenEvent
     * [x] screenEvent → stateInteraction
@@ -24,9 +28,11 @@
 * [ ] In viewer
     * [ ] May allow to use it in competition (associate number with holds)
     * [ ] save the result
+* [ ] Chronometer
 
 ## Known bugs
 
+* [ ] icon file (used to load or save as file)
 * [x] Header too long (in French)
 * [ ] videos dimensions
 * [ ] canvas dimensions
@@ -34,3 +40,4 @@
 * [x] Menu on bottom holds is displayed outside the canvas
 * [ ] (minor) Menu on linked hold can be hover the selected hold
 * [ ] improve scroll stability (do not compute position relative to canvas for scroll)
+* [ ] iPhone/iPad
