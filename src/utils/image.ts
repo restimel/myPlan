@@ -1,6 +1,37 @@
 export type ColorRGB = [number, number, number];
 export type ColorHSL = [number, number, number];
 
+export function aggregateCanvas(list: Set<HTMLCanvasElement>): HTMLCanvasElement {
+    const elements = Array.from(list);
+
+    if (elements.length === 1) {
+        return elements[0];
+    }
+
+    const aggregateEl = document.createElement('canvas');
+    const aggregateContext = aggregateEl.getContext('2d')!;
+
+    elements.forEach((canvas) => {
+        const contextCanvas = canvas.getContext('2d');
+
+        if (!contextCanvas) {
+            return;
+        }
+
+        const { width, height } = canvas;
+        const imgData = contextCanvas.getImageData(
+            0,
+            0,
+            width,
+            height
+        );
+
+        aggregateContext.putImageData(imgData, 0, 0);
+    });
+
+    return aggregateEl;
+}
+
 export function convertToImageData(data: number[], width: number, height: number): ImageData {
     const buffer = new ArrayBuffer(data.length);
     const clampedArray = new Uint8ClampedArray(buffer);

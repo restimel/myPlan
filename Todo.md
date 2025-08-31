@@ -2,7 +2,6 @@
 
 ## TODO
 
-* [x] create a logo icon
 * [ ] factorize canvas draw
     * [x] draw holds
     * [ ] initialization (load image)
@@ -10,10 +9,13 @@
         * [ ] apply the store to views
             * [ ] edit
             * [x] view
+        * [ ] have a generic Canvas component (canvasDisplay)
+            * [ ] edit
+            * [x] view
 * [ ] factorize mouse/touch events
     * [x] create nativeEvent → screenEvent
     * [x] screenEvent → stateInteraction
-    * [ ] Manage zoom in "view" mode
+    * [ ] (should be done → to check) Manage zoom in "view" mode
 * [ ] Build
     * [x] Add route information (name/description)
     * [ ] Actions
@@ -21,6 +23,9 @@
         * [ ] link: create a Link selection
         * [ ] link: starting on hold and restarting on hold
     * [ ] Shrink image size to allow sending editable route (set this as option?)
+* [ ] Improve workflow
+    * [ ] When moving from 'editor' to 'view', the settings should open
+    * [ ] When settings are open, "enter" should validate the field (and validate the form if last field)
 
 ## Maybe to be done
 
@@ -33,11 +38,9 @@
 ## Known bugs
 
 * [ ] icon file (used to load or save as file)
-* [x] Header too long (in French)
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
-* [x] Menu on bottom holds is displayed outside the canvas
 * [ ] (minor) Menu on linked hold can be hover the selected hold
 * [ ] improve scroll stability (do not compute position relative to canvas for scroll)
 * [ ] iPhone/iPad

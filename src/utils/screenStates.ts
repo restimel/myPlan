@@ -44,7 +44,7 @@ type MouseState = 'none' | 'active' | 'target' | 'selection' | 'menu' | 'move' |
 
 export type ScreenAction = 'doubleHold' | 'linkHolds' | 'moveHold' | 'scroll' | 'setHold' | 'zoom';
 
-type ActionCb = (action: ScreenAction, point: Point, fromPoint?: Point) => void;
+export type ActionCb = (action: ScreenAction, point: Point, fromPoint?: Point) => void;
 
 /** in ms */
 const holdMouseDuration = 500;

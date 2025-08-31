@@ -91,7 +91,8 @@ export function saveRoute(image: ImageData, holdList: Hold[], settings: RouteSet
     const json = JSON.stringify(storage);
 
     if (json.length > STORAGE_LIMIT) {
-        const ratioReduceFactor = Math.ceil(json.length * 10 / STORAGE_LIMIT) / 10;
+        const wantedRatioReduceFactor = Math.ceil(json.length * 10 / STORAGE_LIMIT) / 10;
+        const ratioReduceFactor = Math.ceil(Math.sqrt(wantedRatioReduceFactor) * 100) / 100;
 
         if (retry <= 0) {
             log('error', `save route failed (length: ${json.length}, reduceRatio: ${ratioReduceFactor})`);
@@ -111,7 +112,7 @@ export function saveRoute(image: ImageData, holdList: Hold[], settings: RouteSet
                     ] as Point;
                 }),
                 value: hold.value,
-                size: hold.size,
+                size: hold.size / ratioReduceFactor,
                 index: hold.index,
             } as Hold;
         });
