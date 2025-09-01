@@ -15,10 +15,12 @@
         "build": "run-p type-check \"build-only {@}\" --",
         "preview": "vite preview",
         "build-only": "vite build",
+        "build:test": "vite build --config vite.config.test.ts",
         "type-check": "vue-tsc --build",
         "lint": "eslint . --fix",
         "deploy": "npm run build && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version minor && npm run build && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages",
-        "deployBuild": "npm run build && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version patch && npm run build && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages"
+        "deployBuild": "npm run build && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version patch && npm run build && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages",
+        "deployTest": "npm run build:test && git add dist/test && git commit -m 'update test version' && git subtree push --prefix dist origin gh-pages"
     },
     "dependencies": {
         "vue": "^3.5.13",
