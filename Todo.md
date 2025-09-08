@@ -2,6 +2,10 @@
 
 ## TODO
 
+* [ ] Project
+    * [ ] increment build version for test build
+    * [ ] display another name for test version
+    * [ ] display another name for debug version
 * [ ] factorize canvas draw
     * [x] draw holds
     * [ ] initialization (load image)
@@ -12,10 +16,10 @@
         * [ ] have a generic Canvas component (canvasDisplay)
             * [ ] edit
             * [x] view
-* [ ] factorize mouse/touch events
+* [x] factorize mouse/touch events
     * [x] create nativeEvent → screenEvent
     * [x] screenEvent → stateInteraction
-    * [ ] (should be done → to check) Manage zoom in "view" mode
+    * [x] Manage zoom in "view" mode
 * [ ] Build
     * [x] Add route information (name/description)
     * [ ] Actions
@@ -44,3 +48,6 @@
 * [ ] (minor) Menu on linked hold can be hover the selected hold
 * [ ] improve scroll stability (do not compute position relative to canvas for scroll)
 * [ ] iPhone/iPad
+* [ ] view mode
+    * [ ] margin under "TOP" is not correct
+    * [ ] cannot scroll when starting over a hold
