@@ -15,7 +15,7 @@ export default {
         toReportBug: 'Pour rapporter un bug, il vous faut un compte Github',
     },
     message: {
-        cameraDenied: 'Autorisez l\'accès à la caméra pour prendre une photo de la voie. Ou alors vous pouvez charegr une image.',
+        cameraDenied: 'Autorisez l\'accès à la caméra pour prendre une photo de la voie. Ou alors vous pouvez charger une image.',
     },
     action: {
         anotherPhoto: 'Prendre une autre photo',
@@ -44,5 +44,8 @@ export default {
         size: 'Taille :',
         version: 'Version :',
         video: 'Url de la vidéo :',
+    },
+    route: {
+        top: 'TOP = {top}',
     },
 };

@@ -42,7 +42,7 @@
 
 ## Known bugs
 
-* [ ] icon file (used to load or save as file)
+* [ ] improve icon file (used to load or save as file)
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
@@ -50,5 +50,5 @@
 * [ ] improve scroll stability (do not compute position relative to canvas for scroll)
 * [ ] iPhone/iPad
 * [ ] view mode
-    * [ ] margin under "TOP" is not correct
+    * [x] margin under "TOP" is not correct
     * [ ] cannot scroll when starting over a hold

@@ -191,7 +191,7 @@ function drawBoxText(text: string, isOk: boolean, box: Box, size: number, contex
 
     context.fillStyle = bgHoldColor;
     context.strokeStyle = borderHoldColor;
-    context.font = `${size}px serif`;
+    context.font = `${size - 2}px serif`;
 
     if (!isOk) {
         context.globalAlpha = 0.5;
@@ -206,7 +206,7 @@ function drawBoxText(text: string, isOk: boolean, box: Box, size: number, contex
     context.textAlign = 'center';
     context.fillStyle = borderHoldColor;
 
-    context.fillText(text, x + w / 2, y + 2 + h / 2, w);
+    context.fillText(text, x + w / 2, y + h / 2, w);
     context.restore();
 }
 

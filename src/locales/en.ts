@@ -45,4 +45,7 @@ export default {
         version: 'Version:',
         video: 'Video url:',
     },
+    route: {
+        top: 'TOP = {top}',
+    },
 };
