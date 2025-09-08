@@ -10,6 +10,7 @@ export default defineConfig({
     define: {
         __APP_VERSION__: JSON.stringify(pkg.version),
         __APP_LICENCE__: JSON.stringify(pkg.license),
+        __TITLE__: '"MyPlan - test"',
     },
     plugins: [
         vue(),

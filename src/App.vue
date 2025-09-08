@@ -17,6 +17,7 @@ import { onMounted } from 'vue';
 
 /* Hides mobile browser's address bar when page is done loading. */
 onMounted(() => {
+    document.title = __TITLE__ + import.meta.env.VITE_TITLE_SUFFIX;
     setTimeout(() => {
         window.scrollTo(0, 1);
     }, 1);

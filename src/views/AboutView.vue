@@ -1,6 +1,7 @@
 <template>
     <div class="about">
         <h1>{{  t('about.header') }}</h1>
+        <h2 v-if="context">{{ context }}</h2>
 
         <label>
             {{ t('label.version') }}
@@ -66,6 +67,7 @@ import ManageDebug from '@/components/debug/manageDebug.vue';
 import MyIcon from '@/components/myIcon.vue';
 
 const { t } = useI18n();
+const context = import.meta.env.VITE_CONTEXT;
 
 const appVersion = __APP_VERSION__;
 const appLicence = __APP_LICENCE__;
@@ -82,7 +84,7 @@ function openDebug() {
     overflow: auto;
 }
 
-h1 {
+h1, h2 {
     text-align: center;
 }
 

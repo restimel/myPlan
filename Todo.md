@@ -2,10 +2,11 @@
 
 ## TODO
 
-* [ ] Project
-    * [ ] increment build version for test build
-    * [ ] display another name for test version
-    * [ ] display another name for debug version
+* [x] Project
+    * [x] increment build version for test build
+    * [x] display another name for test version
+        * [ ] check it works as expected
+    * [X] display another name for debug version
 * [ ] factorize canvas draw
     * [x] draw holds
     * [ ] initialization (load image)
