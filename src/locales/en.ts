@@ -6,7 +6,7 @@ export default {
         youtubeTitle: 'Choose the YouTube video you want to insert',
     },
     view: {
-        title: 'View',
+        title: 'View route settings',
         settingsTitle: 'Settings',
     },
     about: {

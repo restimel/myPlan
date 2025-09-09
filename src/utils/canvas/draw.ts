@@ -1,6 +1,7 @@
 import { getHoldInArea } from '@/utils/holds';
 import { log } from '@/utils/debug';
 import { crossRect } from '@/utils/geometry';
+import type { ComposerTranslation } from 'vue-i18n';
 
 const bgHoldColor = '#ffffff33';
 const borderHoldColor = '#000000ff';
@@ -210,7 +211,14 @@ function drawBoxText(text: string, isOk: boolean, box: Box, size: number, contex
     context.restore();
 }
 
-export function drawInformation(holds: Hold[], settings: RouteSettings, canvasEl: HTMLCanvasElement | null, defaultHoldSize: number) {
+type Context = {
+    canvasEl: HTMLCanvasElement | null;
+    defaultHoldSize: number;
+    t: ComposerTranslation;
+};
+
+export function drawInformation(holds: Hold[], settings: RouteSettings, info: Context) {
+    const canvasEl = info.canvasEl;
     const context = canvasEl?.getContext('2d');
 
     if (!context || !canvasEl) {
@@ -220,8 +228,8 @@ export function drawInformation(holds: Hold[], settings: RouteSettings, canvasEl
     const lastValue = holds[holds.length - 1].value;
     const top = (Array.isArray(lastValue) ? lastValue[lastValue.length - 1] : lastValue) + 1;
 
-    const size = defaultHoldSize * 1.5;
-    const topText = `TOP = ${top}`; /* TODO i18n */
+    const size = info.defaultHoldSize * 1.5;
+    const topText = info.t('route.top', { top });
     const topWidth = topText.length * 0.6 * size;
     const topHeight = size;
 

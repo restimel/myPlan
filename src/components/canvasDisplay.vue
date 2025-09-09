@@ -25,6 +25,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
     defaultHoldSize,
 } from '@/utils/holds';
@@ -34,6 +35,8 @@ import { screenListener } from '@/utils/screenEvent';
 import { setup, type ActionCb, type ScreenAction } from '@/utils/screenStates';
 import { hysterisPoint } from '@/utils/movePoint';
 import type { RouteStore } from '@/stores/RouteStore';
+
+const { locale, t } = useI18n();
 
 const props = defineProps<{
     image: ImageData | null;
@@ -76,6 +79,12 @@ watch(holdList, () => {
 watch(() => props.store.settings, () => {
     loadImage();
 }, { deep: true });
+
+if (props.details) {
+    watch(locale, () => {
+        loadImage();
+    });
+}
 
 /* assert ratio is in bound */
 watch(scaleRatio, (value, oldValue) => {
@@ -202,7 +211,11 @@ function drawRoute() {
 }
 
 function drawDetails() {
-    drawInformation(holdList.value, props.store.settings, canvasHolds.value, defaultHoldSize.value);
+    drawInformation(holdList.value, props.store.settings, {
+        canvasEl: canvasHolds.value,
+        defaultHoldSize: defaultHoldSize.value,
+        t,
+    });
 }
 
 /* {{{ Canvas interaction */

@@ -6,7 +6,7 @@ export default {
         youtubeTitle: 'Choisissez la vidéo YouTube que vous voulez insérer',
     },
     view: {
-        title: 'Voir',
+        title: 'Voir le plan de route',
         settingsTitle: 'Paramètres',
     },
     about: {
