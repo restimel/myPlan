@@ -67,10 +67,11 @@ import ManageDebug from '@/components/debug/manageDebug.vue';
 import MyIcon from '@/components/myIcon.vue';
 
 const { t } = useI18n();
-const context = import.meta.env.VITE_CONTEXT;
 
 const appVersion = __APP_VERSION__;
 const appLicence = __APP_LICENCE__;
+
+const context = [import.meta.env.VITE_CONTEXT, __CONTEXT__].filter(Boolean).join(' ~~ ');
 
 function openDebug() {
     enableDebug();
