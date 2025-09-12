@@ -12,7 +12,12 @@
             :key="item.name"
         >
             {{ item.label }}
-            <input
+            <input v-if="item.type === 'number'"
+                type="number"
+                v-model="internalValue[item.name]"
+                :data-name="item.name"
+            >
+            <input v-else
                 type="text"
                 v-model="internalValue[item.name]"
                 :data-name="item.name"
