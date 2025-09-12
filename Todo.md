@@ -28,10 +28,10 @@
         * [ ] link: create a Link selection
         * [ ] link: starting on hold and restarting on hold
     * [ ] Shrink image size to allow sending editable route (set this as option?)
-* [ ] Improve workflow
+* [x] Improve workflow
     * [x] When moving from 'editor' to 'view', the settings should open
-    * [ ] When settings are open, it should auto-focus on first field
-    * [ ] When settings are open, "enter" should validate the field (and validate the form if last field)
+    * [x] When settings are open, it should auto-focus on first field
+    * [x] When settings are open, "enter" should validate the field (and validate the form if last field)
 
 ## Maybe to be done
 

@@ -6,6 +6,7 @@
 
     <form
         @submit.prevent.stop="submitForm"
+        ref="modalForm"
     >
         <label v-for="item of items"
             :key="item.name"
@@ -14,6 +15,7 @@
             <input
                 type="text"
                 v-model="internalValue[item.name]"
+                :data-name="item.name"
             >
         </label>
     </form>
@@ -37,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, watch } from 'vue';
+import { defineProps, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 
@@ -60,6 +62,8 @@ type Items = Item[];
 
 type Result = Record<string, string | number>;
 
+type HTMLFocusableElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | undefined;
+
 type Props = {
     title: string;
     items: Items;
@@ -72,6 +76,9 @@ const emit = defineEmits<{
 const { t } = useI18n();
 
 const internalValue = ref<Result>({});
+const modalForm = ref<HTMLFormElement>();
+
+const focusIndex = ref(0);
 
 watch(() => props.items, () => {
     const val: Result = {};
@@ -99,7 +106,44 @@ function submitForm() {
     }
 
     element?.blur?.();
+    const name = element.dataset.name;
+    const items = props.items;
+    const index = items.findIndex((item) => item.name === name);
+
+    if (index === -1) {
+        return;
+    }
+
+    if (index === items.length - 1) {
+        close(true);
+        return;
+    }
+
+    focusIndex.value = index + 1;
+    setFocus();
 }
+
+function setFocus() {
+    const formEl = modalForm.value;
+
+    if (!formEl) {
+        return;
+    }
+
+    const index = focusIndex.value;
+    const inputEl = (formEl.querySelectorAll('input,select,textarea') ?? [])[index] as HTMLFocusableElement;
+
+    if (!inputEl) {
+        return;
+    }
+
+    inputEl.focus();
+}
+
+onMounted(() => {
+    setFocus();
+});
+
 </script>
 
 <style scoped>
