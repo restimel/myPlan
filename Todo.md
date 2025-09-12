@@ -29,7 +29,8 @@
         * [ ] link: starting on hold and restarting on hold
     * [ ] Shrink image size to allow sending editable route (set this as option?)
 * [ ] Improve workflow
-    * [ ] When moving from 'editor' to 'view', the settings should open
+    * [x] When moving from 'editor' to 'view', the settings should open
+    * [ ] When settings are open, it should auto-focus on first field
     * [ ] When settings are open, "enter" should validate the field (and validate the form if last field)
 
 ## Maybe to be done
@@ -49,6 +50,8 @@
 * [ ] (minor) Menu on linked hold can be hover the selected hold
 * [ ] improve scroll stability (do not compute position relative to canvas for scroll)
 * [ ] iPhone/iPad
+* [ ] editor mode
+    * [ ] during capture, video size may hide menu
 * [ ] view mode
     * [x] margin under "TOP" is not correct
     * [ ] cannot scroll when starting over a hold

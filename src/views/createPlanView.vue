@@ -17,6 +17,7 @@ import { useRouter } from 'vue-router';
 import { image } from '@/utils/holds';
 import VideoPlan from '@/components/videoPlan.vue';
 import CanvasHold from '@/components/canvasHold.vue';
+import routeStore from '@/stores/RouteStore';
 
 const router = useRouter();
 
@@ -32,6 +33,7 @@ function getImage(data: ImageData | null) {
 }
 
 function toView() {
+    routeStore.needAction('openSettings');
     router.push('/view');
 }
 </script>

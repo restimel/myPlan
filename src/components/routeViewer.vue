@@ -95,7 +95,8 @@ function onAction(action: ScreenAction, _point: Point, _fromPoint?: Point) {
 
 /* {{{ menu settings */
 
-const showSettings = ref(false);
+const showSettings = ref(props.store.actionNeeded.openSettings);
+props.store.needAction('openSettings', false);
 
 /* }}} */
 

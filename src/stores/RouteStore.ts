@@ -1,14 +1,18 @@
 import { reactive } from 'vue';
 import type { StoredRoute } from '@/utils/storage';
 
+type Actions = 'openSettings';
+
 export type RouteStore = {
     image: ImageData | null;
     holds: Hold[];
     settings: RouteSettings;
+    actionNeeded: Record<Actions, boolean>;
 
     /* Actions */
     initialize: (data: StoredRoute | null) => void;
     setSettings: (value?: RouteSettings) => void;
+    needAction: (action: Actions, value?: boolean) => void;
 };
 
 const routeStore = reactive<RouteStore>({
@@ -16,6 +20,9 @@ const routeStore = reactive<RouteStore>({
     holds: [],
     settings: {
         routeName: '',
+    },
+    actionNeeded: {
+        openSettings: false,
     },
 
     /* {{{ Actions */
@@ -35,6 +42,10 @@ const routeStore = reactive<RouteStore>({
 
     setSettings(value?: RouteSettings) {
         this.settings.routeName = value?.routeName ?? '';
+    },
+
+    needAction(action: Actions, value = true) {
+        this.actionNeeded[action] = value;
     },
 
     /* }}} */
