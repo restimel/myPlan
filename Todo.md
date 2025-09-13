@@ -43,7 +43,7 @@
 
 ## Known bugs
 
-* [ ] improve icon file (used to load)
+* [ ] (minor) improve icon file (used to load)
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
@@ -52,7 +52,7 @@
 * [ ] iPhone/iPad
 * [ ] editor mode
     * [ ] during capture, video size may hide menu
-    * [ ] the magic marker is over menu
+    * [x] the magic marker is over menu
 * [ ] view mode
     * [x] margin under "TOP" is not correct
     * [ ] cannot scroll when starting over a hold

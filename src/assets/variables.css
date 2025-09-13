@@ -112,6 +112,9 @@
 
     /* Fields */
     --field-border: 1px solid var(--color-border);
+
+    /* Buttons */
+    --button-size: 1.6cm;
 }
 
 @media (prefers-color-scheme: dark) {

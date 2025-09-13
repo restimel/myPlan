@@ -31,9 +31,9 @@ button {
 }
 
 button.action {
-    width: 60px;
-    height: 60px;
-    --icon-size: 30px;
+    width: var(--button-size);
+    height: var(--button-size);
+    --icon-size: calc(var(--button-size) / 2);
 }
 
 .info {
