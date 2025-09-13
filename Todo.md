@@ -5,7 +5,7 @@
 * [x] Project
     * [x] increment build version for test build
     * [x] display another name for test version
-        * [ ] check it works as expected
+        * [x] check it works as expected
     * [X] display another name for debug version
 * [ ] factorize canvas draw
     * [x] draw holds
@@ -43,7 +43,7 @@
 
 ## Known bugs
 
-* [ ] improve icon file (used to load or save as file)
+* [ ] improve icon file (used to load)
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
@@ -52,6 +52,7 @@
 * [ ] iPhone/iPad
 * [ ] editor mode
     * [ ] during capture, video size may hide menu
+    * [ ] the magic marker is over menu
 * [ ] view mode
     * [x] margin under "TOP" is not correct
     * [ ] cannot scroll when starting over a hold

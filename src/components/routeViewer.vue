@@ -15,7 +15,7 @@
                 icon: 'edit',
             }, {
                 type: 'exportFile',
-                icon: 'file',
+                icon: 'save',
             }, {
                 type: 'settings',
                 icon: 'settings',
@@ -63,8 +63,10 @@ function action(type: string) {
             break;
         case 'exportFile': {
             const canvasEl = aggregateCanvas(canvasList.value!);
+            const routeName = props.store.settings.routeName;
+            const fileName = routeName ? `route - ${routeName}.png` : 'finalRoute.png';
 
-            exportImage(canvasEl, 'finalRoute.png');
+            exportImage(canvasEl, fileName);
             break;
         }
         case 'settings':
