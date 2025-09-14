@@ -208,6 +208,7 @@ function changeSizeDown() {
 <style scoped>
     aside {
         position: absolute;
+        z-index: var(--zIndex-menu);
         left: var(--x);
         top: var(--y);
         background: var(--color-background);

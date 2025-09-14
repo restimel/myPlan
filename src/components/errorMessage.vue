@@ -16,6 +16,7 @@ aside {
     border-radius: var(--border-radius);
     padding: var(--section-padding);
     position: absolute;
+    z-index: var(--zIndex-error-message);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

@@ -38,17 +38,18 @@ function animation() {
 </script>
 <style scoped>
 .message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: var(--zIndex-message);
     background: transparent;
     color: var(--color-text-details);
     text-shadow: var(--shadow-lg);
     border: none;
     padding: var(--section-padding);
     text-align: center;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
     pointer-events: none;
     user-select: none;
     font-size: 3em;

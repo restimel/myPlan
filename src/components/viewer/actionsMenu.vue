@@ -69,6 +69,7 @@ function action(type: string) {
 <style scoped>
 .menu {
     position: absolute;
+    z-index: var(--zIndex-menu);
     bottom: 0;
     left: 50%;
     transform: translate(-50%, 0);

@@ -291,13 +291,18 @@ function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
 #canvasLayer,
 #canvasBackground {
     position: absolute;
-    background-color: var(--color-background);
     grid-area: content;
     transform: scale(var(--scale));
     transform-origin: top left;
 }
 
+#canvasBackground {
+    z-index: var(--zIndex-bg-canvas);
+    background-color: var(--color-background);
+}
+
 #canvasLayer {
+    z-index: var(--zIndex-fg-canvas);
     background-color: transparent;
 }
 

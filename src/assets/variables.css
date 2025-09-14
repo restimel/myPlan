@@ -115,6 +115,14 @@
 
     /* Buttons */
     --button-size: 1.6cm;
+
+    /* Z-index */
+    --zIndex-bg-canvas: 10;
+    --zIndex-fg-canvas: 20;
+    --zIndex-message: 100;
+    --zIndex-menu: 200;
+    --zIndex-error-message: 500;
+    --zIndex-modal: 1000;
 }
 
 @media (prefers-color-scheme: dark) {
