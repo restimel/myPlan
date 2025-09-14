@@ -11,8 +11,8 @@
     * [x] draw holds
     * [ ] initialization (load image)
         * [x] have a generic store
-        * [ ] apply the store to views
-            * [ ] edit
+        * [x] apply the store to views
+            * [x] edit
             * [x] view
         * [ ] have a generic Canvas component (canvasDisplay)
             * [ ] edit

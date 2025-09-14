@@ -1,11 +1,10 @@
 import { reactive } from 'vue';
 import type { StoredRoute } from '@/utils/storage';
+import { holdManager, type HoldManager } from '@/utils/holds';
 
 type Actions = 'openSettings';
 
-export type RouteStore = {
-    image: ImageData | null;
-    holds: Hold[];
+export type RouteStore = HoldManager & {
     settings: RouteSettings;
     actionNeeded: Record<Actions, boolean>;
 
@@ -16,8 +15,7 @@ export type RouteStore = {
 };
 
 const routeStore = reactive<RouteStore>({
-    image: null,
-    holds: [],
+    ...holdManager,
     settings: {
         routeName: '',
     },

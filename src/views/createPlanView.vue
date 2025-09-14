@@ -4,7 +4,8 @@
             @image="getImage"
         />
         <CanvasHold v-if="mode === 'canvas'"
-            :image="image"
+            :image="routeStore.image"
+            :store="routeStore"
             @back="mode = 'video'"
             @view="toView"
         />
@@ -14,21 +15,21 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { image } from '@/utils/holds';
 import VideoPlan from '@/components/videoPlan.vue';
 import CanvasHold from '@/components/canvasHold.vue';
 import routeStore from '@/stores/RouteStore';
 
 const router = useRouter();
 
-const mode = ref<'video' | 'canvas'>(image.value ? 'canvas' : 'video');
+const mode = ref<'video' | 'canvas'>(routeStore.image ? 'canvas' : 'video');
 
 function getImage(data: ImageData | null) {
     if (!data) {
         return;
     }
 
-    image.value = data;
+    routeStore.resetHolds();
+    routeStore.image = data;
     mode.value = 'canvas';
 }
 

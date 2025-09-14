@@ -26,9 +26,6 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-    defaultHoldSize,
-} from '@/utils/holds';
 import { drawHolds, drawInformation } from '@/utils/canvas/draw';
 import GuideMessage from '@/components/guideMessage.vue';
 import { screenListener } from '@/utils/screenEvent';
@@ -183,7 +180,7 @@ function loadImage(data?: ImageData | null) {
     context.putImageData(imgData, 0, 0);
 
     /* This is to draw around 30 holds on height */
-    defaultHoldSize.value = canvasHoldsEl.height / 60;
+    props.store.setDefaultSize(canvasHoldsEl.height / 60);
 
     drawRoute();
     if (props.details) {
@@ -213,14 +210,14 @@ function drawRoute() {
 function drawDetails() {
     drawInformation(holdList.value, props.store.settings, {
         canvasEl: canvasHolds.value,
-        defaultHoldSize: defaultHoldSize.value,
+        defaultHoldSize: props.store.defaultHoldSize,
         t,
     });
 }
 
 /* {{{ Canvas interaction */
 
-const screenState = setup(holdList, (action: ScreenAction, point: Point, fromPoint?: Point) => {
+const screenState = setup(holdList.value, (action: ScreenAction, point: Point, fromPoint?: Point) => {
     if (action === 'scroll') {
         const [dx, dy] = scrollPoints(point);
 

@@ -29,6 +29,7 @@
             :containerSize="containerRect"
             :offsetX="offsetX"
             :offsetY="offsetY"
+            :store="routeStore"
             @close="closeMenu"
         />
         <GuideMessage :message="t('build.setHolds')" />
@@ -54,19 +55,19 @@
                 {
                     type: 'removeHold',
                     icon: 'delete',
-                    disabled: holdList.length === 0,
+                    disabled: store.holds.length === 0,
                     title: t('action.removeLast'),
                 },
                 {
                     type: 'save',
                     icon: 'save',
-                    disabled: holdList.length === 0,
+                    disabled: store.holds.length === 0,
                     title: t('action.save'),
                 },
                 {
                     type: 'validate',
                     icon: 'ok',
-                    disabled: holdList.length === 0,
+                    disabled: store.holds.length === 0,
                     title: t('action.validate'),
                 },
             ]"
@@ -75,8 +76,8 @@
         />
         <button v-show="!menuOpen"
             class="action"
-            :disabled="holdList.length === 0"
-            @click="removeHold()"
+            :disabled="store.holds.length === 0"
+            @click="store.removeHold()"
             :title="t('action.removeLast')"
         >
             <MyIcon icon="delete" />
@@ -85,7 +86,7 @@
         <button v-show="!menuOpen"
             class="action"
             @click="validate()"
-            :disabled="holdList.length === 0"
+            :disabled="store.holds.length === 0"
             :title="t('action.validate')"
         >
             <MyIcon icon="ok" />
@@ -104,16 +105,6 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-    addHold,
-    defaultHoldSize,
-    doubleHold,
-    holdList,
-    linkHolds,
-    moveHold,
-    removeHold,
-    routeName,
-} from '@/utils/holds';
 import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
 import { drawHolds } from '@/utils/canvas/draw';
@@ -126,9 +117,12 @@ import { screenListener } from '@/utils/screenEvent';
 import { setup, type ScreenAction } from '@/utils/screenStates';
 import { hysterisPoint } from '@/utils/movePoint';
 import { filterToGrey, type ColorRGB } from '@/utils/image';
+import type { RouteStore } from '@/stores/RouteStore';
+import routeStore from '@/stores/RouteStore';
 
 const props = defineProps<{
     image: ImageData | null;
+    store: RouteStore;
 }>();
 
 const emit = defineEmits<{
@@ -157,7 +151,7 @@ watch(() => props.image, () => {
     /* It will reset the effect on image and apply the image to canvas */
     setGrey();
 });
-watch(holdList, drawRoute, { deep: true });
+watch(() => props.store.holds, drawRoute, { deep: true });
 
 /* assert ratio is in bound */
 watch(scaleRatio, (value, oldValue) => {
@@ -238,7 +232,7 @@ function menuAction(action: string) {
             toggleGrey();
             break;
         case 'removeHold':
-            removeHold();
+            props.store.removeHold();
             break;
         case 'save':
             save();
@@ -279,9 +273,9 @@ function loadImage(data?: ImageData) {
     context.putImageData(imgData, 0, 0);
 
     /* This is to draw around 30 holds on height */
-    defaultHoldSize.value = canvasLayerEl.height / 60;
+    props.store.setDefaultSize(canvasLayerEl.height / 60);
 
-    drawHolds(holdList.value, canvasLayerEl);
+    drawHolds(props.store.holds, canvasLayerEl);
 
     activeImage.value = imgData;
 }
@@ -328,7 +322,7 @@ function setHold(point: Point) {
         return setGrey(point);
     }
 
-    addHold(point[0], point[1], defaultHoldSize.value);
+    props.store.addHold(point[0], point[1], props.store.defaultHoldSize);
 }
 
 function closeMenu() {
@@ -344,10 +338,10 @@ function validate() {
     }
 
     const settings = {
-        routeName: routeName.value,
+        routeName: props.store.routeName,
     };
 
-    if (saveRoute(image, holdList.value, settings)) {
+    if (saveRoute(image, props.store.holds, settings)) {
         emit('view');
     }
 }
@@ -368,7 +362,7 @@ function save() {
     const canvasLayerEl = canvasLayer.value!;
     const context = canvasLayerEl.getContext('2d')!;
     context.putImageData(imgData, 0, 0);
-    drawHolds(holdList.value, canvasLayerEl);
+    drawHolds(props.store.holds, canvasLayerEl);
 
     /* Create the file and download it */
     exportImage(canvasLayerEl);
@@ -378,7 +372,7 @@ function save() {
 }
 
 function drawRoute() {
-    drawHolds(holdList.value, canvasLayer.value!, {
+    drawHolds(props.store.holds, canvasLayer.value!, {
         refresh: true,
         line: mouseAction.value === 'link' ?
             [
@@ -391,7 +385,7 @@ function drawRoute() {
 
 /* {{{ Canvas interaction */
 
-const screenState = setup(holdList, onAction);
+const screenState = setup(props.store.holds, onAction);
 
 const screenEvent = screenListener({
     rect: canvasRect,
@@ -441,14 +435,14 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
             break;
         case 'doubleHold':
             const holdIndex = screenState.holdSelection.value?.index ?? 0;
-            doubleHold(holdIndex);
+            props.store.doubleHold(holdIndex);
             break;
         case 'linkHolds': {
             const originHold = screenState.holdSelection.value;
             const targetHold = screenState.holdSelection2.value;
 
             if (originHold && targetHold) {
-                linkHolds(originHold.index, targetHold.index);
+                props.store.linkHolds(originHold.index, targetHold.index);
             }
             break;
         }
@@ -458,7 +452,7 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
             if (hold) {
                 const lastPoint = fromPoint ?? screenState.mousePosition.value;
 
-                moveHold(hold.index, lastPoint, point);
+                props.store.moveHold(hold.index, lastPoint, point);
                 lastPosition.value = point;
             }
             break;

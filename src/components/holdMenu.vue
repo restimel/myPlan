@@ -66,15 +66,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-    changeHoldSize,
-    changeValue,
-    doubleHold,
-    removeHold,
-    top,
-    unlinkHolds,
-} from '@/utils/holds';
 import MyIcon from '@/components/myIcon.vue';
+import type { RouteStore } from '@/stores/RouteStore';
 
 type Props = {
     hold: Hold;
@@ -83,6 +76,7 @@ type Props = {
     containerSize: DOMRect;
     offsetX: number;
     offsetY: number;
+    store: RouteStore;
 };
 
 const props = defineProps<Props>();
@@ -165,34 +159,34 @@ const canMoveUp = computed(() => {
     const holdValue = props.hold.value;
     const value = Array.isArray(holdValue) ? holdValue[1] : holdValue;
 
-    return value < top.value - 1;
+    return value < props.store.top - 1;
 });
 
 function remove() {
-    removeHold(props.hold.index);
+    props.store.removeHold(props.hold.index);
     emit('close');
 }
 
 function unlink() {
-    unlinkHolds(props.hold.index);
+    props.store.unlinkHolds(props.hold.index);
     emit('close');
 }
 
 function double() {
-    doubleHold(props.hold.index);
+    props.store.doubleHold(props.hold.index);
     emit('close');
 }
 
 function moveUp() {
-    changeValue(props.hold.index, true);
+    props.store.changeValue(props.hold.index, true);
 }
 
 function moveDown() {
-    changeValue(props.hold.index, false);
+    props.store.changeValue(props.hold.index, false);
 }
 
 function changeSizeUp() {
-    changeHoldSize(props.hold.index, props.hold.size + 1);
+    props.store.changeHoldSize(props.hold.index, props.hold.size + 1);
 }
 
 function changeSizeDown() {
@@ -202,7 +196,7 @@ function changeSizeDown() {
         return;
     }
 
-    changeHoldSize(props.hold.index, value);
+    props.store.changeHoldSize(props.hold.index, value);
 }
 </script>
 <style scoped>

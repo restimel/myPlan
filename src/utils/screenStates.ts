@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue';
+import { ref } from 'vue';
 import { getHold } from '@/utils/holds';
 import { log } from './debug';
 
@@ -50,7 +50,7 @@ export type ActionCb = (action: ScreenAction, point: Point, fromPoint?: Point) =
 const holdMouseDuration = 500;
 const doubleMouseDuration = 200;
 
-export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
+export function setup(holds: Hold[], onActions: ActionCb) {
     const actionState = ref<MouseState>('none');
     const holdSelection = ref<Hold | null>(null);
     const holdSelection2 = ref<Hold | null>(null);
@@ -69,7 +69,7 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
 
         switch (action) {
             case 'none': {
-                const hold = getHold(point, holds.value);
+                const hold = getHold(point, holds);
 
                 if (hold) {
                     actionState.value = 'target';
@@ -140,7 +140,7 @@ export function setup(holds: Ref<Hold[]>, onActions: ActionCb) {
                 actionState.value = 'menu';
                 break;
             case 'link': {
-                const hold = getHold(point, holds.value);
+                const hold = getHold(point, holds);
 
                 if (hold) {
                     holdSelection2.value = hold;

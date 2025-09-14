@@ -32,7 +32,6 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { exportImage } from '@/utils/files';
-import { load } from '@/utils/holds';
 import ActionMenu from '@/components/viewer/actionsMenu.vue';
 import RouteSettings from '@/components/routeSettings.vue';
 import type { RouteStore } from '@/stores/RouteStore';
@@ -52,7 +51,7 @@ const canvasList = ref<Set<HTMLCanvasElement>>();
 function action(type: string) {
     switch (type) {
         case 'edit':
-            load({
+            props.store.load({
                 holds: props.store.holds,
                 image: props.store.image!,
                 settings: props.store.settings,
