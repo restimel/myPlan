@@ -27,11 +27,13 @@
         * [ ] move: also move when "selection"
         * [ ] link: create a Link selection
         * [ ] link: starting on hold and restarting on hold
+        * [ ] magic color: set in color under (and around) holds
     * [ ] Shrink image size to allow sending editable route (set this as option?)
 * [x] Improve workflow
     * [x] When moving from 'editor' to 'view', the settings should open
     * [x] When settings are open, it should auto-focus on first field
     * [x] When settings are open, "enter" should validate the field (and validate the form if last field)
+* [ ] Add a guide page to explain how to use the application
 
 ## Maybe to be done
 
