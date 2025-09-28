@@ -11,6 +11,8 @@ export default {
     },
     about: {
         title: 'About',
+        goToDev: 'Go to development platform',
+        goToTest: 'Go to test platform',
         header: 'About myPLAN',
         toReportBug: 'To report a bug, you need a Github account',
     },

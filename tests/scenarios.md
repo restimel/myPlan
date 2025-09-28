@@ -26,7 +26,7 @@
     * [x] holds should be displayed at the same place (same size)
 5. Export image
     * [x] image can be download to device and should be the same as in "view" mode
-    * [x] It should propose a name which include the title
+    * [x] It should propose a file name which includes the title
 6. Navigate back to "Build plan" / or / click on "edit"
     * [x] we should be in "set hold" mode
     * [x] The previous image should be displayed

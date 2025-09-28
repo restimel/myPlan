@@ -1,7 +1,12 @@
 <template>
     <div class="about">
-        <h1>{{  t('about.header') }}</h1>
+        <h1 @dblclick="displayPlatform = true">{{  t('about.header') }}</h1>
         <h2 v-if="context">{{ context }}</h2>
+        <a v-if="displayPlatform"
+            :href="linkToOppositePlatform"
+        >
+            {{ t(isTestPlatform ? 'about.goToDev' : 'about.goToTest')}}
+        </a>
 
         <label>
             {{ t('label.version') }}
@@ -61,6 +66,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { debug, debugMessage, enableDebug } from '@/utils/debug';
 import { useI18n } from 'vue-i18n';
 import ManageDebug from '@/components/debug/manageDebug.vue';
@@ -71,7 +77,11 @@ const { t } = useI18n();
 const appVersion = __APP_VERSION__;
 const appLicence = __APP_LICENCE__;
 
+const isTestPlatform = !!__CONTEXT__;
+const displayPlatform = ref<boolean>(isTestPlatform || false);
 const context = [import.meta.env.VITE_CONTEXT, __CONTEXT__].filter(Boolean).join(' ~~ ');
+
+const linkToOppositePlatform = isTestPlatform ? '../' : './test/';
 
 function openDebug() {
     enableDebug();
