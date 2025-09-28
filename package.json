@@ -20,7 +20,7 @@
         "build:test": "vite build --config vite.config.test.ts",
         "type-check": "vue-tsc --build",
         "lint": "eslint . --fix",
-        "deploy": "npm run build-all && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version minor && npm run build-all && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages",
+        "deploy": "npm run deployBuild",
         "deployBuild": "npm run build-all && git diff --quiet dist || (git clean -fd dist && git checkout -- dist && npm version patch && npm run build-all && git add dist && git commit -m 'update production version') && git subtree push --prefix dist origin gh-pages",
         "deployTest": "npm version prerelease --preid=test && npm run build:test && git add dist/test && git commit -m 'update test version' && git subtree push --prefix dist origin gh-pages"
     },
