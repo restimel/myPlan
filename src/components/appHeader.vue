@@ -83,7 +83,7 @@ nav a:first-of-type {
     display: none;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 570px) {
     nav {
         display: none;
         flex-direction: column;

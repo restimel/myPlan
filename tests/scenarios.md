@@ -76,3 +76,32 @@
         * The image is moved but does not follow exactly the finger
 
 ## Re-use a route
+
+## Chronometer
+1. click on 'Chronometer'
+    * [x] The chronometer page should be displayed
+    * [x] 1 period setting should be displayed
+2. Change the period name
+    * [x] The period name in the preview should be changed
+3. Change the duration
+    * [x] The duration is changed in the preview
+4. Start timer (click on timer or on icon)
+    * [x] timer should count down
+    * [x] small timer should count up
+    * [x] "play" icon should be changed to "pause" icon
+5. Pause timer (click on timer or on icon)
+    * [x] timers should stop
+    * [x] "pause" icon should be changed to "play" icon
+6. Start timer again
+    * [x] timer should continue from previous value
+    * [x] when there are less than 10s, digits should be in red (blink)
+7. When timeout
+    * [ ] If sound enabled, it should play sound
+    * [x] If vibrate enabled, it should vibrate
+    * Depending on the action selected, it should
+        * [x] stop counting (background should be in red)
+        * [x] continue counting (background should be in red)
+        * [x] restart counting
+        * [x] start the next period
+8. Click on reset icon
+    * [x] The timer should be re-initialized

@@ -122,12 +122,19 @@ watch(
 .edit-timer {
     position: relative;
     display: grid;
-    grid-template: "name options delete" "duration options delete" "action options delete" / 1fr max-content;
+    grid-template: "name options delete" "duration options delete" "action options delete" / 1fr max-content max-content;
     align-items: center;
     gap: var(--field-padding);
     width: 100%;
     padding: var(--field-padding);
 }
+
+@media (max-width: 600px) {
+    .edit-timer {
+        grid-template: "name delete" "duration  delete" "action delete" "options delete" / 1fr max-content;
+    }
+}
+
 .edit-timer:nth-child(odd) {
     background-color: var(--color-background-light);
 }
