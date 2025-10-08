@@ -34,6 +34,10 @@
     * [x] When settings are open, it should auto-focus on first field
     * [x] When settings are open, "enter" should validate the field (and validate the form if last field)
 * [ ] Add a guide page to explain how to use the application
+* [ ] Chronometer
+    * [ ] play sound
+    * [ ] allow to change background color for a period
+    * [ ] intermediate warning (bip at 1 minute left)
 
 ## Maybe to be done
 
@@ -41,7 +45,6 @@
 * [ ] In viewer
     * [ ] May allow to use it in competition (associate number with holds)
     * [ ] save the result
-* [ ] Chronometer
 
 ## Known bugs
 

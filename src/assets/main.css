@@ -1,5 +1,13 @@
 @import './base.css';
 
+@font-face {
+    font-family: "Digital";
+    src: url("./fonts/digital-7.ttf");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 #app {
     width: 100%;
     height: 100%;
@@ -30,6 +38,21 @@ button {
     cursor: pointer;
 }
 
+button[disabled] {
+    cursor: not-allowed;
+}
+
+button.btn-small {
+    padding: var(--spacing-xs) var(--spacing-xs);
+    border-radius: 1rem;
+}
+
+button.btn-transparent {
+    background: transparent;
+    border: none;
+    color: inherit;
+}
+
 button.action {
     width: var(--button-size);
     height: var(--button-size);
@@ -50,3 +73,13 @@ button.active,
 button.applied:not(.active) {
     color: var(--color-primary);
 }
+
+/* {{{ animations */
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* }}} */

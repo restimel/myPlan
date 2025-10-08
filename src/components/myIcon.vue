@@ -4,8 +4,10 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import IconAdd from '@/components/icons/IconAdd.vue';
 import IconBug from '@/components/icons/IconBug.vue';
 import IconCancel from '@/components/icons/IconCancel.vue';
+import IconChrono from '@/components/icons/IconChrono.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconDown from '@/components/icons/IconDown.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
@@ -15,10 +17,14 @@ import IconLink from '@/components/icons/IconLink.vue';
 import IconMagic from '@/components/icons/IconMagic.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
 import IconMerge from '@/components/icons/IconMerge.vue';
+import IconNext from '@/components/icons/IconNext.vue';
 import IconOk from '@/components/icons/IconOk.vue';
+import IconPause from '@/components/icons/IconPause.vue';
 import IconPhoto from '@/components/icons/IconPhoto.vue';
+import IconPlay from '@/components/icons/IconPlay.vue';
 import IconQuestion from '@/components/icons/IconQuestion.vue';
 import IconRecapture from '@/components/icons/IconRecapture.vue';
+import IconRestart from '@/components/icons/IconRestart.vue';
 import IconSave from '@/components/icons/IconSave.vue';
 import IconSettings from '@/components/icons/IconSettings.vue';
 import IconSize from '@/components/icons/IconSize.vue';
@@ -29,8 +35,10 @@ import IconView from '@/components/icons/IconView.vue';
 import IconYouTube from '@/components/icons/IconYouTube.vue';
 
 export type Icons =
+    | 'add'
     | 'bug'
     | 'cancel'
+    | 'chrono'
     | 'delete'
     | 'down'
     | 'edit'
@@ -40,10 +48,14 @@ export type Icons =
     | 'magic'
     | 'menu'
     | 'merge'
+    | 'next'
     | 'ok'
+    | 'pause'
     | 'photo'
+    | 'play'
     | 'question'
     | 'recapture'
+    | 'restart'
     | 'save'
     | 'settings'
     | 'size'
@@ -62,8 +74,10 @@ type Props = {
 const props = defineProps<Props>();
 
 const mapElement = {
+    add: IconAdd,
     bug: IconBug,
     cancel: IconCancel,
+    chronometer: IconChrono,
     delete: IconDelete,
     down: IconDown,
     edit: IconEdit,
@@ -73,10 +87,14 @@ const mapElement = {
     magic: IconMagic,
     menu: IconMenu,
     merge: IconMerge,
+    next: IconNext,
     ok: IconOk,
+    pause: IconPause,
     photo: IconPhoto,
+    play: IconPlay,
     question: IconQuestion,
     recapture: IconRecapture,
+    restart: IconRestart,
     save: IconSave,
     settings: IconSettings,
     size: IconSize,

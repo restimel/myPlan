@@ -13,9 +13,10 @@
             }"
             @mousedown="close"
         >
-            <RouterLink to="/build"><MyIcon icon="edit" :size="12" /> {{ t('build.title') }}</RouterLink>
-            <RouterLink to="/view"><MyIcon icon="view" :size="12" />  {{ t('view.title') }}</RouterLink>
-            <RouterLink to="/about"><MyIcon icon="question" :size="12" />  {{ t('about.title') }}</RouterLink>
+            <RouterLink to="/build"><MyIcon icon="edit" :size="12" />{{ t('build.title') }}</RouterLink>
+            <RouterLink to="/view"><MyIcon icon="view" :size="12" /> {{ t('view.title') }}</RouterLink>
+            <RouterLink to="/chronometer"><MyIcon icon="chronometer" :size="12" /> {{ t('chronometer.title') }}</RouterLink>
+            <RouterLink to="/about"><MyIcon icon="question" :size="12" /> {{ t('about.title') }}</RouterLink>
             <LanguageSelector />
         </nav>
     </div>

@@ -20,13 +20,15 @@ const router = createRouter({
             component: ViewPlanView,
         },
         {
+            path: '/chronometer',
+            name: 'chronometer',
+            /* route level code-splitting */
+            component: () => import('@/views/ChronometerView.vue'),
+        },
+        {
             path: '/about',
             name: 'about',
-            /*
-             * route level code-splitting
-             * this generates a separate chunk (About.[hash].js) for this route
-             * which is lazy-loaded when the route is visited.
-             */
+            /* route level code-splitting */
             component: () => import('@/views/AboutView.vue'),
         },
         {

@@ -63,6 +63,10 @@
 
     --color-bg-media: var(--vt-c-black);
 
+    --color-bg-chronometer: var(--vt-c-black);
+    --color-bg-chronometer-timeout: #cb1818;
+    --color-chronometer-warning: #e65151;
+
     /* Spacing */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;
