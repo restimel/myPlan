@@ -35,10 +35,10 @@
     * [x] When settings are open, "enter" should validate the field (and validate the form if last field)
 * [ ] Add a guide page to explain how to use the application
 * [ ] Chronometer
-    * [ ] play sound
+    * [x] play sound
     * [ ] store chronometer settings
     * [ ] allow to change background color for a period
-    * [ ] intermediate warning (bip at 1 minute left)
+    * [x] intermediate warning (bip at 1 minute left)
     * [ ] create settings template
 
 ## Maybe to be done
@@ -63,3 +63,4 @@
 * [ ] view mode
     * [x] margin under "TOP" is not correct
     * [ ] cannot scroll when starting over a hold
+* [ ] do not lock screen when timer is running

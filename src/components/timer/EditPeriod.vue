@@ -44,6 +44,13 @@
                 >
                 {{ t('chronometer.activateVibration') }}
             </label>
+            <label :disabled="!isVibrateSupported">
+                <input
+                    type="checkbox"
+                    v-model="localPeriod.soundWarning"
+                >
+                {{ t('chronometer.activateBeepWarning') }}
+            </label>
         </fieldset>
         <ConfirmButton
             class="period-delete btn-small"

@@ -42,7 +42,7 @@ function pad(value: number): string {
     return value.toString(10).padStart(2, '0');
 }
 
-const valueSeconds = computed(() => Math.round(Math.abs(props.value) / 1000));
+const valueSeconds = computed(() => Math.abs(props.value));
 
 const hours = computed(() => {
     const value = valueSeconds.value;
@@ -65,10 +65,10 @@ const seconds = computed(() => {
     return pad(secondValue);
 });
 
-const displayHours = computed(() => props.duration >= 3_600_000 || hours.value !== '00');
+const displayHours = computed(() => props.duration >= 3_600 || hours.value !== '00');
 
 const isWarning = computed<boolean>(() => {
-    return !!props.warn && !isTimeout.value && props.value <= 10_000;
+    return !!props.warn && !isTimeout.value && props.value <= 10;
 });
 
 </script>
@@ -98,8 +98,11 @@ const isWarning = computed<boolean>(() => {
 }
 
 @keyframes limitWarning {
-    60% {
+    0% {
         color: var(--color-chronometer-warning);
+    }
+    30% {
+        color: inherit;
     }
 }
 </style>

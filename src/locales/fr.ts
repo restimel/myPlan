@@ -24,6 +24,7 @@ export default {
         actionStartNext: 'Démarrer la période suivante',
         actionStop: 'Arrêter le chronomètre',
         addPeriod: 'Ajouter une nouvelle période',
+        activateBeepWarning: 'sonneries intermédiaires',
         activateSound: 'sonnerie',
         activateVibration: 'vibrations',
         deletePeriodConfirm: 'Cliquez une deuxième fois pour confirmer la suppression de cette période',

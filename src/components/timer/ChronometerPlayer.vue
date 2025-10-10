@@ -5,14 +5,14 @@
     >
         <ChronometerDisplay
             class="time-left"
-            :value="timerLeft"
-            :duration="currentPeriod.duration * 1000"
+            :value="timerLeftSecond"
+            :duration="currentPeriod.duration"
             warn
         />
         <ChronometerDisplay
             class="time-spent"
-            :value="timerSpent"
-            :duration="currentPeriod.duration * 1000"
+            :value="timerSpentSecond"
+            :duration="currentPeriod.duration"
         />
         <div class="period-name">
             {{ currentPeriod.name }}
@@ -55,12 +55,11 @@ import {
     periods,
     restartChrono,
     stop,
-    timerLeft,
-    timerSpent,
+    timerLeftSecond,
+    timerSpentSecond,
 } from '@/stores/ChronometerStore';
 import ChronometerDisplay from '@/components/timer/ChronometerDisplay.vue';
 import MyIcon from '@/components/myIcon.vue';
-import { computed } from 'vue';
 
 function play() {
     if (isRunning.value) {

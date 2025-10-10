@@ -23,6 +23,7 @@ export default {
         actionRepeat: 'Repeat this period',
         actionStartNext: 'Start next period',
         actionStop: 'Stop timer',
+        activateBeepWarning: 'Intermediate beep',
         activateSound: 'sounds',
         activateVibration: 'vibrations',
         addPeriod: 'Add a new period',
