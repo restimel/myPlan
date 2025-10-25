@@ -3,6 +3,13 @@
         class="chronometer-player"
         @click="play"
     >
+        <video
+            class="keep-awake-video"
+            src="@/assets/bgTimer.webm"
+            loop
+            :controls="false"
+            ref="awakeVideo"
+        />
         <ChronometerDisplay
             class="time-left"
             :value="timerLeftSecond"
@@ -47,6 +54,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useTemplateRef, watch } from 'vue';
 import {
     continueChrono,
     currentPeriod,
@@ -62,6 +70,16 @@ import {
 } from '@/stores/ChronometerStore';
 import ChronometerDisplay from '@/components/timer/ChronometerDisplay.vue';
 import MyIcon from '@/components/myIcon.vue';
+
+const awakeVideo = useTemplateRef('awakeVideo');
+
+watch(isRunning, (isRunning) => {
+    if (isRunning) {
+        awakeVideo.value?.play();
+    } else {
+        awakeVideo.value?.pause();
+    }
+});
 
 function play() {
     if (isRunning.value) {
@@ -109,11 +127,24 @@ function restartChrono() {
     position: absolute;
     top: 0;
     font-size: 0.8em;
+    z-index: 100;
 }
 .period-actions {
     position: absolute;
     bottom: 0;
     right: 0;
     margin: var(--field-margin);
+    z-index: 100;
+}
+
+.keep-awake-video {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.05;
 }
 </style>

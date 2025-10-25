@@ -46,6 +46,7 @@
 * [ ] Add Youtube video player in background (www.youtube.com/iframe_api)
 * [ ] In viewer
     * [ ] May allow to use it in competition (associate number with holds)
+        * [ ] create shortcut between holds
     * [ ] save the result
 
 ## Known bugs
@@ -63,4 +64,4 @@
 * [ ] view mode
     * [x] margin under "TOP" is not correct
     * [ ] cannot scroll when starting over a hold
-* [ ] do not lock screen when timer is running
+* [?] do not lock screen when timer is running
