@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container editor-page">
         <h1>
             {{ t('chronometer.settingsTitle') }}
         </h1>

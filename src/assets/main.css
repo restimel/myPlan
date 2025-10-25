@@ -15,6 +15,19 @@
     font-weight: normal;
 }
 
+.container {
+    border: 2px solid var(--mode-color, transparent);
+    box-shadow: inset 0 0 5px var(--mode-color, transparent);
+}
+
+.editor-page {
+    --mode-color: var(--mode-editor-color);
+}
+
+.view-page {
+    --mode-color: var(--mode-view-color);
+}
+
 a {
     text-decoration: none;
     transition: 0.4s;
@@ -26,6 +39,8 @@ a {
         background-color: hsla(160, 100%, 37%, 0.2);
     }
 }
+
+/* {{{ Buttons */
 
 button {
     display: inline-flex;
@@ -74,6 +89,7 @@ button.applied:not(.active) {
     color: var(--color-primary);
 }
 
+/* }}} */
 /* {{{ animations */
 
 @keyframes blink {

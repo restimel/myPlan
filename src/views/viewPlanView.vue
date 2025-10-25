@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container view-page">
         <RouteViewer
             :store="routeStore"
         />

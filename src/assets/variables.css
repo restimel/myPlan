@@ -67,6 +67,10 @@
     --color-bg-chronometer-timeout: #cb1818;
     --color-chronometer-warning: #e65151;
 
+    --mode-editor-color: #c31420;
+    --mode-view-color: #1e853c;
+    --mode-competition-color: #10176e;
+
     /* Spacing */
     --spacing-xs: 0.5rem;
     --spacing-sm: 1rem;

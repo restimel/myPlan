@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container editor-page">
         <VideoPlan v-if="mode === 'video'"
             @image="getImage"
         />
