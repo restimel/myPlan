@@ -22,6 +22,9 @@
         >
             <button v-for="actionItem of actions"
                 class="action"
+                :class="{
+                    active: !!actionItem.active,
+                }"
                 :key="actionItem.type"
                 :title="actionItem.title"
                 :disabled="actionItem.disabled"
@@ -41,6 +44,7 @@ type Action = {
     icon: Icons;
     title?: string;
     disabled?: boolean;
+    active?: boolean;
 };
 
 type Props = {

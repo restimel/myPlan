@@ -51,6 +51,7 @@
                 {
                     type: 'magicHold',
                     icon: 'magic',
+                    active: willApplyGrey,
                 },
                 {
                     type: 'removeHold',
