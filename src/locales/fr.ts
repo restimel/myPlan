@@ -27,6 +27,7 @@ export default {
         activateBeepWarning: 'sonneries intermédiaires',
         activateSound: 'sonnerie',
         activateVibration: 'vibrations',
+        clearPeriods: 'Supprimer toutes les périodes',
         deletePeriodConfirm: 'Cliquez une deuxième fois pour confirmer la suppression de cette période',
         warningTitle: 'Effet à la fin de la période',
     },

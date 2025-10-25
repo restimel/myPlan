@@ -36,7 +36,7 @@
 * [ ] Add a guide page to explain how to use the application
 * [ ] Chronometer
     * [x] play sound
-    * [ ] store chronometer settings
+    * [x] store chronometer settings
     * [ ] allow to change background color for a period
     * [x] intermediate warning (bip at 1 minute left)
     * [ ] create settings template

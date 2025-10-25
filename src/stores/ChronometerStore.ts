@@ -2,8 +2,8 @@ import { getRandomId } from '@/utils/tools';
 import { computed, reactive, ref, watch } from 'vue';
 import { useVibrate, useWakeLock } from '@vueuse/core';
 import { beepTime, beepTimeout } from '@/utils/sound';
+import { loadTimer, saveTimer } from '@/utils/storage';
 
-type Warning = 'none' | 'sound' | 'vibration';
 export type Period = {
     id: number;
     name: string;
@@ -33,6 +33,81 @@ export const defaultPeriod: Period = {
 
 export const periods = ref<Period[]>([]);
 updatePeriod(-1);
+
+export const isDefaultPeriods = computed<boolean>(() => {
+    const periodsValue = periods.value;
+
+    if (periodsValue.length > 1) {
+        return false;
+    }
+
+    const period = periodsValue[0];
+
+    if (!/^period \d+$/.test(period.name)) {
+        return false;
+    }
+
+    if (
+        period.duration !== defaultPeriod.duration ||
+        period.endEffect !== defaultPeriod.endEffect ||
+        period.activateSound !== defaultPeriod.activateSound ||
+        period.activateVibration !== defaultPeriod.activateVibration ||
+        period.soundWarning !== defaultPeriod.soundWarning
+    ) {
+        return false;
+    }
+
+    return true;
+});
+
+function cleanPeriod(period: Period, index = periods.value.length): Period {
+    if (!period) {
+        period = {...defaultPeriod};
+    }
+
+    if (!period.id) {
+        period.id = getRandomId();
+    }
+
+    if (!period.name || period.name === defaultPeriodName) {
+        period.name = `period ${index + 1}`;
+    }
+
+    if (typeof period.duration !== 'number' || period.duration <= 0) {
+        period.duration = defaultPeriod.duration;
+    }
+
+    if (!period.endEffect) {
+        period.endEffect = defaultPeriod.endEffect;
+    }
+
+    if (typeof period.activateSound !== 'boolean') {
+        period.activateSound = defaultPeriod.activateSound;
+    }
+
+    if (typeof period.activateVibration !== 'boolean') {
+        period.activateVibration = defaultPeriod.activateVibration;
+    }
+
+    if (typeof period.soundWarning !== 'boolean') {
+        period.soundWarning = defaultPeriod.soundWarning;
+    }
+
+    return period;
+}
+
+function initPeriods() {
+    const storedPeriods = loadTimer();
+
+    if (storedPeriods) {
+        periods.value = storedPeriods.map(cleanPeriod);
+    }
+
+    watch(periods, (value) => {
+        saveTimer(value);
+    }, { deep: true });
+}
+initPeriods();
 
 export function updatePeriod(index: number, period: Period = defaultPeriod) {
     const periodsValue = periods.value;
@@ -66,6 +141,11 @@ export function deletePeriod(index: number) {
     }
 
     return false;
+}
+
+export function clearPeriods() {
+    periods.value = [];
+    updatePeriod(-1);
 }
 
 /* }}} */
@@ -143,7 +223,7 @@ export function setPeriod(index: number) {
 }
 
 watch(isTimeout, () => {
-    if (isTimeout.value) {
+    if (isTimeout.value && isRunning.value) {
         const period = currentPeriod.value;
         const effect = period.endEffect;
 
@@ -169,7 +249,7 @@ watch(isTimeout, () => {
 
 watch(nextWarningTime, (nextTime) => {
     const period = currentPeriod.value;
-    const soundWarning = period.soundWarning;
+    const soundWarning = period.soundWarning && period.activateSound;
     const maxWarningValue = getNextWarning(period.duration * 1_000);
 
     if (soundWarning && isRunning.value && nextTime !== maxWarningValue) {
@@ -212,7 +292,7 @@ function updateTick() {
     }
 }
 
-export function restartChrono() {
+export function restartPeriod() {
     timerSpent.value = 0;
 }
 
@@ -224,7 +304,7 @@ export function continueChrono() {
 }
 
 export function start() {
-    restartChrono();
+    restartPeriod();
     continueChrono();
 }
 

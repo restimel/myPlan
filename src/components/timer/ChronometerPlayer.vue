@@ -53,7 +53,9 @@ import {
     isRunning,
     nextPeriod,
     periods,
-    restartChrono,
+    restartPeriod,
+    setPeriod,
+    start,
     stop,
     timerLeftSecond,
     timerSpentSecond,
@@ -70,9 +72,20 @@ function play() {
 }
 
 function changeToNextPeriod() {
+    const running = isRunning.value;
+
     stop();
-    restartChrono();
+    restartPeriod();
     nextPeriod();
+
+    if (running) {
+        start();
+    }
+}
+
+function restartChrono() {
+    setPeriod(0);
+    restartPeriod();
 }
 
 </script>

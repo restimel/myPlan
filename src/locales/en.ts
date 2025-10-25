@@ -27,6 +27,7 @@ export default {
         activateSound: 'sounds',
         activateVibration: 'vibrations',
         addPeriod: 'Add a new period',
+        clearPeriods: 'Clear all periods',
         deletePeriodConfirm: 'Click a second time to confirm the period deletion',
         warningTitle: 'Effect at the end of the period',
     },

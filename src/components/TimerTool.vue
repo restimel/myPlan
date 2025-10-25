@@ -16,6 +16,16 @@
             />
             {{ t('chronometer.addPeriod') }}
         </button>
+        <button
+            class="default-btn"
+            :disabled="isDefaultPeriods"
+            @click="clearPeriods"
+        >
+            <MyIcon
+                icon="delete"
+            />
+            {{ t('chronometer.clearPeriods') }}
+        </button>
     </main>
 </template>
 
@@ -23,7 +33,9 @@
 import MyIcon from '@/components/myIcon.vue';
 import EditPeriod from '@/components/timer/EditPeriod.vue';
 import {
+    clearPeriods,
     currentPeriod,
+    isDefaultPeriods,
     periods,
     setPeriod,
     updatePeriod,

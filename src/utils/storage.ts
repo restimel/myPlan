@@ -5,6 +5,7 @@ import {
     table2Dto1D,
 } from '@/utils/image';
 import { log } from '@/utils/debug';
+import type { Period } from '@/stores/ChronometerStore';
 
 type StoredImage = {
     image: string;
@@ -21,7 +22,8 @@ export type StoredRoute = {
 }
 
 /** Name of the localStorage saved on browser */
-const STORAGE_NAME = 'plan';
+const ROUTE_STORAGE_NAME = 'plan';
+const TIMER_STORAGE_NAME = 'chronometers';
 
 /**
  * This offset is to avoid controls and non printable characters (before 32)
@@ -32,7 +34,7 @@ const STORAGE_NAME = 'plan';
 const CHAR_OFFSET = 35;
 
 /** Localstorage limit is around 5M */
-const STORAGE_LIMIT = 2_400_000;
+const ROUTE_STORAGE_LIMIT = 2_400_000;
 
 const defaultSettings: RouteSettings = {
     routeName: '',
@@ -79,6 +81,8 @@ function stringToData(text: string): number[] {
     return data;
 }
 
+/* {{{ Route storage */
+
 export function saveRoute(image: ImageData, holdList: Hold[], settings: RouteSettings, retry = 5): boolean {
     const storage: StoredImage = {
         image: dataToString(image.data),
@@ -90,8 +94,8 @@ export function saveRoute(image: ImageData, holdList: Hold[], settings: RouteSet
 
     const json = JSON.stringify(storage);
 
-    if (json.length > STORAGE_LIMIT) {
-        const wantedRatioReduceFactor = Math.ceil(json.length * 10 / STORAGE_LIMIT) / 10;
+    if (json.length > ROUTE_STORAGE_LIMIT) {
+        const wantedRatioReduceFactor = Math.ceil(json.length * 10 / ROUTE_STORAGE_LIMIT) / 10;
         const ratioReduceFactor = Math.ceil(Math.sqrt(wantedRatioReduceFactor) * 100) / 100;
 
         if (retry <= 0) {
@@ -121,13 +125,13 @@ export function saveRoute(image: ImageData, holdList: Hold[], settings: RouteSet
     }
 
     log('information', 'storage size: ' + json.length);
-    localStorage.setItem(STORAGE_NAME, json);
+    localStorage.setItem(ROUTE_STORAGE_NAME, json);
 
     return true;
 }
 
 export function loadRoute(): StoredRoute | null {
-    const json = localStorage.getItem(STORAGE_NAME);
+    const json = localStorage.getItem(ROUTE_STORAGE_NAME);
 
     if (!json) {
         return null;
@@ -153,7 +157,44 @@ export function loadRoute(): StoredRoute | null {
 
         return result;
     } catch (err) {
-        log('warning', `Issue while parsing JSON (error: ${err})`);
+        log('warning', `Issue while parsing Route JSON (error: ${err})`);
         return null;
     }
 }
+
+/* }}} */
+/* {{{ Timer storage */
+
+export function saveTimer(periods: Period[]) {
+    const json = JSON.stringify(periods);
+
+    log('information', 'save timer (size: ' + json.length + ')');
+    localStorage.setItem(TIMER_STORAGE_NAME, json);
+}
+
+export function loadTimer(): Period[] | null {
+    const json = localStorage.getItem(TIMER_STORAGE_NAME);
+
+    if (!json) {
+        log('information', 'Storage: no timer found');
+        return null;
+    }
+
+    try {
+        const stored = JSON.parse(json);
+
+        if (!Array.isArray(stored)) {
+            log('information', 'Storage: invalid stored data --- ' + json);
+            return null;
+        }
+
+        log('information', 'Storage: load timers:' + stored.length);
+
+        return stored;
+    } catch (err) {
+        log('warning', `Issue while parsing Timer JSON (error: ${err})`);
+        return null;
+    }
+}
+
+/* }}} */
