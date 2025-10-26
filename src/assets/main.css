@@ -40,6 +40,11 @@ a {
     }
 }
 
+.info {
+    font-size: 0.8em;
+    color: var(--color-text-details)
+}
+
 /* {{{ Buttons */
 
 button {
@@ -74,19 +79,15 @@ button.action {
     --icon-size: calc(var(--button-size) / 2);
 }
 
-.info {
-    font-size: 0.8em;
-    color: var(--color-text-details)
-}
-
 button.active,
 .primary-btn {
     background: var(--color-primary);
     color: var(--color-txt-primary);
 }
 
-button.applied:not(.active) {
-    color: var(--color-primary);
+button.active:not([disabled]):hover,
+.primary-btn:not([disabled]):hover {
+    background: var(--color-primary-hover);
 }
 
 /* }}} */
