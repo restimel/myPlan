@@ -64,4 +64,4 @@
 * [ ] view mode
     * [x] margin under "TOP" is not correct
     * [ ] cannot scroll when starting over a hold
-* [?] do not lock screen when timer is running
+* [x] do not lock screen when timer is running
