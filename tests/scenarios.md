@@ -116,7 +116,7 @@
     * [x] All periods should stay the same as before
 12. Add new period
     * [x] it should displayed a new period to edit bellow all other periods
-    * [ ] If the number of periods is greater than the screen size, we should be able to scroll to see them all.
+    * [?] If the number of periods is greater than the screen size, we should be able to scroll to see them all.
         * We cannot scroll
 13. Delete a period
     * [x] A confirm system should prevent wrong deletion (current implementation is we need to click again on the button)

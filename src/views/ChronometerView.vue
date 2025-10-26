@@ -24,6 +24,8 @@ const { t } = useI18n();
     grid-template-areas: "title" "chronometer" "content";
     align-items: center;
     justify-items: center;
+    max-height: 100%;
+    overflow: auto;
 }
 
 </style>

@@ -41,7 +41,7 @@ main {
 @media (orientation:landscape) {
     main {
         grid-template-columns: max-content 1fr;
-        grid-template-rows: 1fr;
+        grid-template-rows: 100%;
     }
 }
 
