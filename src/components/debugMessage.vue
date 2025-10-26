@@ -18,6 +18,6 @@ aside {
     right: 0;
     background: var(--color-background-soft);
     color: var(--color-text);
-    z-index: 1000;
+    z-index: var(--zIndex-debug-message);
 }
 </style>

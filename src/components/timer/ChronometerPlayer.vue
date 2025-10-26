@@ -127,14 +127,14 @@ function restartChrono() {
     position: absolute;
     top: 0;
     font-size: 0.8em;
-    z-index: 100;
+    z-index: var(--zIndex-chronometer);
 }
 .period-actions {
     position: absolute;
     bottom: 0;
     right: 0;
     margin: var(--field-margin);
-    z-index: 100;
+    z-index: var(--zIndex-chronometer);
 }
 
 .keep-awake-video {
@@ -144,7 +144,6 @@ function restartChrono() {
     width: 10px;
     height: 10px;
     pointer-events: none;
-    z-index: 1;
     opacity: 0.05;
 }
 </style>

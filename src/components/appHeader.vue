@@ -91,7 +91,7 @@ nav a:first-of-type {
         font-size: 1.2em;
 
         position: absolute;
-        z-index: 100;
+        z-index: var(--zIndex-main-menu);
         top: 20px;
         height: auto;
         background-color: var(--color-primary);

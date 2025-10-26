@@ -127,10 +127,13 @@
     /* Z-index */
     --zIndex-bg-canvas: 10;
     --zIndex-fg-canvas: 20;
+    --zIndex-chronometer: 50;
     --zIndex-message: 100;
     --zIndex-menu: 200;
     --zIndex-error-message: 500;
+    --zIndex-main-menu: 700;
     --zIndex-modal: 1000;
+    --zIndex-debug-message: 10000;
 }
 
 @media (prefers-color-scheme: dark) {
