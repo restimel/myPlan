@@ -29,13 +29,6 @@
                 {{ t('chronometer.warningTitle') }}
             </legend>
 
-            <label>
-                <input
-                    type="checkbox"
-                    v-model="localPeriod.activateSound"
-                >
-                {{ t('chronometer.activateSound') }}
-            </label>
             <label :disabled="!isVibrateSupported">
                 <input
                     type="checkbox"
@@ -44,7 +37,18 @@
                 >
                 {{ t('chronometer.activateVibration') }}
             </label>
-            <label :disabled="!isVibrateSupported">
+            <label>
+                <input
+                    type="checkbox"
+                    v-model="localPeriod.activateSound"
+                >
+                {{ t('chronometer.activateSound') }}
+            </label>
+            <label
+                :class="{
+                    disabled: !localPeriod.activateSound,
+                }"
+            >
                 <input
                     type="checkbox"
                     v-model="localPeriod.soundWarning"
@@ -115,6 +119,12 @@ watch(() => props.periodIndex,
     { immediate: true }
 );
 
+watch(() => localPeriod.value.soundWarning, (value) => {
+    if (value) {
+        localPeriod.value.activateSound = true;
+    }
+});
+
 watch(
     localPeriod,
     (newValue) => {
@@ -172,5 +182,9 @@ watch(
 .period-options {
     display: flex;
     flex-direction: column;
+}
+
+.disabled {
+    opacity: 0.5;
 }
 </style>

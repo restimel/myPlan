@@ -43,10 +43,6 @@
 
     --color-heading: var(--vt-c-text-light-1);
 
-    --color-text: var(--vt-c-text-light-1);
-    --color-text-information: var(--vt-c-grey);
-    --color-heading: var(--vt-c-text-light-1);
-
     --color-background: var(--vt-c-white);
     --color-background-soft: var(--vt-c-white-soft);
     --color-background-light: var(--vt-c-white-light);
@@ -54,6 +50,10 @@
 
     --color-border: var(--vt-c-divider-light-2);
     --color-border-hover: var(--vt-c-divider-light-1);
+
+    --color-text: var(--vt-c-text-light-1);
+    --color-text-information: var(--vt-c-grey);
+    --color-heading: var(--vt-c-text-light-1);
 
     --color-success: #4CAF50;
     --color-error: #F44336;
@@ -67,7 +67,7 @@
     --color-bg-chronometer-timeout: #cb1818;
     --color-chronometer-warning: #e65151;
 
-    --mode-editor-color: #c31420;
+    --mode-editor-color: #e37019;
     --mode-view-color: #1e853c;
     --mode-competition-color: #10176e;
 
