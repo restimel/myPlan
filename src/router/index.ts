@@ -20,10 +20,16 @@ const router = createRouter({
             component: ViewPlanView,
         },
         {
-            path: '/chronometer',
-            name: 'chronometer',
+            path: '/chronometerSettings',
+            name: 'chronometerSettings',
             /* route level code-splitting */
             component: () => import('@/views/ChronometerView.vue'),
+        },
+        {
+            path: '/chronometer',
+            name: 'chronometerPlayer',
+            /* route level code-splitting */
+            component: () => import('@/views/ChronometerPlayerView.vue'),
         },
         {
             path: '/about',

@@ -1,6 +1,16 @@
 <template>
     <main class="chronometer-editor">
         <div class="chronometer-editor__container">
+            <RouterLink to="/chronometer">
+                <button
+                    class="primary-btn"
+                >
+                    <MyIcon
+                        icon="size"
+                    />
+                    {{ t('chronometer.fullscreenPlayer') }}
+                </button>
+            </RouterLink>
             <EditPeriod v-for="(period, periodIndex) of periods"
                 :class="{ active: period.id === currentPeriod.id }"
                 :period-index="periodIndex"

@@ -37,6 +37,7 @@
 * [ ] Chronometer
     * [x] play sound
     * [x] store chronometer settings
+    * [x] Display chronometer in fullscreen
     * [ ] allow to change background color for a period
     * [x] intermediate warning (bip at 1 minute left)
     * [ ] create settings template

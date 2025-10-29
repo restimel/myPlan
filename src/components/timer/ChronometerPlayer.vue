@@ -1,7 +1,11 @@
 <template>
     <div
         class="chronometer-player"
+        :class="{
+            timeout: isTimeout,
+        }"
         @click="play"
+        ref="chronometerPlayer"
     >
         <video
             class="keep-awake-video"
@@ -54,11 +58,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useTemplateRef, watch } from 'vue';
+import { computed, useTemplateRef, watch } from 'vue';
 import {
     continueChrono,
     currentPeriod,
     isRunning,
+    isTimeout,
     nextPeriod,
     periods,
     restartPeriod,
@@ -69,9 +74,24 @@ import {
     timerSpentSecond,
 } from '@/stores/ChronometerStore';
 import ChronometerDisplay from '@/components/timer/ChronometerDisplay.vue';
+import { useElementSize } from '@vueuse/core';
 import MyIcon from '@/components/myIcon.vue';
 
 const awakeVideo = useTemplateRef('awakeVideo');
+const chronometerPlayer = useTemplateRef('chronometerPlayer');
+const { width, height } = useElementSize(chronometerPlayer);
+
+const size = computed(() => {
+    const fontRatio = 1.4;
+    const chronoHeight = 5 * height.value / 6;
+    const chronoWidth = chronoHeight * fontRatio;
+
+    if (chronoWidth < width.value) {
+        return `${chronoHeight / 2}px`;
+    }
+
+    return `${width.value / fontRatio / 2}px`;
+});
 
 watch(isRunning, (isRunning) => {
     if (isRunning) {
@@ -112,16 +132,23 @@ function restartChrono() {
 .chronometer-player {
     position: relative;
     width: 100%;
+    height: 100%;
 
+    background: var(--color-bg-chronometer);
     color: var(--vt-c-white-soft); /* default color */
     /* contrast color */
     color: hsl(from var(--color-bg-chronometer) 0 0 calc(clamp(0, 60 - l, 1) * 95%));
+
+    --size: clamp(5em, 100%);
+}
+.chronometer-player.timeout {
+    --color-bg-chronometer: var(--color-bg-chronometer-timeout);
 }
 .time-left {
-    font-size: 5em;
+    font-size: v-bind(size);
 }
 .time-spent {
-    font-size: 1em;
+    font-size: calc(v-bind(size) / 5);
 }
 .period-name {
     position: absolute;

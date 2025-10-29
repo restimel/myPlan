@@ -29,6 +29,7 @@ export default {
         addPeriod: 'Add a new period',
         clearPeriods: 'Clear all periods',
         deletePeriodConfirm: 'Click a second time to confirm the period deletion',
+        fullscreenPlayer: 'Run in fullscreen',
         warningTitle: 'Effect at the end of the period',
     },
     message: {

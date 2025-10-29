@@ -38,7 +38,7 @@ export type Icons =
     | 'add'
     | 'bug'
     | 'cancel'
-    | 'chrono'
+    | 'chronometer'
     | 'delete'
     | 'down'
     | 'edit'

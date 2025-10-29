@@ -116,11 +116,15 @@
     * [x] All periods should stay the same as before
 12. Add new period
     * [x] it should displayed a new period to edit bellow all other periods
-    * [?] If the number of periods is greater than the screen size, we should be able to scroll to see them all.
+    * [x] If the number of periods is greater than the screen size, we should be able to scroll to see them all.
         * We cannot scroll
 13. Delete a period
     * [x] A confirm system should prevent wrong deletion (current implementation is we need to click again on the button)
     * [x] The given period should be removed
-12. Click on "Clear all periods"
+14. Click on "Clear all periods"
     * [x] It should reset all periods and display the default one
     * [x] The button should now be disabled
+15. Click on fullscreen
+    * [ ] The timer should be displayed in fullscreen.
+    * [ ] All operations (play/stop/restart) should be available
+    * [ ] We should be available to leave this mode

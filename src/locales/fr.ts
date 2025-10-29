@@ -29,6 +29,7 @@ export default {
         activateVibration: 'vibrations',
         clearPeriods: 'Supprimer toutes les périodes',
         deletePeriodConfirm: 'Cliquez une deuxième fois pour confirmer la suppression de cette période',
+        fullscreenPlayer: 'Démarrer en plein écran',
         warningTitle: 'Effet à la fin de la période',
     },
     message: {

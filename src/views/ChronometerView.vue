@@ -20,7 +20,7 @@ const { t } = useI18n();
 
 .container {
     display: grid;
-    grid-template-rows: max-content max-content 1fr;
+    grid-template-rows: max-content 10em 1fr;
     grid-template-areas: "title" "chronometer" "content";
     align-items: center;
     justify-items: center;
