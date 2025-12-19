@@ -10,6 +10,7 @@
         <video
             class="keep-awake-video"
             src="@/assets/bgTimer.webm"
+            muted
             loop
             :controls="false"
             ref="awakeVideo"
@@ -93,13 +94,41 @@ const size = computed(() => {
     return `${width.value / fontRatio / 2}px`;
 });
 
+/* {{{ Awake system */
+
+/* Alternate play of the video to save energy consumption */
+
+const AWAKE_RUN = 500;
+const AWAKE_SLEEP = 5000;
+let awakeTimer = 0;
+
+function awakePlay() {
+    clearTimeout(awakeTimer);
+    awakeVideo.value?.play();
+    awakeTimer = setTimeout(awakePause, AWAKE_RUN);
+}
+
+function awakePause() {
+    clearTimeout(awakeTimer);
+    awakeVideo.value?.pause();
+    awakeTimer = setTimeout(awakePlay, AWAKE_SLEEP);
+}
+
+function stopAwake() {
+    clearTimeout(awakeTimer);
+    awakeVideo.value?.pause();
+    awakeTimer = 0;
+}
+
 watch(isRunning, (isRunning) => {
     if (isRunning) {
-        awakeVideo.value?.play();
+        awakePlay();
     } else {
-        awakeVideo.value?.pause();
+        stopAwake();
     }
 });
+
+/* }}} */
 
 function play() {
     if (isRunning.value) {

@@ -17,6 +17,9 @@ export type Period = {
 
 const REFRESH_PERIOD = 200;
 
+const WARNING_MINUTE = 60_000;
+const WARNING_LAST_SECONDS = 5_000;
+
 /* {{{ manage Periods */
 
 const defaultPeriodName = 'default period';
@@ -190,12 +193,12 @@ const nextWarningTime = computed<number>(() => {
 });
 
 function getNextWarning(value: number): number {
-    if (value > 60_000) {
-        return 60;
+    if (value > WARNING_MINUTE) {
+        return WARNING_MINUTE / 1000;
     }
 
-    if (value > 10_000) {
-        return 10;
+    if (value > WARNING_LAST_SECONDS) {
+        return WARNING_LAST_SECONDS / 1000;
     }
 
     if (value > 0) {
@@ -286,9 +289,10 @@ function updateTick() {
     timerSpent.value += spent;
 
     const remainingTime = timerLeft.value;
+    const nextPeriodTimeLeft = remainingTime - nextWarningTime.value * 1000;
 
-    if (remainingTime < REFRESH_PERIOD && remainingTime >= 0) {
-        setTimeout(updateTick, remainingTime);
+    if (nextPeriodTimeLeft < REFRESH_PERIOD && remainingTime >= 0) {
+        setTimeout(updateTick, nextPeriodTimeLeft);
     }
 }
 

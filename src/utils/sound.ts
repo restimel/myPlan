@@ -7,7 +7,7 @@ export function beepTime() {
 }
 
 export function beepTimeout() {
-    playBeep(1200, 1000, 0.6);
+    playBeep(1050, 1000, 0.6);
 }
 
 export function playBeep(

@@ -36,6 +36,12 @@
                     :disabled="!localPeriod.activateVibration && !canUseVibration"
                 >
                 {{ t('chronometer.activateVibration') }}
+                <MyIcon
+                    icon="play"
+                    :size="10"
+                    class="demo-effect"
+                    @click.stop.prevent="vibrate()"
+                />
             </label>
             <label>
                 <input
@@ -43,6 +49,12 @@
                     v-model="localPeriod.activateSound"
                 >
                 {{ t('chronometer.activateSound') }}
+                <MyIcon
+                    icon="play"
+                    :size="10"
+                    class="demo-effect"
+                    @click.stop.prevent="beepTimeout()"
+                />
             </label>
             <label
                 :class="{
@@ -54,6 +66,12 @@
                     v-model="localPeriod.soundWarning"
                 >
                 {{ t('chronometer.activateBeepWarning') }}
+                <MyIcon
+                    icon="play"
+                    :size="10"
+                    class="demo-effect"
+                    @click.stop.prevent="beepTime()"
+                />
             </label>
         </fieldset>
         <ConfirmButton
@@ -75,11 +93,14 @@ import {
     isVibrateSupported,
     periods,
     updatePeriod,
+    vibrate,
     type Period,
 } from '@/stores/ChronometerStore';
 import { getRandomId } from '@/utils/tools';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import DurationEditor from '@/components/timer/DurationEditor.vue';
+import MyIcon from '../myIcon.vue';
+import { beepTime, beepTimeout } from '@/utils/sound';
 
 const { t } = useI18n();
 
@@ -184,7 +205,19 @@ watch(
     flex-direction: column;
 }
 
+.period-options label {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
 .disabled {
     opacity: 0.4;
+}
+
+.demo-effect {
+    cursor: pointer;
+    margin-inline-start: auto;
 }
 </style>
