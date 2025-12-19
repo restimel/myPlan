@@ -29,6 +29,7 @@ import IconSave from '@/components/icons/IconSave.vue';
 import IconSettings from '@/components/icons/IconSettings.vue';
 import IconSize from '@/components/icons/IconSize.vue';
 import IconSplit from '@/components/icons/IconSplit.vue';
+import IconTrophy from '@/components/icons/IconTrophy.vue';
 import IconUnlink from '@/components/icons/IconUnlink.vue';
 import IconUp from '@/components/icons/IconUp.vue';
 import IconView from '@/components/icons/IconView.vue';
@@ -60,6 +61,7 @@ export type Icons =
     | 'settings'
     | 'size'
     | 'split'
+    | 'trophy'
     | 'unlink'
     | 'up'
     | 'view'
@@ -99,6 +101,7 @@ const mapElement = {
     settings: IconSettings,
     size: IconSize,
     split: IconSplit,
+    trophy: IconTrophy,
     unlink: IconUnlink,
     up: IconUp,
     view: IconView,
