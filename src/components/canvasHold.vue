@@ -117,7 +117,7 @@ import { exportImage } from '@/utils/files';
 import { screenListener } from '@/utils/screenEvent';
 import { setup, type ScreenAction } from '@/utils/screenStates';
 import { hysterisPoint } from '@/utils/movePoint';
-import { filterToGrey, type ColorRGB } from '@/utils/image';
+import { filterToGrey, unsetGreyHold } from '@/utils/image';
 import type { RouteStore } from '@/stores/RouteStore';
 import routeStore from '@/stores/RouteStore';
 
@@ -146,6 +146,7 @@ const offsetY = ref(0);
 
 const willApplyGrey = ref(false);
 const highlightColor = ref(false);
+const referenceColor = ref<ColorRGB>(props.store.settings.greyedImage.color ?? [0, 0, 0]);
 const menuOpen = ref(false);
 
 watch(() => props.image, () => {
@@ -250,7 +251,17 @@ function menuAction(action: string) {
 function loadImage(data?: ImageData) {
     const canvasEl = canvas.value!;
     const canvasLayerEl = canvasLayer.value!;
-    const imgData = data ?? props.image;
+    let imgData: ImageData | undefined;
+
+    if (!data) {
+        const color = referenceColor.value;
+
+        if (color && props.image) {
+            imgData = filterToGrey(props.image, props.store.holds, color);
+        }
+    } else {
+        imgData = data;
+    }
 
     if (!canvasEl || !imgData) {
         activeImage.value = null;
@@ -292,6 +303,7 @@ function setGrey(point?: Point) {
     }
 
     if (!point) {
+        props.store.setGrey();
         loadImage(originImage);
 
         return;
@@ -311,8 +323,13 @@ function setGrey(point?: Point) {
         return;
     }
 
-    const image = filterToGrey(originImage, color);
+    referenceColor.value = color;
 
+    const image = filterToGrey(originImage, props.store.holds, color);
+
+    props.store.setGrey({
+        color,
+    });
     loadImage(image);
 
     highlightColor.value = true;
@@ -323,7 +340,12 @@ function setHold(point: Point) {
         return setGrey(point);
     }
 
-    props.store.addHold(point[0], point[1], props.store.defaultHoldSize);
+    const hold = props.store.addHold(point[0], point[1], props.store.defaultHoldSize);
+
+    if (highlightColor.value && activeImage.value && props.image) {
+        const image = unsetGreyHold(activeImage.value, props.image, hold);
+        loadImage(image);
+    }
 }
 
 function closeMenu() {
@@ -332,7 +354,8 @@ function closeMenu() {
 }
 
 function validate() {
-    const image = activeImage.value;
+    /* Save the original image in order to keep the color */
+    const image = props.image;
 
     if (!image) {
         return;
@@ -340,6 +363,9 @@ function validate() {
 
     const settings = {
         routeName: props.store.routeName,
+        greyedImage: {
+            color: highlightColor.value ? referenceColor.value : undefined,
+        },
     };
 
     if (saveRoute(image, props.store.holds, settings)) {

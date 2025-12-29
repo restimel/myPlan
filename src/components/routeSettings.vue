@@ -34,7 +34,11 @@ const showSettings = ref(props.show);
 watch(() => props.show, () => showSettings.value = props.show);
 
 function closeSettings(result: Record<string, string | number> | undefined) {
-    const formResult = result as (SettingsForm | undefined);
+    const formResult = result &&
+        {
+            greyedImage: props.store.settings.greyedImage,
+            ...result,
+        } as (SettingsForm | undefined);
 
     if (formResult) {
         props.store.setSettings(formResult);

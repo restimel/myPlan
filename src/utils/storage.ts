@@ -8,6 +8,7 @@ import { log } from '@/utils/debug';
 import type { Period } from '@/stores/ChronometerStore';
 
 type StoredImage = {
+    version: number;
     image: string;
     width: number;
     height: number;
@@ -38,6 +39,7 @@ const ROUTE_STORAGE_LIMIT = 2_400_000;
 
 const defaultSettings: RouteSettings = {
     routeName: '',
+    greyedImage: {},
 };
 
 /** Used for compression */
@@ -85,6 +87,7 @@ function stringToData(text: string): number[] {
 
 export function saveRoute(image: ImageData, holdList: Hold[], settings: RouteSettings, retry = 5): boolean {
     const storage: StoredImage = {
+        version: 1,
         image: dataToString(image.data),
         width: image.width,
         height: image.height,

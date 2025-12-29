@@ -1,5 +1,3 @@
-export type ColorRGB = [number, number, number];
-export type ColorHSL = [number, number, number];
 
 export function aggregateCanvas(list: Set<HTMLCanvasElement>): HTMLCanvasElement {
     const elements = Array.from(list);
@@ -248,7 +246,111 @@ function isSameHue(pixel: ColorRGB, hueReference: number): boolean {
     return isAround(h, hueReference, 15, 360);
 }
 
-export function filterToGrey(originImage: ImageData, color?: ColorRGB): ImageData {
+type HoldBox = {
+    xMin: number;
+    xMax: number;
+    yMin: number;
+    yMax: number;
+    center: [number, number];
+    size: number;
+};
+
+const MARGIN_SIZE = 5;
+function isUnderHold([x, y]: [number, number], holds: HoldBox[]): boolean {
+    return holds.some((box) => {
+        if (x < box.xMin || x > box.xMax || y < box.yMin || y > box.yMax) {
+            return false;
+        }
+
+        const radius = box.size ** 2;
+        const [cx, cy] = box.center;
+        const dist = (x - cx) ** 2 + (y - cy) ** 2;
+
+        return dist < radius;
+    });
+}
+
+function buildBoxes(holds: Hold[]): HoldBox[] {
+    const boxes = holds.map(({position, size}) => {
+        const radius = size + MARGIN_SIZE;
+
+        return position.map(([cx, cy]) => {
+            return {
+                xMin: cx - radius,
+                xMax: cx + radius,
+                yMin: cy - radius,
+                yMax: cy + radius,
+                center: [cx, cy],
+                size: radius,
+            } as HoldBox;
+        });
+    });
+
+    return boxes.flat();
+}
+
+function getXY(index: number, width: number): [number, number] {
+    const baseIndex = Math.trunc(index / 4);
+    const x = baseIndex % width;
+    const y = (baseIndex - x) / width;
+
+    return [x, y];
+}
+
+export function unsetGreyHold(currentImage: ImageData, originImage: ImageData, hold: Hold): ImageData {
+    const data = Array.from(currentImage.data);
+
+    unsetGreyHoldOnImage(data, originImage, hold);
+
+    const buffer = new ArrayBuffer(data.length);
+    const clampedArray = new Uint8ClampedArray(buffer);
+
+    clampedArray.set(data);
+
+    const image = new ImageData(
+        clampedArray,
+        currentImage.width,
+        currentImage.height
+    );
+
+    return image;
+}
+
+function unsetGreyHoldOnImage(data: ImageDataArray | number[], originImage: ImageData, hold: Hold): ImageDataArray {
+    const center = hold.position[0];
+    const cx = Math.round(center[0]);
+    const cy = Math.round(center[1]);
+    const radius = Math.round(hold.size) + MARGIN_SIZE;
+    const xMin = cx - radius;
+    const xMax = cx + radius;
+    const yMin = cy - radius;
+    const yMax = cy + radius;
+    const boxes: HoldBox[] = [{
+        xMin,
+        xMax,
+        yMin,
+        yMax,
+        center,
+        size: radius,
+    }];
+    const width = originImage.width;
+
+    for (let x = xMin; x <= xMax; x++) {
+        for (let y = yMin; y <= yMax; y++) {
+            if (isUnderHold([x, y], boxes)) {
+                const index = (x + y * width) * 4;
+
+                data[index] = originImage.data[index];
+                data[index + 1] = originImage.data[index + 1];
+                data[index + 2] = originImage.data[index + 2];
+            }
+        }
+    }
+
+    return data as ImageDataArray;
+}
+
+export function filterToGrey(originImage: ImageData, holds: Hold[], color?: ColorRGB): ImageData {
     const data = Array.from(originImage.data);
     const refMeanValue = meanColorValue(color);
     /* Darken or lighten the greyValue at the opposite of the chosen value */
@@ -258,7 +360,9 @@ export function filterToGrey(originImage: ImageData, color?: ColorRGB): ImageDat
     const hueReference = rgbToHsl(color ?? [0, 0, 0])[HUE];
 
     let index = 0;
-    const length = originImage.height * originImage.width * 4;
+    const width = originImage.width;
+    const length = originImage.height * width * 4;
+    const boxes = buildBoxes(holds);
 
     while (index < length) {
         const red = data[index];
@@ -266,7 +370,7 @@ export function filterToGrey(originImage: ImageData, color?: ColorRGB): ImageDat
         const blue = data[index + 2];
         const pixelColor: ColorRGB = [red, green, blue];
 
-        if (!color || !isSameHue(pixelColor, hueReference)) {
+        if (!color || !isSameHue(pixelColor, hueReference) && !isUnderHold(getXY(index, width), boxes)) {
             const meanValue = meanColorValue(pixelColor);
             const newValue = clampValue(meanValue * modification);
 
@@ -277,6 +381,10 @@ export function filterToGrey(originImage: ImageData, color?: ColorRGB): ImageDat
 
         index += 4;
     }
+
+    holds.forEach((hold) => {
+        unsetGreyHoldOnImage(data, originImage, hold);
+    });
 
     const buffer = new ArrayBuffer(data.length);
     const clampedArray = new Uint8ClampedArray(buffer);

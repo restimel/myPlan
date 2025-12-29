@@ -187,6 +187,12 @@ function getImage(canvasEl: HTMLCanvasElement, context: CanvasRenderingContext2D
     display: none;
 }
 
+.main {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
 video {
     width: 100%;
     height: 100%;

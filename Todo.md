@@ -39,5 +39,6 @@
 * [ ] editor mode
     * [ ] during capture, video size may hide menu
     * [x] the magic marker is over menu
+    * [ ] when editing from view, the holds restart from 1
 * [ ] view mode
     * [ ] cannot scroll when starting over a hold

@@ -11,6 +11,7 @@ export type RouteStore = HoldManager & {
     /* Actions */
     initialize: (data: StoredRoute | null) => void;
     setSettings: (value?: RouteSettings) => void;
+    setGrey: (options?: GreySettings) => void;
     needAction: (action: Actions, value?: boolean) => void;
 };
 
@@ -18,6 +19,7 @@ const routeStore = reactive<RouteStore>({
     ...holdManager,
     settings: {
         routeName: '',
+        greyedImage: {},
     },
     actionNeeded: {
         openSettings: false,
@@ -40,6 +42,16 @@ const routeStore = reactive<RouteStore>({
 
     setSettings(value?: RouteSettings) {
         this.settings.routeName = value?.routeName ?? '';
+        this.settings.greyedImage.color = value?.greyedImage.color;
+    },
+
+    setGrey(options?: GreySettings) {
+        if (!options) {
+            this.settings.greyedImage.color = undefined;
+            return;
+        }
+
+        this.settings.greyedImage.color = options.color;
     },
 
     needAction(action: Actions, value = true) {

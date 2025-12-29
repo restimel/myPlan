@@ -1,3 +1,6 @@
+type ColorRGB = [number, number, number];
+type ColorHSL = [number, number, number];
+
 /** [x, y] */
 type Point = [number, number];
 
@@ -14,6 +17,11 @@ type Hold = {
     index: number;
 };
 
+type GreySettings = {
+    color?: ColorRGB;
+};
+
 type RouteSettings = {
     routeName: string;
+    greyedImage: GreySettings;
 };

@@ -25,7 +25,7 @@ export type HoldManager = {
     resetValues: () => void;
     resetHolds: () => void;
     setDefaultSize: (size: number) => void;
-    addHold: (x: number, y: number, size: number) => void;
+    addHold: (x: number, y: number, size: number) => Hold;
     removeHold: (idx?: number) => void;
     doubleHold: (idx: number, double?: boolean) => boolean;
     linkHolds: (idx1: number, idx2: number) => boolean;
@@ -72,15 +72,19 @@ export const holdManager: HoldManager = {
         this.defaultHoldSize = size;
     },
 
-    addHold(x: number, y: number, size: number) {
-        this.holds.push({
+    addHold(x: number, y: number, size: number): Hold {
+        const hold: Hold = {
             position: [[x, y]],
             value: this.top,
             size: size,
             index: this.holds.length,
-        });
+        };
+
+        this.holds.push(hold);
 
         this.top = this.top + 1;
+
+        return hold;
     },
 
     removeHold(idx: number = -1) {

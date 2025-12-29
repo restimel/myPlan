@@ -32,6 +32,7 @@ import { screenListener } from '@/utils/screenEvent';
 import { setup, type ActionCb, type ScreenAction } from '@/utils/screenStates';
 import { hysterisPoint } from '@/utils/movePoint';
 import type { RouteStore } from '@/stores/RouteStore';
+import { filterToGrey } from '@/utils/image';
 
 const { locale, t } = useI18n();
 
@@ -156,12 +157,19 @@ onBeforeUnmount(() => {
 function loadImage(data?: ImageData | null) {
     const canvasImageEl = canvasImage.value!;
     const canvasHoldsEl = canvasHolds.value!;
-    const imgData = data ?? props.image;
+    let imgData: ImageData | undefined;
+    const color = props.store.settings.greyedImage.color;
 
-    if (!canvasImageEl || !imgData) {
+    if (!canvasImageEl || (!data && !props.image)) {
         activeImage.value = null;
 
         return;
+    }
+
+    if (color) {
+        imgData = filterToGrey(data ?? props.image!, props.store.holds, color);
+    } else {
+        imgData = data ?? props.image!;
     }
 
     const { width, height } = imgData;
