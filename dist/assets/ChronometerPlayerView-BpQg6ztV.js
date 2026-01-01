@@ -1,1 +1,0 @@
-import{C as e}from"./ChronometerPlayer-B3AyPEam.js";import{d as o,a as r,b as a,o as t,_ as s}from"./index-CTAKiwyD.js";const n={class:"container view-page"},c=o({__name:"ChronometerPlayerView",setup(_){return(m,p)=>(t(),r("div",n,[a(e)]))}}),l=s(c,[["__scopeId","data-v-66671c39"]]);export{l as default};
