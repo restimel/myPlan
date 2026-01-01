@@ -1,0 +1,1 @@
+import{C as e}from"./ChronometerPlayer-DooQoCWg.js";import{d as o,a as r,b as a,o as t,_ as s}from"./index-DsAGCeld.js";const n={class:"container view-page"},c=o({__name:"ChronometerPlayerView",setup(_){return(m,p)=>(t(),r("div",n,[a(e)]))}}),l=s(c,[["__scopeId","data-v-66671c39"]]);export{l as default};
