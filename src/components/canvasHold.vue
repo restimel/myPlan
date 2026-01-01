@@ -78,7 +78,7 @@
         <button v-show="!menuOpen"
             class="action"
             :disabled="store.holds.length === 0"
-            @click="store.removeHold()"
+            @click="removeHold()"
             :title="t('action.removeLast')"
         >
             <MyIcon icon="delete" />
@@ -234,7 +234,7 @@ function menuAction(action: string) {
             toggleGrey();
             break;
         case 'removeHold':
-            props.store.removeHold();
+            removeHold();
             break;
         case 'save':
             save();
@@ -290,6 +290,14 @@ function loadImage(data?: ImageData) {
     drawHolds(props.store.holds, canvasLayerEl);
 
     activeImage.value = imgData;
+}
+
+function removeHold() {
+    props.store.removeHold();
+
+    if (highlightColor.value) {
+        loadImage();
+    }
 }
 
 function setGrey(point?: Point) {
