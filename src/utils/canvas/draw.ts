@@ -2,6 +2,7 @@ import { getHoldInArea } from '@/utils/holds';
 import { log } from '@/utils/debug';
 import { crossRect } from '@/utils/geometry';
 import type { ComposerTranslation } from 'vue-i18n';
+import { def } from '../tools';
 
 const bgHoldColor = '#ffffff33';
 const borderHoldColor = '#000000ff';
@@ -225,8 +226,8 @@ export function drawInformation(holds: Hold[], settings: RouteSettings, info: Co
         return;
     }
 
-    const lastValue = holds[holds.length - 1].value;
-    const top = (Array.isArray(lastValue) ? lastValue[lastValue.length - 1] : lastValue) + 1;
+    const lastValue = def(holds[holds.length - 1]).value;
+    const top = (Array.isArray(lastValue) ? def(lastValue[lastValue.length - 1]) : lastValue) + 1;
 
     const size = info.defaultHoldSize * 1.5;
     const topText = info.t('route.top', { top });

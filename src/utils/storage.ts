@@ -6,6 +6,7 @@ import {
 } from '@/utils/image';
 import { log } from '@/utils/debug';
 import type { Period } from '@/stores/ChronometerStore';
+import { def } from './tools';
 
 type StoredImage = {
     version: number;
@@ -47,10 +48,10 @@ function dataToString(data: Uint8ClampedArray<ArrayBufferLike>): string {
     const length = data.length;
     const text: string[] = [];
 
-    for (let idx = 0; idx < length; idx = idx + 4) {
-        const r = data[idx];
-        const g = data[idx + 1];
-        const b = data[idx + 2];
+    for (let idx = 0; idx + 2 < length; idx = idx + 4) {
+        const r = def(data[idx]);
+        const g = def(data[idx + 1]);
+        const b = def(data[idx + 2]);
 
         text.push(
             String.fromCharCode(
@@ -71,7 +72,7 @@ function stringToData(text: string): number[] {
     const length = list.length;
 
     for (let idx = 0; idx < length; idx++) {
-        const char = list[idx];
+        const char = def(list[idx]);
 
         data.push(char.charCodeAt(0) - CHAR_OFFSET);
 

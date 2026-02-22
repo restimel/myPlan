@@ -15,6 +15,7 @@ export function playBeep(
     msDuration: number = 500,
     volume: number = 0.2
 ): void {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();

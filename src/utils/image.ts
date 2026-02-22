@@ -1,8 +1,9 @@
+import { def, hasExactlyOne } from './tools';
 
 export function aggregateCanvas(list: Set<HTMLCanvasElement>): HTMLCanvasElement {
     const elements = Array.from(list);
 
-    if (elements.length === 1) {
+    if (hasExactlyOne(elements)) {
         return elements[0];
     }
 
@@ -76,14 +77,15 @@ export function table2Dto1D(image: ColorRGB[][]): ImageData {
     const data: number[] = new Array(length);
 
     for (let x = 0; x < width; x++) {
-        const col = image[x];
+        const col = def(image[x]);
 
         for (let y = 0; y < height; y++) {
             const index = (y * width + x) * 4;
+            const pixel = def(col[y]);
 
-            data[index] = col[y][0];
-            data[index + 1] = col[y][1];
-            data[index + 2] = col[y][2];
+            data[index] = pixel[0];
+            data[index + 1] = pixel[1];
+            data[index + 2] = pixel[2];
             data[index + 3] = 255;
         }
     }
@@ -138,10 +140,10 @@ export function reduceSize(image: ColorRGB[][], reduceRatio: number): ColorRGB[]
 
             const dy: number = srcY - y1;
 
-            const c00: ColorRGB = image[x1][y1];
-            const c10: ColorRGB = image[x2][y1];
-            const c01: ColorRGB = image[x1][y2];
-            const c11: ColorRGB = image[x2][y2];
+            const c00: ColorRGB = def(image[x1]?.[y1]);
+            const c10: ColorRGB = def(image[x2]?.[y1]);
+            const c01: ColorRGB = def(image[x1]?.[y2]);
+            const c11: ColorRGB = def(image[x2]?.[y2]);
 
             const r: number = interpolate(
                 interpolate(c00[0], c10[0], dx),
@@ -161,7 +163,7 @@ export function reduceSize(image: ColorRGB[][], reduceRatio: number): ColorRGB[]
                 dy
             );
 
-            newImage[x][y] = [Math.round(r), Math.round(g), Math.round(b)];
+            newImage[x]![y] = [Math.round(r), Math.round(g), Math.round(b)];
         }
     }
 
@@ -317,7 +319,7 @@ export function unsetGreyHold(currentImage: ImageData, originImage: ImageData, h
 }
 
 function unsetGreyHoldOnImage(data: ImageDataArray | number[], originImage: ImageData, hold: Hold): ImageDataArray {
-    const center = hold.position[0];
+    const center = def(hold.position[0]);
     const cx = Math.round(center[0]);
     const cy = Math.round(center[1]);
     const radius = Math.round(hold.size) + MARGIN_SIZE;
@@ -340,9 +342,9 @@ function unsetGreyHoldOnImage(data: ImageDataArray | number[], originImage: Imag
             if (isUnderHold([x, y], boxes)) {
                 const index = (x + y * width) * 4;
 
-                data[index] = originImage.data[index];
-                data[index + 1] = originImage.data[index + 1];
-                data[index + 2] = originImage.data[index + 2];
+                data[index] = def(originImage.data[index]);
+                data[index + 1] = def(originImage.data[index + 1]);
+                data[index + 2] = def(originImage.data[index + 2]);
             }
         }
     }
@@ -364,10 +366,10 @@ export function filterToGrey(originImage: ImageData, holds: Hold[], color?: Colo
     const length = originImage.height * width * 4;
     const boxes = buildBoxes(holds);
 
-    while (index < length) {
-        const red = data[index];
-        const green = data[index + 1];
-        const blue = data[index + 2];
+    while (index + 2 < length) {
+        const red = def(data[index]);
+        const green = def(data[index + 1]);
+        const blue = def(data[index + 2]);
         const pixelColor: ColorRGB = [red, green, blue];
 
         if (!color || !isSameHue(pixelColor, hueReference) && !isUnderHold(getXY(index, width), boxes)) {

@@ -71,15 +71,17 @@ export function screenListener(options: ScreenEventOption) {
         event.preventDefault();
         event.stopPropagation();
 
-        if (touches.length !== 2) {
+        const [finger1, finger2] = touches;
+
+        if (!finger1 || !finger2 || touches.length !== 2) {
             return;
         }
 
         const rect = options.rect.value;
-        const lastP1 = lastPosition.get(touches[0].identifier) ?? [0, 0];
-        const lastP2 = lastPosition.get(touches[1].identifier) ?? [0, 0];
-        const newP1 = getPosition(touches[0], rect);
-        const newP2 = getPosition(touches[1], rect);
+        const lastP1 = lastPosition.get(finger1.identifier) ?? [0, 0];
+        const lastP2 = lastPosition.get(finger2.identifier) ?? [0, 0];
+        const newP1 = getPosition(finger1, rect);
+        const newP2 = getPosition(finger2, rect);
 
         const oldDist = getDistance(lastP1, lastP2);
         const newDist = getDistance(newP1, newP2);
@@ -98,8 +100,8 @@ export function screenListener(options: ScreenEventOption) {
         }
 
         if (
-            isUnderMinDistance(dist1, touches[0], resize) &&
-            isUnderMinDistance(dist2, touches[1], resize)
+            isUnderMinDistance(dist1, finger1, resize) &&
+            isUnderMinDistance(dist2, finger2, resize)
         ) {
             log('zoom', 'drop--' +  [newDirection, zoomDirection, '--', dist1, dist2].join(','));
             /* Minimal variation not reached */
@@ -118,8 +120,8 @@ export function screenListener(options: ScreenEventOption) {
         const offsetDy = center[1] * (newRatio - oldScale) / oldScale;
 
         /* save state for future event */
-        lastPosition.set(touches[0].identifier, newP1);
-        lastPosition.set(touches[1].identifier, newP2);
+        lastPosition.set(finger1.identifier, newP1);
+        lastPosition.set(finger2.identifier, newP2);
         zoomDirection = newDirection;
 
         options.onZoom(newRatio, offsetDx, offsetDy, event);
@@ -171,7 +173,7 @@ export function screenListener(options: ScreenEventOption) {
             return touchZoom(list, event);
         }
 
-        const touch = list[0];
+        const touch = list[0]!;
         const identifier = touch.identifier;
         const newPos = getPosition(touch, options.rect.value);
         const lastPos = lastPosition.get(identifier);

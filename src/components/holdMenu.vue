@@ -68,6 +68,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import type { RouteStore } from '@/stores/RouteStore';
+import { def } from '@/utils/tools';
 
 type Props = {
     hold: Hold;
@@ -89,7 +90,7 @@ const { t } = useI18n();
 const style = computed(() => {
     const nbItems = 7;
     const hold = props.hold;
-    const position = hold.position[0];
+    const position = def(hold.position[0]);
     const ratio = props.scale;
     const margin = 5;
     const holdSize = hold.size * ratio + margin;
@@ -103,8 +104,8 @@ const style = computed(() => {
     const minHeight = props.offsetY;
     const maxHeight = minHeight + props.containerSize.height;
 
-    const X = position[0] * ratio;
-    const Y = position[1] * ratio;
+    const X = def(position[0]) * ratio;
+    const Y = def(position[1]) * ratio;
     let x = X;
     let y = Y;
 

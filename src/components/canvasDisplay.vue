@@ -227,7 +227,7 @@ function drawDetails() {
 
 const screenState = setup(holdList.value, (action: ScreenAction, point: Point, fromPoint?: Point) => {
     if (action === 'scroll') {
-        const [dx, dy] = scrollPoints(point);
+        const [dx = 0, dy = 0] = scrollPoints(point);
 
         if (!dx && !dy) {
             return;

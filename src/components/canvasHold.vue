@@ -120,6 +120,7 @@ import { hysterisPoint } from '@/utils/movePoint';
 import { filterToGrey, unsetGreyHold } from '@/utils/image';
 import type { RouteStore } from '@/stores/RouteStore';
 import routeStore from '@/stores/RouteStore';
+import { def } from '@/utils/tools';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -318,18 +319,20 @@ function setGrey(point?: Point) {
     }
 
     const pointIndex = (Math.round(point[0]) + Math.round(point[1]) * originImage.width) * 4;
-    const color: ColorRGB = [
+    const partialColor: Partial<ColorRGB> = [
         originImage.data[pointIndex],
         originImage.data[pointIndex + 1],
         originImage.data[pointIndex + 2],
     ];
 
-    if (color[0] === undefined) {
+    if (partialColor[0] === undefined) {
         log('warning', `No color [${pointIndex} / ${originImage.data.length}]`);
         loadImage(originImage);
 
         return;
     }
+
+    const color= partialColor as ColorRGB;
 
     referenceColor.value = color;
 
@@ -411,7 +414,7 @@ function drawRoute() {
         refresh: true,
         line: mouseAction.value === 'link' ?
             [
-                selectHold.value!.position[0],
+                def(selectHold.value!.position[0]),
                 lastPosition.value,
             ] : undefined,
         selectedHold: selectHold.value,
@@ -493,7 +496,7 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
             break;
         }
         case 'scroll': {
-            const [dx, dy] = scrollPoints(point);
+            const [dx = 0, dy = 0] = scrollPoints(point);
 
             if (!dx && !dy) {
                 return;

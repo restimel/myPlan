@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import { def } from '@/utils/tools';
 import { useI18n } from 'vue-i18n';
 
 const { locale, availableLocales } = useI18n();
@@ -18,7 +19,7 @@ const changeLanguage = () => {
     const lang = locale.value;
     const idx = availableLocales.indexOf(lang);
     const newIdx = (idx + 1) % availableLocales.length;
-    const newLang = availableLocales[newIdx];
+    const newLang = def(availableLocales[newIdx]);
 
     locale.value = newLang;
     localStorage.setItem('language', newLang);
