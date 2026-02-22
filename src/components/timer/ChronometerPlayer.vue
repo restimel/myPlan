@@ -4,6 +4,7 @@
         :class="{
             timeout: isTimeout,
         }"
+        :style="customStyle"
         @click="play"
         ref="chronometerPlayer"
     >
@@ -19,12 +20,14 @@
             class="time-left"
             :value="timerLeftSecond"
             :duration="currentPeriod.duration"
+            :colors="currentPeriod.colors"
             warn
         />
         <ChronometerDisplay
             class="time-spent"
             :value="timerSpentSecond"
             :duration="currentPeriod.duration"
+            :colors="currentPeriod.colors"
         />
         <div class="period-name">
             {{ currentPeriod.name }}
@@ -92,6 +95,29 @@ const size = computed(() => {
     }
 
     return `${width.value / fontRatio / 2}px`;
+});
+
+const customStyle = computed(() => {
+    const colors = currentPeriod.value.colors;
+    const styles: Record<string, string> = {};
+
+    if (!colors) {
+        return styles;
+    }
+
+    if (colors.background && colors.background !== 'default') {
+        styles['--color-bg-chronometer-default'] = colors.background;
+    }
+
+    if (colors.txtWarning && colors.txtWarning !== 'default') {
+        styles['--color-chronometer-warning'] = colors.txtWarning;
+    }
+
+    if (colors.timeout && colors.timeout !== 'default') {
+        styles['--color-bg-chronometer-timeout'] = colors.timeout;
+    }
+
+    return styles;
 });
 
 /* {{{ Awake system */
@@ -163,6 +189,7 @@ function restartChrono() {
     width: 100%;
     height: 100%;
 
+    --color-bg-chronometer: var(--color-bg-chronometer-default);
     background: var(--color-bg-chronometer);
     color: var(--vt-c-white-soft); /* default color */
     /* contrast color */

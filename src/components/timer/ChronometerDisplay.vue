@@ -6,6 +6,7 @@
             running: isRunning,
             warning: isWarning,
         }"
+        :style="customStyle"
     >
         <div v-if="value < 0" class="sign">
             -
@@ -29,13 +30,15 @@
 </template>
 
 <script lang="ts" setup>
-import { isRunning, isTimeout } from '@/stores/ChronometerStore';
+import { INFORMATION_LAST_SECONDS, isRunning, isTimeout } from '@/stores/ChronometerStore';
 import { computed } from 'vue';
+import type { PeriodColors } from '@/stores/ChronometerStore';
 
 const props = defineProps<{
     value: number;
     duration: number;
     warn?: boolean;
+    colors?: PeriodColors;
 }>();
 
 function pad(value: number): string {
@@ -68,9 +71,31 @@ const seconds = computed(() => {
 const displayHours = computed(() => props.duration >= 3_600 || hours.value !== '00');
 
 const isWarning = computed<boolean>(() => {
-    return !!props.warn && !isTimeout.value && props.value <= 10;
+    return !!props.warn && !isTimeout.value && props.value <= INFORMATION_LAST_SECONDS;
 });
 
+const customStyle = computed(() => {
+    const colors = props.colors;
+    const styles: Record<string, string> = {};
+
+    if (!colors) {
+        return styles;
+    }
+
+    if (colors.background && colors.background !== 'default') {
+        styles['--color-bg-chronometer-default'] = colors.background;
+    }
+
+    if (colors.txtWarning && colors.txtWarning !== 'default') {
+        styles['--color-chronometer-warning'] = colors.txtWarning;
+    }
+
+    if (colors.timeout && colors.timeout !== 'default') {
+        styles['--color-bg-chronometer-timeout'] = colors.timeout;
+    }
+
+    return styles;
+});
 </script>
 
 <style scoped>
@@ -82,6 +107,7 @@ const isWarning = computed<boolean>(() => {
     cursor: pointer;
     width: 100%;
 
+    --color-bg-chronometer: var(--color-bg-chronometer-default);
     background: var(--color-bg-chronometer);
     color: var(--vt-c-white-soft); /* default color */
     /* contrast color */

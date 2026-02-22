@@ -24,7 +24,7 @@
         * [ ] create shortcut between holds
     * [ ] save the result
 * [ ] Chronometer
-    * [ ] allow to change background color for a period
+    * [x] allow to change background color for a period
     * [ ] create settings template
 
 ## Known bugs

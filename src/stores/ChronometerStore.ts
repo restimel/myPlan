@@ -4,6 +4,13 @@ import { useVibrate, useWakeLock } from '@vueuse/core';
 import { beepTime, beepTimeout } from '@/utils/sound';
 import { loadTimer, saveTimer } from '@/utils/storage';
 
+export type PeriodColor = 'default' | string;
+export type PeriodColors = {
+    background: PeriodColor;
+    txtWarning: PeriodColor;
+    timeout: PeriodColor;
+};
+
 export type Period = {
     id: number;
     name: string;
@@ -13,12 +20,14 @@ export type Period = {
     activateVibration: boolean;
     activateSound: boolean;
     soundWarning: boolean;
+    colors: PeriodColors;
 };
 
-const REFRESH_PERIOD = 200;
+const REFRESH_PERIOD = 200; /* ms */
 
-const WARNING_MINUTE = 60_000;
-const WARNING_LAST_SECONDS = 5_000;
+const WARNING_MINUTE = 60_000; /* ms */
+const WARNING_LAST_SECONDS = 5_000; /* ms */
+export const INFORMATION_LAST_SECONDS = 10;
 
 /* {{{ manage Periods */
 
@@ -32,6 +41,11 @@ export const defaultPeriod: Period = {
     activateSound: true,
     activateVibration: true,
     soundWarning: true,
+    colors: {
+        background: 'default',
+        txtWarning: 'default',
+        timeout: 'default',
+    },
 };
 
 export const periods = ref<Period[]>([]);
@@ -46,7 +60,7 @@ export const isDefaultPeriods = computed<boolean>(() => {
 
     const period = periodsValue[0];
 
-    if (!/^period \d+$/.test(period.name)) {
+    if (!period || !/^period \d+$/.test(period.name)) {
         return false;
     }
 
@@ -55,7 +69,10 @@ export const isDefaultPeriods = computed<boolean>(() => {
         period.endEffect !== defaultPeriod.endEffect ||
         period.activateSound !== defaultPeriod.activateSound ||
         period.activateVibration !== defaultPeriod.activateVibration ||
-        period.soundWarning !== defaultPeriod.soundWarning
+        period.soundWarning !== defaultPeriod.soundWarning ||
+        period.colors.background !== defaultPeriod.colors.background ||
+        period.colors.txtWarning !== defaultPeriod.colors.txtWarning ||
+        period.colors.timeout !== defaultPeriod.colors.timeout
     ) {
         return false;
     }
@@ -94,6 +111,10 @@ function cleanPeriod(period: Period, index = periods.value.length): Period {
 
     if (typeof period.soundWarning !== 'boolean') {
         period.soundWarning = defaultPeriod.soundWarning;
+    }
+
+    if (typeof period.colors !== 'object') {
+        period.colors = {...defaultPeriod.colors};
     }
 
     return period;
@@ -155,7 +176,7 @@ export function clearPeriods() {
 /* {{{ chronometer */
 
 export const periodSelected = ref<number>(0);
-export const currentPeriod = computed<Period>(() => periods.value[periodSelected.value]);
+export const currentPeriod = computed<Period>(() => periods.value[periodSelected.value]!);
 export const isRunning = computed(() => chronometerTimer.value !== 0);
 
 const timerSpent = ref<number>(0);

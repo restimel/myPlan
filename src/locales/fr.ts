@@ -56,9 +56,15 @@ export default {
     label: {
         author: 'Auteur :',
         bug: 'Pour rapporter des bugs :',
+        colors: {
+            background: 'Couleur du fond :',
+            timeout: 'Couleur du fond quand le temps est écoulé :',
+            warn: 'Couleur clignotante du texte quand il reste peu de temps :',
+        },
         contribution: 'Pour contribuer :',
         licence: 'Licence :',
         periodAction: 'Action :',
+        periodColors: 'Couleurs',
         periodName: 'Nom :',
         periodDuration: 'Durée :',
         routeName: 'Nom de la voie :',

@@ -24,6 +24,12 @@
                 <option value="continue">{{ t('chronometer.actionContinue') }}</option>
             </select>
         </label>
+        <label class="period-colors">
+            <EditColors
+                v-model="localPeriod.colors"
+                :title="localPeriod.name"
+            />
+        </label>
         <fieldset class="period-options">
             <legend>
                 {{ t('chronometer.warningTitle') }}
@@ -101,6 +107,7 @@ import ConfirmButton from '@/components/ConfirmButton.vue';
 import DurationEditor from '@/components/timer/DurationEditor.vue';
 import MyIcon from '../myIcon.vue';
 import { beepTime, beepTimeout } from '@/utils/sound';
+import EditColors from './EditColors.vue';
 
 const { t } = useI18n();
 
