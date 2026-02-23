@@ -1,0 +1,1 @@
+import{C as e}from"./ChronometerPlayer-CPvD9mUn.js";import{d as o,c as r,b as t,o as a,_ as s}from"./index-Kq1ci5IF.js";const c={class:"container view-page"},n=o({__name:"ChronometerPlayerView",setup(_){return(m,p)=>(a(),r("div",c,[t(e)]))}}),l=s(n,[["__scopeId","data-v-66671c39"]]);export{l as default};
