@@ -114,6 +114,11 @@ const containerRect = computed<DOMRect>(() => {
     updateRect.value;
 
     const containerEl = container.value!;
+
+    if (!containerEl) {
+        return new DOMRect();
+    }
+
     const rect = containerEl.getBoundingClientRect();
 
     return rect;
@@ -248,7 +253,7 @@ const screenState = setup(holdList.value, (action: ScreenAction, point: Point, f
         return;
     }
 
-    props.onAction(action, point, fromPoint, screenState.mousePosition);
+    props.onAction(action, point, fromPoint);
 });
 
 const screenEvent = screenListener({
