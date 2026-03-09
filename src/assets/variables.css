@@ -94,6 +94,9 @@
     --font-size-xl: 1.5rem;
     --font-size-xxl: 2rem;
 
+    --font-title-size: 5mm;
+    --font-main-title-size: 7mm;
+
     /* Font family */
     --font-text: 'Droid Sans', 'Helvetica Neue', sans-serif;
     --font-code: monospace;

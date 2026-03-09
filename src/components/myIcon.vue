@@ -70,7 +70,7 @@ export type Icons =
 
 type Props = {
     icon: Icons;
-    size?: number;
+    size?: number | string;
 }
 
 const props = defineProps<Props>();
@@ -119,14 +119,22 @@ const iconComponent = computed(() => {
 });
 
 const style = computed(() => {
-    if (props.size) {
+    const size = props.size;
+
+    if (size === undefined) {
         return `
-            --size: ${props.size ?? 15}px;
+            --size: var(--icon-size, 15px);
+        `;
+    }
+
+    if (!isNaN(+size)) {
+        return `
+            --size: ${size}px;
         `;
     }
 
     return `
-        --size: var(--icon-size, 15px);
+        --size: ${size};
     `;
 });
 </script>

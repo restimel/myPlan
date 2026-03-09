@@ -4,7 +4,7 @@
             class="mobile-menu-button"
             @click="toggleMobileMenu"
         >
-            <MyIcon icon="menu" :size="16" />
+            <MyIcon icon="menu" :size="iconSizeMenu" />
             {{ 'Menu' }}
         </div>
         <nav
@@ -13,17 +13,17 @@
             }"
             @mousedown="close"
         >
-            <RouterLink to="/build"><MyIcon icon="edit" :size="12" />{{ t('build.title') }}</RouterLink>
-            <RouterLink to="/view"><MyIcon icon="view" :size="12" /> {{ t('view.title') }}</RouterLink>
-            <RouterLink to="/chronometerSettings"><MyIcon icon="chronometer" :size="12" /> {{ t('chronometer.title') }}</RouterLink>
-            <RouterLink to="/about"><MyIcon icon="question" :size="12" /> {{ t('about.title') }}</RouterLink>
+            <RouterLink to="/build"><MyIcon icon="edit" :size="iconSize" />{{ t('build.title') }}</RouterLink>
+            <RouterLink to="/view"><MyIcon icon="view" :size="iconSize" /> {{ t('view.title') }}</RouterLink>
+            <RouterLink to="/chronometerSettings"><MyIcon icon="chronometer" :size="iconSize" /> {{ t('chronometer.title') }}</RouterLink>
+            <RouterLink to="/about"><MyIcon icon="question" :size="iconSize" /> {{ t('about.title') }}</RouterLink>
             <LanguageSelector />
         </nav>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
@@ -32,6 +32,14 @@ import LanguageSelector from '@/components/LanguageSelector.vue';
 const { t } = useI18n();
 
 const isMenuOpen = ref(false);
+
+const iconSize = computed(() => {
+    return 'var(--font-title-size)';
+});
+
+const iconSizeMenu = computed(() => {
+    return 'var(--font-main-title-size)';
+});
 
 function toggleMobileMenu() {
     isMenuOpen.value = !isMenuOpen.value;
@@ -49,7 +57,7 @@ nav {
     height: 100%;
     display: flex;
     flex-direction: row;
-    font-size: 12px;
+    font-size: var(--font-title-size);
     text-align: center;
     justify-content: center;
     gap: var(--spacing-sm);
@@ -63,9 +71,14 @@ nav {
 
 nav a {
     color: var(--color-txt-primary);
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     padding: 0 1rem;
     border-left: 1px solid var(--color-border);
+}
+
+nav a > :deep(.icon) {
+    margin-inline-end: var(--spacing-xs);
 }
 
 nav a.router-link-exact-active {
@@ -83,7 +96,7 @@ nav a:first-of-type {
     display: none;
 }
 
-@media (max-width: 570px) {
+@media (max-width: 810px) {
     nav {
         display: none;
         flex-direction: column;
@@ -92,7 +105,6 @@ nav a:first-of-type {
 
         position: absolute;
         z-index: var(--zIndex-main-menu);
-        top: 20px;
         height: auto;
         background-color: var(--color-primary);
         box-shadow: var(--shadow-primary);
@@ -109,6 +121,8 @@ nav a:first-of-type {
         align-content: center;
         justify-content: center;
         align-items: center;
+        font-size: var(--font-main-title-size);
+        cursor: pointer;
     }
 }
 
