@@ -255,10 +255,14 @@ function loadImage(data?: ImageData) {
     let imgData: ImageData | undefined;
 
     if (!data) {
-        const color = referenceColor.value;
+        const isGrey = highlightColor.value;
 
-        if (color && props.image) {
+        if (isGrey && props.image) {
+            const color = referenceColor.value;
+
             imgData = filterToGrey(props.image, props.store.holds, color);
+        } else {
+            imgData = props.image ?? undefined;
         }
     } else {
         imgData = data;

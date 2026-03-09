@@ -39,7 +39,7 @@
 import { ref } from 'vue';
 import MyIcon, { type Icons } from '@/components/myIcon.vue';
 
-type Action = {
+export type Action = {
     type: string;
     icon: Icons;
     title?: string;

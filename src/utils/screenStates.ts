@@ -40,7 +40,7 @@ import { log } from './debug';
  *
  */
 
-type MouseState = 'none' | 'active' | 'target' | 'selection' | 'menu' | 'move' | 'double' | 'link' | 'zoom' | 'scroll';
+export type MouseState = 'none' | 'active' | 'target' | 'selection' | 'menu' | 'move' | 'double' | 'link' | 'zoom' | 'scroll';
 
 export type ScreenAction = 'doubleHold' | 'linkHolds' | 'moveHold' | 'scroll' | 'setHold' | 'zoom';
 
@@ -129,7 +129,7 @@ export function setup(holds: Hold[], onActions: ActionCb) {
                 }, doubleMouseDuration);
                 break;
             case 'move':
-                onActions('moveHold', point);
+                onActions('moveHold', point, mousePosition.value);
                 resetAction();
                 break;
             case 'scroll':

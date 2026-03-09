@@ -46,6 +46,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     canvas: [Set<HTMLCanvasElement>];
+    scaleRatio: [number];
+    containerRect: [DOMRect];
 }>();
 
 const container = useTemplateRef('container');
@@ -95,6 +97,8 @@ watch(scaleRatio, (value, oldValue) => {
     if (scaleRatio.value !== oldValue) {
         forceUpdate();
     }
+
+    emit('scaleRatio', scaleRatio.value);
 });
 
 /* update the offset (related to zoom) */
@@ -113,6 +117,9 @@ const containerRect = computed<DOMRect>(() => {
     const rect = containerEl.getBoundingClientRect();
 
     return rect;
+});
+watch(containerRect, (value) => {
+    emit('containerRect', value);
 });
 
 const canvasRect = computed<DOMRect>(() => {
@@ -241,7 +248,7 @@ const screenState = setup(holdList.value, (action: ScreenAction, point: Point, f
         return;
     }
 
-    props.onAction(action, point, fromPoint);
+    props.onAction(action, point, fromPoint, screenState.mousePosition);
 });
 
 const screenEvent = screenListener({
