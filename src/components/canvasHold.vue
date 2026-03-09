@@ -564,12 +564,13 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
 
 .status {
     position: absolute;
+    z-index: var(--zIndex-status);
     right: var(--spacing-lg);
     bottom: calc(var(--spacing-lg) + var(--button-size));
     background: var(--color-primary);
     color: var(--color-txt-primary);
     border-radius: 25px;
     cursor: pointer;
-    --icon-size: 20px;
+    --icon-size: 1cm;
 }
 </style>

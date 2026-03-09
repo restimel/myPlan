@@ -118,6 +118,7 @@
     /* Z-index */
     --zIndex-bg-canvas: 10;
     --zIndex-fg-canvas: 20;
+    --zIndex-status: 30;
     --zIndex-chronometer: 50;
     --zIndex-message: 100;
     --zIndex-menu: 200;
