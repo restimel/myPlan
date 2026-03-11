@@ -103,6 +103,9 @@ export function drawHolds(holds: Hold[], canvasEl: HTMLCanvasElement, options: O
 
         context.restore();
     });
+
+    /* XXX: empty the path to avoid redrawing already drawn paths */
+    context.beginPath();
 }
 
 type Preferences = {

@@ -12,8 +12,11 @@
         * [ ] move: also move when "selection"
         * [ ] link: create a Link selection
         * [ ] link: starting on hold and restarting on hold
-        * [ ] magic color: set in color under (and around) holds
     * [ ] Shrink image size to allow sending editable route (set this as option?)
+    * [ ] Create image menu
+        * [ ] Contrast image
+        * [ ] Magic color to adjust around the color
+        * [ ] Manage (all) hold size ?
 * [ ] Add a guide page to explain how to use the application
 
 ## Maybe to be done
