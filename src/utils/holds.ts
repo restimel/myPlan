@@ -73,6 +73,11 @@ export const holdManager: HoldManager = {
     },
 
     addHold(x: number, y: number, size: number): Hold {
+        /* There is an issue because top is not up to date :( */
+        if (this.top < this.holds.length) {
+            this.resetValues();
+        }
+
         const hold: Hold = {
             position: [[x, y]],
             value: this.top,

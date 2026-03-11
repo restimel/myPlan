@@ -11,7 +11,6 @@
             :class="{
                 open: isMenuOpen,
             }"
-            @mousedown="close"
         >
             <RouterLink to="/build"><MyIcon icon="edit" :size="iconSize" />{{ t('build.title') }}</RouterLink>
             <RouterLink to="/view"><MyIcon icon="view" :size="iconSize" /> {{ t('view.title') }}</RouterLink>
@@ -23,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { RouterLink } from 'vue-router';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { RouterLink, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import LanguageSelector from '@/components/LanguageSelector.vue';
@@ -32,6 +31,9 @@ import LanguageSelector from '@/components/LanguageSelector.vue';
 const { t } = useI18n();
 
 const isMenuOpen = ref(false);
+let removeHook = () => {};
+
+const router = useRouter();
 
 const iconSize = computed(() => {
     return 'var(--font-title-size)';
@@ -45,10 +47,18 @@ function toggleMobileMenu() {
     isMenuOpen.value = !isMenuOpen.value;
 }
 
-function close() {
-    /* differ the close in order to let mobile interaction with links */
-    setTimeout(() => isMenuOpen.value = false, 5);
-}
+onMounted(() => {
+    removeHook = router.afterEach(() => {
+        isMenuOpen.value = false;
+    });
+});
+
+onUnmounted(() => {
+    if (removeHook) {
+        removeHook();
+    }
+});
+
 </script>
 <style scoped>
 
