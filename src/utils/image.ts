@@ -7,25 +7,14 @@ export function aggregateCanvas(list: Set<HTMLCanvasElement>): HTMLCanvasElement
         return elements[0];
     }
 
+    const { width, height } = def(elements[0]);
     const aggregateEl = document.createElement('canvas');
+    aggregateEl.width = width;
+    aggregateEl.height = height;
     const aggregateContext = aggregateEl.getContext('2d')!;
 
     elements.forEach((canvas) => {
-        const contextCanvas = canvas.getContext('2d');
-
-        if (!contextCanvas) {
-            return;
-        }
-
-        const { width, height } = canvas;
-        const imgData = contextCanvas.getImageData(
-            0,
-            0,
-            width,
-            height
-        );
-
-        aggregateContext.putImageData(imgData, 0, 0);
+        aggregateContext.drawImage(canvas, 0, 0);
     });
 
     return aggregateEl;

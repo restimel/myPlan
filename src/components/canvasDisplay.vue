@@ -12,7 +12,7 @@
         <canvas
             ref="canvasLayer"
             id="canvasLayer"
-
+            :class="layerClass"
             @mousedown="screenEvent"
             @touchstart="screenEvent"
             @mouseup="screenEvent"
@@ -20,6 +20,7 @@
             @mousemove="screenEvent"
             @touchmove="screenEvent"
         ></canvas>
+        <slot />
         <GuideMessage :message="message" />
     </div>
 </template>
@@ -42,6 +43,8 @@ const props = defineProps<{
     details?: boolean;
     store: RouteStore;
     onAction: ActionCb;
+    noGreyFilter?: boolean;
+    layerClass?: string | Record<string, boolean>;
 }>();
 
 const emit = defineEmits<{
@@ -170,7 +173,7 @@ function loadImage(data?: ImageData | null) {
     const canvasImageEl = canvasImage.value!;
     const canvasHoldsEl = canvasHolds.value!;
     let imgData: ImageData | undefined;
-    const color = props.store.settings.greyedImage.color;
+    const color = props.noGreyFilter ? undefined : props.store.settings.greyedImage.color;
 
     if (!canvasImageEl || (!data && !props.image)) {
         activeImage.value = null;
@@ -214,16 +217,13 @@ function loadImage(data?: ImageData | null) {
 }
 
 function drawRoute() {
+    const firstPos = selectHold.value?.position[0];
+
     drawHolds(holdList.value, canvasHolds.value!, {
         refresh: !props.details,
-        /*
-         * line: mouseAction.value === 'link' ?
-         *     [
-         *         selectHold.value!.position[0],
-         *         lastPosition.value,
-         *     ] : undefined,
-         * selectedHold: selectHold.value,
-         */
+        line: !props.details && mouseAction.value === 'link' && firstPos ?
+            [firstPos, lastPosition.value] : undefined,
+        selectedHold: !props.details ? selectHold.value ?? undefined : undefined,
     });
 }
 
@@ -266,6 +266,7 @@ const screenEvent = screenListener({
 });
 
 const selectHold = screenState.holdSelection;
+const selectHold2 = screenState.holdSelection2;
 const mouseAction = screenState.actionState;
 const lastPosition = screenState.mousePosition;
 const scrollPoints = hysterisPoint(lastPosition.value);
@@ -276,7 +277,7 @@ watch(selectHold, () => {
     }
 });
 watch(lastPosition, () => {
-    if (mouseAction.value === 'link') {
+    if (!props.details && mouseAction.value === 'link') {
         drawRoute();
     }
 });
@@ -302,6 +303,20 @@ function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
 }
 
 /* }}} */
+
+defineExpose({
+    selectHold,
+    selectHold2,
+    mouseAction,
+    offsetX,
+    offsetY,
+    scaleRatio,
+    containerRect,
+    clearSelection() {
+        mouseAction.value = 'none';
+        selectHold.value = null;
+    },
+});
 
 </script>
 <style scoped>

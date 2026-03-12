@@ -1,39 +1,25 @@
 <template>
-    <div
-        ref="container"
-        class="canvas-container"
-        :style="`--scale: ${scaleRatio};`"
-        @scroll="scrollContainer"
+    <CanvasDisplay
+        ref="canvasDisplayRef"
+        :image="activeImage"
+        :store="store"
+        :onAction="onCanvasAction"
+        :layerClass="{ isDoingMagic: willApplyGrey }"
+        :message="t('build.setHolds')"
+        noGreyFilter
+        @canvas="(list) => canvasList = list"
     >
-        <canvas
-            ref="canvas"
-            id="canvasPicture"
-        ></canvas>
-        <canvas
-            ref="canvasLayer"
-            id="canvasLayer"
-            :class="{
-                isDoingMagic: willApplyGrey,
-            }"
-            @mousedown="screenEvent"
-            @touchstart="screenEvent"
-            @mouseup="screenEvent"
-            @touchend="screenEvent"
-            @mousemove="screenEvent"
-            @touchmove="screenEvent"
-        ></canvas>
         <HoldMenu v-if="selectHold && (mouseAction === 'selection' || mouseAction === 'menu')"
             :hold="selectHold"
-            :scale="scaleRatio"
+            :scale="scaleRatioValue"
             :canMove="mouseAction === 'selection'"
-            :containerSize="containerRect"
-            :offsetX="offsetX"
-            :offsetY="offsetY"
+            :containerSize="containerRectValue"
+            :offsetX="offsetXValue"
+            :offsetY="offsetYValue"
             :store="routeStore"
             @close="closeMenu"
         />
-        <GuideMessage :message="t('build.setHolds')" />
-    </div>
+    </CanvasDisplay>
     <footer class="footer-actions">
         <button v-show="!menuOpen"
             class="action"
@@ -93,7 +79,7 @@
             <MyIcon icon="ok" />
         </button>
         <span class="info" v-if="debug">
-            <input type="range" min="0.1" max="10" step="0.1" v-model="scaleRatio" />{{ Math.round(scaleRatio * 10) / 10 }}
+            {{ Math.round(scaleRatioValue * 10) / 10 }}
         </span>
 
         <MyIcon v-if="highlightColor"
@@ -104,23 +90,19 @@
     </footer>
 </template>
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
-import { drawHolds } from '@/utils/canvas/draw';
 import HoldMenu from '@/components/holdMenu.vue';
 import ActionMenu from '@/components/viewer/actionsMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
-import GuideMessage from '@/components/guideMessage.vue';
 import { exportImage } from '@/utils/files';
-import { screenListener } from '@/utils/screenEvent';
-import { setup, type ScreenAction } from '@/utils/screenStates';
-import { hysterisPoint } from '@/utils/movePoint';
-import { filterToGrey, unsetGreyHold } from '@/utils/image';
+import { filterToGrey, unsetGreyHold, aggregateCanvas } from '@/utils/image';
 import type { RouteStore } from '@/stores/RouteStore';
 import routeStore from '@/stores/RouteStore';
-import { def } from '@/utils/tools';
+import type { ScreenAction } from '@/utils/screenStates';
+import CanvasDisplay from '@/components/canvasDisplay.vue';
 
 const props = defineProps<{
     image: ImageData | null;
@@ -134,96 +116,31 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const container = useTemplateRef('container');
-const canvas = useTemplateRef('canvas');
-const canvasLayer = useTemplateRef('canvasLayer');
+const canvasDisplayRef = useTemplateRef<InstanceType<typeof CanvasDisplay>>('canvasDisplayRef');
+const canvasList = ref<Set<HTMLCanvasElement>>();
 
 const activeImage = ref<ImageData | null>(null);
-
-const scaleRatio = ref(1);
-const updateRect = ref(0);
-const offsetX = ref(0);
-const offsetY = ref(0);
 
 const willApplyGrey = ref(false);
 const highlightColor = ref(false);
 const referenceColor = ref<ColorRGB>(props.store.settings.greyedImage.color ?? [0, 0, 0]);
 const menuOpen = ref(false);
 
+/* Accessors to state exposed by CanvasDisplay (defineExpose auto-unwraps refs) */
+const selectHold = computed(() => canvasDisplayRef.value?.selectHold ?? null);
+const mouseAction = computed(() => canvasDisplayRef.value?.mouseAction ?? 'none');
+const offsetXValue = computed(() => canvasDisplayRef.value?.offsetX ?? 0);
+const offsetYValue = computed(() => canvasDisplayRef.value?.offsetY ?? 0);
+const scaleRatioValue = computed(() => canvasDisplayRef.value?.scaleRatio ?? 1);
+const containerRectValue = computed(() => canvasDisplayRef.value?.containerRect ?? new DOMRect());
+
+onMounted(() => {
+    setGrey();
+});
+
 watch(() => props.image, () => {
     /* It will reset the effect on image and apply the image to canvas */
     setGrey();
-});
-watch(() => props.store.holds, drawRoute, { deep: true });
-
-/* assert ratio is in bound */
-watch(scaleRatio, (value, oldValue) => {
-    if (value < 0.1) {
-        scaleRatio.value = 0.1;
-    } else if (value > 10) {
-        scaleRatio.value = 10;
-    }
-
-    if (scaleRatio.value !== oldValue) {
-        forceUpdate();
-    }
-});
-
-/* update the offset (related to zoom) */
-watch([offsetX, offsetY], () => {
-    const containerEl = container.value;
-
-    containerEl?.scrollTo(offsetX.value, offsetY.value);
-    forceUpdate();
-});
-
-const containerRect = computed<DOMRect>(() => {
-    /* eslint-disable-next-line @typescript-eslint/no-unused-expressions -- used to force computation again */
-    updateRect.value;
-
-    const containerEl = container.value!;
-    const rect = containerEl.getBoundingClientRect();
-
-    return rect;
-});
-
-const canvasRect = computed<DOMRect>(() => {
-    /* eslint-disable-next-line @typescript-eslint/no-unused-expressions -- used to force computation again */
-    updateRect.value;
-
-    const canvasEl = canvas.value!;
-    const rect = canvasEl.getBoundingClientRect();
-
-    return rect;
-});
-
-function forceUpdate() {
-    updateRect.value++;
-}
-
-function scrollContainer() {
-    const containerEl = container.value!;
-
-    offsetX.value = containerEl.scrollLeft;
-    offsetY.value = containerEl.scrollTop;
-}
-
-let observer: ResizeObserver;
-
-onMounted(() => {
-    observer = new ResizeObserver(() => {
-        forceUpdate();
-    });
-
-    if (container.value) {
-        observer.observe(container.value);
-    }
-
-    loadImage();
-});
-
-onBeforeUnmount(() => {
-    observer?.disconnect();
 });
 
 function menuAction(action: string) {
@@ -249,60 +166,20 @@ function menuAction(action: string) {
     }
 }
 
-function loadImage(data?: ImageData) {
-    const canvasEl = canvas.value!;
-    const canvasLayerEl = canvasLayer.value!;
-    let imgData: ImageData | undefined;
-
-    if (!data) {
-        const isGrey = highlightColor.value;
-
-        if (isGrey && props.image) {
-            const color = referenceColor.value;
-
-            imgData = filterToGrey(props.image, props.store.holds, color);
-        } else {
-            imgData = props.image ?? undefined;
-        }
-    } else {
-        imgData = data;
-    }
-
-    if (!canvasEl || !imgData) {
-        activeImage.value = null;
-
-        return;
-    }
-
-    const { width, height } = imgData;
-
-    const rect = containerRect.value;
-    const scale = Math.min(rect.width / width, rect.height / height);
-    scaleRatio.value = scale;
-
-    canvasEl.width = width;
-    canvasEl.height = height;
-    canvasLayerEl.width = width;
-    canvasLayerEl.height = height;
-
-    const context = canvasEl.getContext('2d')!;
-
-    context.putImageData(imgData, 0, 0);
-
-    /* This is to draw around 30 holds on height */
-    props.store.setDefaultSize(canvasLayerEl.height / 60);
-
-    drawHolds(props.store.holds, canvasLayerEl);
-
-    activeImage.value = imgData;
-}
-
 function removeHold() {
     props.store.removeHold();
 
     if (highlightColor.value) {
-        loadImage();
+        applyGreyFilter();
     }
+}
+
+function applyGreyFilter() {
+    if (!props.image) {
+        return;
+    }
+
+    activeImage.value = filterToGrey(props.image, props.store.holds, referenceColor.value);
 }
 
 function setGrey(point?: Point) {
@@ -312,12 +189,14 @@ function setGrey(point?: Point) {
     highlightColor.value = false;
 
     if (!originImage) {
+        activeImage.value = null;
+
         return;
     }
 
     if (!point) {
         props.store.setGrey();
-        loadImage(originImage);
+        activeImage.value = originImage;
 
         return;
     }
@@ -331,41 +210,25 @@ function setGrey(point?: Point) {
 
     if (partialColor[0] === undefined) {
         log('warning', `No color [${pointIndex} / ${originImage.data.length}]`);
-        loadImage(originImage);
+        activeImage.value = originImage;
 
         return;
     }
 
-    const color= partialColor as ColorRGB;
+    const color = partialColor as ColorRGB;
 
     referenceColor.value = color;
 
     const image = filterToGrey(originImage, props.store.holds, color);
 
-    props.store.setGrey({
-        color,
-    });
-    loadImage(image);
+    props.store.setGrey({ color });
+    activeImage.value = image;
 
     highlightColor.value = true;
 }
 
-function setHold(point: Point) {
-    if (willApplyGrey.value) {
-        return setGrey(point);
-    }
-
-    const hold = props.store.addHold(point[0], point[1], props.store.defaultHoldSize);
-
-    if (highlightColor.value && activeImage.value && props.image) {
-        const image = unsetGreyHold(activeImage.value, props.image, hold);
-        loadImage(image);
-    }
-}
-
 function closeMenu() {
-    mouseAction.value = 'none';
-    selectHold.value = null;
+    canvasDisplayRef.value?.clearSelection();
 }
 
 function validate() {
@@ -399,89 +262,28 @@ function toggleGrey() {
 }
 
 function save() {
-    /* Prepare the image (in only one canvas) */
-    const imgData = activeImage.value!;
-    const canvasLayerEl = canvasLayer.value!;
-    const context = canvasLayerEl.getContext('2d')!;
-    context.putImageData(imgData, 0, 0);
-    drawHolds(props.store.holds, canvasLayerEl);
-
-    /* Create the file and download it */
-    exportImage(canvasLayerEl);
-
-    /* restore the canvas */
-    drawRoute();
-}
-
-function drawRoute() {
-    drawHolds(props.store.holds, canvasLayer.value!, {
-        refresh: true,
-        line: mouseAction.value === 'link' ?
-            [
-                def(selectHold.value!.position[0]),
-                lastPosition.value,
-            ] : undefined,
-        selectedHold: selectHold.value,
-    });
-}
-
-/* {{{ Canvas interaction */
-
-const screenState = setup(props.store.holds, onAction);
-
-const screenEvent = screenListener({
-    rect: canvasRect,
-    scale: scaleRatio,
-    onStart: start,
-    onEnd: end,
-    onMove: moveContext,
-    onZoom: zoomContext,
-});
-
-const selectHold = screenState.holdSelection;
-const mouseAction = screenState.actionState;
-const lastPosition = screenState.mousePosition;
-const scrollPoints = hysterisPoint(lastPosition.value);
-
-watch(selectHold, drawRoute);
-watch(lastPosition, () => {
-    if (mouseAction.value === 'link') {
-        drawRoute();
+    if (!canvasList.value) {
+        return;
     }
-});
 
-function start(positions: Point[]) {
-    const lastPoint = positions.at(-1)!;
-    screenState.startInteraction(lastPoint);
-    scrollPoints.reset(lastPoint);
+    const canvasEl = aggregateCanvas(canvasList.value);
+
+    exportImage(canvasEl);
 }
 
-function end(point: Point) {
-    screenState.stopInteraction(point);
-}
-
-function moveContext(point: Point, fromPoint: Point, distance: number, event: Event) {
-    screenState.moveInteraction(point, fromPoint, event);
-}
-
-function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
-    scaleRatio.value = newRatio;
-    offsetX.value += offsetDx;
-    offsetY.value += offsetDy;
-}
-
-function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
+function onCanvasAction(action: ScreenAction, point: Point, fromPoint?: Point) {
     switch (action) {
         case 'setHold':
             setHold(point);
             break;
-        case 'doubleHold':
-            const holdIndex = screenState.holdSelection.value?.index ?? 0;
+        case 'doubleHold': {
+            const holdIndex = canvasDisplayRef.value?.selectHold?.index ?? 0;
             props.store.doubleHold(holdIndex);
             break;
+        }
         case 'linkHolds': {
-            const originHold = screenState.holdSelection.value;
-            const targetHold = screenState.holdSelection2.value;
+            const originHold = canvasDisplayRef.value?.selectHold;
+            const targetHold = canvasDisplayRef.value?.selectHold2;
 
             if (originHold && targetHold) {
                 props.store.linkHolds(originHold.index, targetHold.index);
@@ -489,29 +291,16 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
             break;
         }
         case 'moveHold': {
-            const hold = screenState.holdSelection.value;
+            const hold = canvasDisplayRef.value?.selectHold;
 
             if (hold) {
-                const lastPoint = fromPoint ?? screenState.mousePosition.value;
-
-                props.store.moveHold(hold.index, lastPoint, point);
-                lastPosition.value = point;
+                props.store.moveHold(hold.index, fromPoint ?? point, point);
             }
             break;
         }
-        case 'scroll': {
-            const [dx = 0, dy = 0] = scrollPoints(point);
-
-            if (!dx && !dy) {
-                return;
-            }
-
-            offsetX.value += dx * scaleRatio.value;
-            offsetY.value += dy * scaleRatio.value;
-
-            lastPosition.value = point;
+        case 'scroll':
+            log('error', 'Scroll: should be managed by another route');
             break;
-        }
         case 'zoom':
             log('error', 'Zoom: should be managed by another route');
             break;
@@ -520,37 +309,21 @@ function onAction(action: ScreenAction, point: Point, fromPoint?: Point) {
     }
 }
 
-/* }}} */
+function setHold(point: Point) {
+    if (willApplyGrey.value) {
+        return setGrey(point);
+    }
+
+    const hold = props.store.addHold(point[0], point[1], props.store.defaultHoldSize);
+
+    if (highlightColor.value && activeImage.value && props.image) {
+        activeImage.value = unsetGreyHold(activeImage.value, props.image, hold);
+    }
+}
 
 </script>
 <style scoped>
-#canvasLayer,
-#canvasPicture {
-    position: absolute;
-    grid-area: content;
-    transform: scale(var(--scale));
-    transform-origin: top left;
-}
-
-#canvasBackground {
-    z-index: var(--zIndex-bg-canvas);
-    background-color: var(--color-background);
-}
-
-#canvasLayer {
-    z-index: var(--zIndex-fg-canvas);
-    background-color: transparent;
-}
-
-.canvas-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background: var(--color-bg-media);
-}
-
-.isDoingMagic {
+:deep(.isDoingMagic) {
     cursor: url(@/assets/iconMagic.cur) 14 14, pointer;
 }
 

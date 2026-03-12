@@ -4,8 +4,8 @@
 
 * [ ] factorize canvas draw
     * [ ] initialization (load image)
-        * [ ] have a generic Canvas component (canvasDisplay)
-            * [ ] edit
+        * [x] have a generic Canvas component (canvasDisplay)
+            * [x] edit
             * [x] view
 * [ ] Build
     * [ ] Actions
