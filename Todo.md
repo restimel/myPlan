@@ -44,4 +44,4 @@
     * [x] the magic marker is over menu
     * [x] when editing from view, the holds restart from 1
 * [ ] view mode
-    * [ ] cannot scroll when starting over a hold
+    * [?] cannot scroll when starting over a hold

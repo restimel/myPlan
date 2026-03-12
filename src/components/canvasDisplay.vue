@@ -238,7 +238,7 @@ function drawDetails() {
 /* {{{ Canvas interaction */
 
 const screenState = setup(holdList.value, (action: ScreenAction, point: Point, fromPoint?: Point) => {
-    if (action === 'scroll') {
+    if (action === 'scroll' || (props.details && action === 'moveHold')) {
         const [dx = 0, dy = 0] = scrollPoints(point);
 
         if (!dx && !dy) {
@@ -277,7 +277,20 @@ watch(selectHold, () => {
     }
 });
 watch(lastPosition, () => {
-    if (!props.details && mouseAction.value === 'link') {
+    if (mouseAction.value !== 'link') {
+        return;
+    }
+
+    if (props.details) {
+        const [dx = 0, dy = 0] = scrollPoints(lastPosition.value);
+
+        if (!dx && !dy) {
+            return;
+        }
+
+        offsetX.value += dx * scaleRatio.value;
+        offsetY.value += dy * scaleRatio.value;
+    } else {
         drawRoute();
     }
 });
