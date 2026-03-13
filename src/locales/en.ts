@@ -16,6 +16,22 @@ export default {
         header: 'About myPLAN',
         toReportBug: 'To report a bug, you need a Github account',
     },
+    config: {
+        title: 'Configuration',
+        keepScreenAwake: 'Keep screen awake:',
+        keepScreenAwakeOff: 'Off – screen may turn off (warning: alerts may not be triggered)',
+        keepScreenAwakeHtml5: 'HTML5 Wake Lock – screen stays on, battery-friendly but not supported by all browsers',
+        keepScreenAwakeVideo: 'Video loop – screen stays on, works on all browsers but uses more battery',
+        test: 'Test',
+        stopTest: 'Stop test',
+        testInUse: 'Currently in use by the chronometer',
+        testInstruction: 'Wait a few minutes without touching your screen to check that it stays awake.',
+        testStatus: {
+            active: 'Active',
+            pending: 'Requested — not yet confirmed by the browser',
+            inactive: 'Inactive',
+        },
+    },
     chronometer: {
         title: 'Chronometer',
         settingsTitle: 'Chronometer settings',

@@ -1,8 +1,9 @@
 import { getRandomId } from '@/utils/tools';
-import { computed, reactive, ref, watch } from 'vue';
-import { useVibrate, useWakeLock } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
+import { useVibrate } from '@vueuse/core';
 import { beepTime, beepTimeout } from '@/utils/sound';
 import { loadTimer, saveTimer } from '@/utils/storage';
+import { requestKeepAwake, releaseKeepAwake } from '@/utils/keepScreenAwake';
 
 export type PeriodColor = 'default' | string;
 export type PeriodColors = {
@@ -324,7 +325,7 @@ export function restartPeriod() {
 export function continueChrono() {
     timeReference = performance.now();
     clearInterval(chronometerTimer.value);
-    wakeLock.request('screen');
+    requestKeepAwake();
     chronometerTimer.value = setInterval(updateTick, REFRESH_PERIOD);
 }
 
@@ -337,14 +338,12 @@ export function stop() {
     clearInterval(chronometerTimer.value);
     chronometerTimer.value = 0;
     updateTick();
-    wakeLock.release();
+    releaseKeepAwake();
 }
 
 /* }}} */
 /* {{{ actions */
 
 export const { vibrate, stop: stopVibrate, isSupported: isVibrateSupported } = useVibrate({ pattern: [300, 100, 300, 100, 300] });
-
-const wakeLock = reactive(useWakeLock());
 
 /* }}} */

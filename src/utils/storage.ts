@@ -167,6 +167,40 @@ export function loadRoute(): StoredRoute | null {
 }
 
 /* }}} */
+/* {{{ Preferences storage */
+
+export type KeepScreenAwake = 'off' | 'html5' | 'video';
+
+export type UserPreferences = {
+    keepScreenAwake: KeepScreenAwake;
+};
+
+const PREFERENCES_STORAGE_NAME = 'preferences';
+
+const defaultPreferences: UserPreferences = {
+    keepScreenAwake: 'html5',
+};
+
+export function savePreferences(prefs: UserPreferences) {
+    localStorage.setItem(PREFERENCES_STORAGE_NAME, JSON.stringify(prefs));
+}
+
+export function loadPreferences(): UserPreferences {
+    const json = localStorage.getItem(PREFERENCES_STORAGE_NAME);
+
+    if (!json) {
+        return { ...defaultPreferences };
+    }
+
+    try {
+        return { ...defaultPreferences, ...JSON.parse(json) };
+    } catch (err) {
+        log('warning', `Issue while parsing Preferences JSON (error: ${err})`);
+        return { ...defaultPreferences };
+    }
+}
+
+/* }}} */
 /* {{{ Timer storage */
 
 export function saveTimer(periods: Period[]) {

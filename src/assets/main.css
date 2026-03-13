@@ -91,6 +91,19 @@ button.active:not([disabled]):hover,
 }
 
 /* }}} */
+/* {{{ Keep screen awake */
+
+.keep-awake-video {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    opacity: 0.05;
+}
+
+/* }}} */
 /* {{{ animations */
 
 @keyframes blink {

@@ -8,14 +8,6 @@
         @click="play"
         ref="chronometerPlayer"
     >
-        <video
-            class="keep-awake-video"
-            src="@/assets/bgTimer.webm"
-            muted
-            loop
-            :controls="false"
-            ref="awakeVideo"
-        />
         <ChronometerDisplay
             class="time-left"
             :value="timerLeftSecond"
@@ -62,7 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, useTemplateRef, watch } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import {
     continueChrono,
     currentPeriod,
@@ -81,7 +73,6 @@ import ChronometerDisplay from '@/components/timer/ChronometerDisplay.vue';
 import { useElementSize } from '@vueuse/core';
 import MyIcon from '@/components/myIcon.vue';
 
-const awakeVideo = useTemplateRef('awakeVideo');
 const chronometerPlayer = useTemplateRef('chronometerPlayer');
 const { width, height } = useElementSize(chronometerPlayer);
 
@@ -119,42 +110,6 @@ const customStyle = computed(() => {
 
     return styles;
 });
-
-/* {{{ Awake system */
-
-/* Alternate play of the video to save energy consumption */
-
-const AWAKE_RUN = 500;
-const AWAKE_SLEEP = 5000;
-let awakeTimer = 0;
-
-function awakePlay() {
-    clearTimeout(awakeTimer);
-    awakeVideo.value?.play();
-    awakeTimer = setTimeout(awakePause, AWAKE_RUN);
-}
-
-function awakePause() {
-    clearTimeout(awakeTimer);
-    awakeVideo.value?.pause();
-    awakeTimer = setTimeout(awakePlay, AWAKE_SLEEP);
-}
-
-function stopAwake() {
-    clearTimeout(awakeTimer);
-    awakeVideo.value?.pause();
-    awakeTimer = 0;
-}
-
-watch(isRunning, (isRunning) => {
-    if (isRunning) {
-        awakePlay();
-    } else {
-        stopAwake();
-    }
-});
-
-/* }}} */
 
 function play() {
     if (isRunning.value) {
@@ -220,13 +175,4 @@ function restartChrono() {
     z-index: var(--zIndex-chronometer);
 }
 
-.keep-awake-video {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 10px;
-    height: 10px;
-    pointer-events: none;
-    opacity: 0.05;
-}
 </style>

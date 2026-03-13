@@ -56,6 +56,41 @@
 
         <img src="@/assets/logo.svg" alt="logo of myPLAN" class="logo" />
 
+        <section class="config-section">
+            <h2>{{ t('config.title') }}</h2>
+            <section class="config-subsection">
+                <h3>{{ t('chronometer.title') }}</h3>
+                <fieldset>
+                    <legend>{{ t('config.keepScreenAwake') }}</legend>
+                    <label v-for="option in keepScreenAwakeOptions" :key="option.value" class="radio-label">
+                        <input
+                            type="radio"
+                            name="keepScreenAwake"
+                            :value="option.value"
+                            v-model="preferences.keepScreenAwake"
+                        />
+                        {{ option.label }}
+                    </label>
+                    <div class="test-area">
+                        <div v-if="isTestMode" class="test-status">
+                            <span class="status-dot" :class="keepAwakeStatus"></span>
+                            <span>{{ t(`config.testStatus.${keepAwakeStatus}`) }}</span>
+                        </div>
+                        <p v-if="isTestMode" class="info">{{ t('config.testInstruction') }}</p>
+                        <button
+                            @click="toggleTest"
+                            :disabled="testDisabled"
+                            :class="{ 'primary-btn': isTestMode }"
+                            :title="isAwakeActive && !isTestMode ? t('config.testInUse') : undefined"
+                        >
+                            <MyIcon :icon="isTestMode ? 'pause' : 'play'" />
+                            {{ isTestMode ? t('config.stopTest') : t('config.test') }}
+                        </button>
+                    </div>
+                </fieldset>
+            </section>
+        </section>
+
         <label v-if="debug">
             Debug
             <output>
@@ -66,13 +101,39 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { debug, debugMessage, enableDebug } from '@/utils/debug';
 import { useI18n } from 'vue-i18n';
 import ManageDebug from '@/components/debug/manageDebug.vue';
 import MyIcon from '@/components/myIcon.vue';
+import { preferencesStore as preferences } from '@/stores/PreferencesStore';
+import { isAwakeActive, isTestMode, keepAwakeStatus, startTest, stopTest } from '@/utils/keepScreenAwake';
 
 const { t } = useI18n();
+
+const keepScreenAwakeOptions = computed(() => [
+    { value: 'off', label: t('config.keepScreenAwakeOff') },
+    { value: 'html5', label: t('config.keepScreenAwakeHtml5') },
+    { value: 'video', label: t('config.keepScreenAwakeVideo') },
+]);
+
+const testDisabled = computed(() =>
+    preferences.keepScreenAwake === 'off' || (isAwakeActive.value && !isTestMode.value)
+);
+
+function toggleTest() {
+    if (isTestMode.value) {
+        stopTest();
+    } else {
+        startTest();
+    }
+}
+
+onUnmounted(() => {
+    if (isTestMode.value) {
+        stopTest();
+    }
+});
 
 const appVersion = __APP_VERSION__;
 const appLicence = __APP_LICENCE__;
@@ -141,5 +202,66 @@ figure {
         right: var(--section-padding);
     }
 }
+
+.config-section {
+    margin-top: var(--field-margin);
+}
+
+.config-section h2 {
+    text-align: start;
+}
+
+.config-subsection h3 {
+    text-align: start;
+    font-size: var(--font-size-md);
+    margin-bottom: var(--field-padding);
+}
+
+fieldset {
+    border: var(--field-border);
+    border-radius: var(--border-radius-sm);
+    padding: 0.5em 1em;
+}
+
+legend {
+    font-weight: 700;
+    padding: 0 0.25em;
+}
+
+.radio-label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.test-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--field-padding-sm);
+    margin-top: var(--field-padding);
+}
+
+.test-status {
+    display: flex;
+    align-items: center;
+    gap: var(--field-padding-sm);
+    font-weight: normal;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background: var(--vt-c-grey);
+    flex-shrink: 0;
+}
+
+.status-dot.active   { background: var(--color-success); }
+.status-dot.pending  { background: var(--color-warning); }
+.status-dot.inactive { background: var(--color-error); }
 
 </style>
