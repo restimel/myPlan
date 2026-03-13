@@ -21,6 +21,7 @@ export default {
         keepScreenAwake: 'Keep screen awake:',
         keepScreenAwakeOff: 'Off – screen may turn off (warning: alerts may not be triggered)',
         keepScreenAwakeHtml5: 'HTML5 Wake Lock – screen stays on, battery-friendly but not supported by all browsers',
+        keepScreenAwakeCanvas: 'Canvas stream – screen stays on, intermediate battery usage, broader compatibility than HTML5',
         keepScreenAwakeVideo: 'Video loop – screen stays on, works on all browsers but uses more battery',
         test: 'Test',
         stopTest: 'Stop test',

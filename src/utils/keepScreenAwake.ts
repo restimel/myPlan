@@ -8,17 +8,26 @@ import bgTimerSrc from '@/assets/bgTimer.webm';
 const wakeLock = reactive(useWakeLock());
 
 /* }}} */
-/* {{{ Video loop */
+/* {{{ Video / Canvas loop */
 
 /** Play the video briefly every AWAKE_SLEEP ms to keep the screen on */
-const AWAKE_RUN = 500;
+const AWAKE_RUN = 200;
 const AWAKE_SLEEP = 5000;
 
 const videoElement = ref<HTMLVideoElement | null>(null);
 let awakeTimer = 0;
+let canvasCtx: CanvasRenderingContext2D | null = null;
+let canvasPixelFlip = false;
 
 function videoPlay() {
     clearTimeout(awakeTimer);
+
+    if (canvasCtx) {
+        canvasPixelFlip = !canvasPixelFlip;
+        canvasCtx.fillStyle = canvasPixelFlip ? '#000001' : '#000000';
+        canvasCtx.fillRect(0, 0, 1, 1);
+    }
+
     videoElement.value?.play();
     awakeTimer = setTimeout(videoPause, AWAKE_RUN);
 }
@@ -29,15 +38,8 @@ function videoPause() {
     awakeTimer = setTimeout(videoPlay, AWAKE_SLEEP);
 }
 
-function startVideo() {
-    if (videoElement.value) {
-        return;
-    }
-
-    const video = document.createElement('video');
-    video.src = bgTimerSrc;
+function attachVideo(video: HTMLVideoElement) {
     video.muted = true;
-    video.loop = true;
     video.setAttribute('playsinline', '');
     video.className = 'keep-awake-video';
     document.body.appendChild(video);
@@ -45,9 +47,36 @@ function startVideo() {
     videoPlay();
 }
 
+function startVideo() {
+    if (videoElement.value) {
+        return;
+    }
+
+    const video = document.createElement('video');
+    video.src = bgTimerSrc;
+    video.loop = true;
+    attachVideo(video);
+}
+
+function startCanvas() {
+    if (videoElement.value) {
+        return;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    canvasCtx = canvas.getContext('2d');
+
+    const video = document.createElement('video');
+    video.srcObject = canvas.captureStream(1);
+    attachVideo(video);
+}
+
 function stopVideo() {
     clearTimeout(awakeTimer);
     awakeTimer = 0;
+    canvasCtx = null;
 
     if (!videoElement.value) {
         return;
@@ -77,7 +106,7 @@ export const keepAwakeStatus = computed<'active' | 'pending' | 'inactive'>(() =>
         return wakeLock.isActive ? 'active' : 'pending';
     }
 
-    if (mode === 'video') {
+    if (mode === 'canvas' || mode === 'video') {
         return videoElement.value !== null ? 'active' : 'inactive';
     }
 
@@ -96,6 +125,8 @@ function applyMode() {
 
     if (mode === 'html5') {
         wakeLock.request('screen');
+    } else if (mode === 'canvas') {
+        startCanvas();
     } else if (mode === 'video') {
         startVideo();
     }

@@ -21,6 +21,7 @@ export default {
         keepScreenAwake: 'Garder l\'écran allumé :',
         keepScreenAwakeOff: 'Désactivé – l\'écran peut s\'éteindre (attention : les alertes risquent de ne plus être déclenchées)',
         keepScreenAwakeHtml5: 'HTML5 Wake Lock – l\'écran reste allumé, économique mais non supporté par tous les navigateurs',
+        keepScreenAwakeCanvas: 'Flux canvas – l\'écran reste allumé, consommation intermédiaire, meilleure compatibilité que HTML5',
         keepScreenAwakeVideo: 'Vidéo en boucle – l\'écran reste allumé, fonctionne sur tous les navigateurs mais consomme plus de batterie',
         test: 'Tester',
         stopTest: 'Arrêter le test',

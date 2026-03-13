@@ -114,6 +114,7 @@ const { t } = useI18n();
 const keepScreenAwakeOptions = computed(() => [
     { value: 'off', label: t('config.keepScreenAwakeOff') },
     { value: 'html5', label: t('config.keepScreenAwakeHtml5') },
+    { value: 'canvas', label: t('config.keepScreenAwakeCanvas') },
     { value: 'video', label: t('config.keepScreenAwakeVideo') },
 ]);
 

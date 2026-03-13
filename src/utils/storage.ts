@@ -169,7 +169,7 @@ export function loadRoute(): StoredRoute | null {
 /* }}} */
 /* {{{ Preferences storage */
 
-export type KeepScreenAwake = 'off' | 'html5' | 'video';
+export type KeepScreenAwake = 'off' | 'html5' | 'canvas' | 'video';
 
 export type UserPreferences = {
     keepScreenAwake: KeepScreenAwake;
