@@ -37,7 +37,6 @@
     <div class="item">
         <label>
             <MyIcon icon="size" />
-            <span> </span>
             <span class="label">
                 {{ t('label.size') }} {{ Math.round(hold.size) }}
             </span>
@@ -68,7 +67,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import type { RouteStore } from '@/stores/RouteStore';
-import { def } from '@/utils/tools';
+import { clamp, def } from '@/utils/tools';
 
 type Props = {
     hold: Hold;
@@ -90,54 +89,76 @@ const { t } = useI18n();
 const style = computed(() => {
     const nbItems = 7;
     const hold = props.hold;
-    const position = def(hold.position[0]);
     const ratio = props.scale;
     const margin = 5;
-    const holdSize = hold.size * ratio + margin;
+    const holdRadius = hold.size * ratio + margin;
     /*
      * 42 = 18 (font-size) + 2 * (padding = 10) + 2 * (border = 2)
      */
-    const height = nbItems * 42;
-    const width = 200;
-    const minWidth = props.offsetX;
-    const maxWidth = minWidth + props.containerSize.width;
-    const minHeight = props.offsetY;
-    const maxHeight = minHeight + props.containerSize.height;
+    const itemHeight = 42;
+    const menuHeight = nbItems * itemHeight;
+    const menuWidth = 200;
+    const minX = props.offsetX;
+    const maxX = minX + props.containerSize.width;
+    const minY = props.offsetY;
+    const maxY = minY + props.containerSize.height;
 
-    const X = def(position[0]) * ratio;
-    const Y = def(position[1]) * ratio;
-    let x = X;
-    let y = Y;
+    /*
+     * Compute the bounding box of the entire group (anchor + linked holds).
+     * Candidates placed outside this box cannot overlap any hold by construction.
+     */
+    const positions = hold.position.map((pos) => ({
+        x: def(pos[0]) * ratio,
+        y: def(pos[1]) * ratio,
+    }));
 
-    if (x + holdSize + width < maxWidth) {
-        x = x + holdSize;
-    } else if (x - holdSize - width > minWidth) {
-        x = x - holdSize - width;
-    }
-
-    if (x === X) {
-        if (y + holdSize + height < maxHeight) {
-            y = y + holdSize;
-        } else {
-            y = y - holdSize - height;
+    let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity, sumX = 0, sumY = 0;
+    for (const p of positions) {
+        if (p.x < pMinX) {
+            pMinX = p.x;
+        }
+        if (p.x > pMaxX) {
+            pMaxX = p.x;
+        }
+        if (p.y < pMinY) {
+            pMinY = p.y;
+        }
+        if (p.y > pMaxY) {
+            pMaxY = p.y;
         }
 
-        x = Math.max(margin, X - width / 2);
-    } else {
-        y = Math.max(margin, Y - height / 2);
+        sumX += p.x;
+        sumY += p.y;
     }
 
-    /* Ensure the menu is inside the element */
-    if (y < minHeight - margin) {
-        y = minHeight - margin;
-    }
-    if (y + height > maxHeight - margin) {
-        y = maxHeight - height - margin;
-    }
+    const groupMinX = pMinX - holdRadius;
+    const groupMaxX = pMaxX + holdRadius;
+    const groupMinY = pMinY - holdRadius;
+    const groupMaxY = pMaxY + holdRadius;
+    const centerX = sumX / positions.length;
+    const centerY = sumY / positions.length;
+
+    /*
+     * For each direction, primary axis is fixed at the group boundary (no overlap),
+     * perpendicular axis is clamped to stay on screen.
+     * A candidate is valid only if its primary axis fits on screen without clamping.
+     * Priority order: right → left → below → above
+     */
+    const clampedY = clamp(centerY - menuHeight / 2, minY + margin, maxY - menuHeight - margin);
+    const clampedX = clamp(centerX - menuWidth / 2, minX + margin, maxX - menuWidth - margin);
+
+    const candidates = [
+        { x: groupMaxX, y: clampedY, valid: groupMaxX + menuWidth <= maxX },
+        { x: groupMinX - menuWidth, y: clampedY, valid: groupMinX - menuWidth >= minX },
+        { x: clampedX, y: groupMaxY, valid: groupMaxY + menuHeight <= maxY },
+        { x: clampedX, y: groupMinY - menuHeight, valid: groupMinY - menuHeight >= minY },
+    ];
+
+    const best = candidates.find((c) => c.valid) ?? candidates[0]!;
 
     return `
-        --x: ${x}px;
-        --y: ${y}px;
+        --x: ${best.x}px;
+        --y: ${best.y}px;
     `;
 });
 
@@ -239,6 +260,7 @@ function changeSizeDown() {
 
     label > .label {
         flex: 1;
+        text-align: end;
     }
     label button.small-btn {
         display: inline-block;

@@ -40,7 +40,7 @@
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
-* [ ] (minor) Menu on linked hold can be hover the selected hold
+* [x] (minor) Menu on linked hold can be hover the selected hold
 * [ ] improve scroll stability (do not compute position relative to canvas for scroll)
 * [ ] iPhone/iPad
 * [ ] editor mode

@@ -1,4 +1,4 @@
-import { def, hasExactlyOne } from './tools';
+import { clamp, def, hasExactlyOne } from './tools';
 
 export function aggregateCanvas(list: Set<HTMLCanvasElement>): HTMLCanvasElement {
     const elements = Array.from(list);
@@ -177,13 +177,7 @@ function isAround(value1: number, value2: number, margin = 40, circleMax?: numbe
 }
 
 function clampValue(value: number): number {
-    return Math.max(
-        0,
-        Math.min(
-            value,
-            255
-        )
-    );
+    return clamp(value, 0, 255);
 }
 
 const RED = 0;
