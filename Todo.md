@@ -8,10 +8,14 @@
             * [x] edit
             * [x] view
 * [ ] Build
+    * [ ] capturing image
+        * [ ] capture several images to create a larger image (for long wall)
     * [ ] Actions
         * [ ] move: also move when "selection"
         * [ ] link: create a Link selection
         * [ ] link: starting on hold and restarting on hold
+        * [ ] improve image quality: add a tool to change contrast
+        * [ ] improve image quality: add a tool to change light (dark/light)
     * [ ] Shrink image size to allow sending editable route (set this as option?)
     * [ ] Create image menu
         * [ ] Contrast image
@@ -43,5 +47,4 @@
     * [ ] during capture, video size may hide menu
     * [x] the magic marker is over menu
     * [x] when editing from view, the holds restart from 1
-* [ ] view mode
-    * [?] cannot scroll when starting over a hold
+    * [x] When leaving while modification are done (after image is captured and at least 1 hold added), leaving the page (refresh/change route) will result in losing the work done → a prompt should warn user before leaving

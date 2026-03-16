@@ -4,6 +4,7 @@ export default {
         captureVideo: 'Take or upload a picture of the route',
         setHolds: 'Set holds on the route',
         youtubeTitle: 'Choose the YouTube video you want to insert',
+        confirmLeave: 'Unsaved changes will be lost. Do you really want to leave?',
     },
     view: {
         title: 'View route settings',

@@ -9,19 +9,67 @@
             @back="mode = 'video'"
             @view="toView"
         />
+        <DialogConfirm v-if="showConfirm"
+            :message="t('build.confirmLeave')"
+            @confirm="onConfirmLeave"
+            @cancel="onCancelLeave"
+        />
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter, onBeforeRouteLeave, type RouteLocationRaw } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import VideoPlan from '@/components/videoPlan.vue';
 import CanvasHold from '@/components/canvasHold.vue';
+import DialogConfirm from '@/components/dialogConfirm.vue';
 import routeStore from '@/stores/RouteStore';
 
 const router = useRouter();
+const { t } = useI18n();
 
 const mode = ref<'video' | 'canvas'>(routeStore.image ? 'canvas' : 'video');
+const intentionalLeave = ref(false);
+const showConfirm = ref(false);
+const pendingRoute = ref<RouteLocationRaw | null>(null);
+
+const shouldWarnBeforeLeave = computed(() =>
+    !intentionalLeave.value && routeStore.image !== null && routeStore.holds.length > 0
+);
+
+function handleBeforeUnload(e: BeforeUnloadEvent) {
+    if (shouldWarnBeforeLeave.value) {
+        e.preventDefault();
+    }
+}
+
+onMounted(() => {
+    window.addEventListener('beforeunload', handleBeforeUnload);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+});
+
+onBeforeRouteLeave((to) => {
+    if (shouldWarnBeforeLeave.value) {
+        pendingRoute.value = to;
+        showConfirm.value = true;
+        return false;
+    }
+});
+
+function onConfirmLeave() {
+    showConfirm.value = false;
+    intentionalLeave.value = true;
+    router.push(pendingRoute.value ?? '/');
+}
+
+function onCancelLeave() {
+    showConfirm.value = false;
+    pendingRoute.value = null;
+}
 
 function getImage(data: ImageData | null) {
     if (!data) {
@@ -34,6 +82,7 @@ function getImage(data: ImageData | null) {
 }
 
 function toView() {
+    intentionalLeave.value = true;
     routeStore.needAction('openSettings');
     router.push('/view');
 }

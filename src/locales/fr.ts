@@ -4,6 +4,7 @@ export default {
         captureVideo: 'Capturez ou chargez une image de la voie',
         setHolds: 'Placez les prises sur la voie',
         youtubeTitle: 'Choisissez la vidéo YouTube que vous voulez insérer',
+        confirmLeave: 'Des modifications non sauvegardées seront perdues. Voulez-vous vraiment quitter ?',
     },
     view: {
         title: 'Voir le plan de route',
