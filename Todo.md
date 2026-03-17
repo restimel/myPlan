@@ -40,7 +40,7 @@
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
 * [x] (minor) Menu on linked hold can be hover the selected hold
-* [ ] Menu height seems to be wrong because sometime it displays over holds
+* [x] Menu height seems to be wrong because sometime it displays over holds
     → how to reproduce: small screen (360 × 740),  a hold at center (horizontally), 2/3 vertically, create another hold bellow and link them. Open the menu: it displays over the first hold (the bottom of the menu is at bottom of 1st hold) then when the 'linked' header disappears the bottom menu is at top of the 1st hold (there are enough space on top of them menu to be moved toward top).
 * [ ] improve scroll stability (do not compute position relative to canvas for scroll)
 * [ ] iPhone/iPad -- seems that application to not work with them

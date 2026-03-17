@@ -1,5 +1,6 @@
 <template>
 <aside
+    :class="{ hidden: measuredHeight === 0 }"
     :style="style"
 >
     <div v-if="canMove" class="head">
@@ -63,7 +64,7 @@
 </aside>
 </template>
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import type { RouteStore } from '@/stores/RouteStore';
@@ -86,17 +87,24 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const instance = getCurrentInstance();
+const measuredHeight = ref(0);
+
+function measureHeight() {
+    const el = instance?.proxy?.$el as HTMLElement | undefined;
+    if (el) {
+        measuredHeight.value = el.offsetHeight;
+    }
+}
+
+onMounted(measureHeight);
+
 const style = computed(() => {
-    const nbItems = 7;
     const hold = props.hold;
     const ratio = props.scale;
     const margin = 5;
     const holdRadius = hold.size * ratio + margin;
-    /*
-     * 42 = 18 (font-size) + 2 * (padding = 10) + 2 * (border = 2)
-     */
-    const itemHeight = 42;
-    const menuHeight = nbItems * itemHeight;
+    const menuHeight = measuredHeight.value;
     const menuWidth = 200;
     const minX = props.offsetX;
     const maxX = minX + props.containerSize.width;
@@ -170,6 +178,8 @@ const isDouble = computed(() => {
     return Array.isArray(props.hold.value);
 });
 
+watch(() => [props.canMove, isLink.value, isDouble.value], measureHeight, { flush: 'post' });
+
 const canMoveDown = computed(() => {
     const holdValue = props.hold.value;
     const value = Array.isArray(holdValue) ? holdValue[1] : holdValue;
@@ -222,6 +232,10 @@ function changeSizeDown() {
 }
 </script>
 <style scoped>
+    aside.hidden {
+        visibility: hidden;
+    }
+
     aside {
         position: absolute;
         z-index: var(--zIndex-menu);
