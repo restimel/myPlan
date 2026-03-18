@@ -355,6 +355,7 @@ defineExpose({
 #canvasLayer {
     z-index: var(--zIndex-fg-canvas);
     background-color: transparent;
+    touch-action: none;
 }
 
 .canvas-container {
