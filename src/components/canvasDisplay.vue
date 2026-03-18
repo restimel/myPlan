@@ -76,12 +76,14 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const holdList = computed(() => props.store.holds);
 
-watch(() => props.image, loadImage);
-watch(holdList, () => {
+watch(() => props.image, () => {
     loadImage();
+});
+watch(holdList, () => {
+    loadImage(undefined, false);
 }, { deep: true });
 watch(() => props.store.settings, () => {
-    loadImage();
+    loadImage(undefined, false);
 }, { deep: true });
 
 if (props.details) {
@@ -170,7 +172,7 @@ onBeforeUnmount(() => {
     observer?.disconnect();
 });
 
-function loadImage(data?: ImageData | null) {
+function loadImage(data?: ImageData | null, resetZoom = true) {
     const canvasImageEl = canvasImage.value!;
     const canvasHoldsEl = canvasHolds.value!;
     let imgData: ImageData | undefined;
@@ -190,9 +192,12 @@ function loadImage(data?: ImageData | null) {
 
     const { width, height } = imgData;
 
-    const rect = containerRect.value;
-    const scale = Math.min(rect.width / width, rect.height / height);
-    scaleRatio.value = scale;
+    if (resetZoom) {
+        const rect = containerRect.value;
+        const scale = Math.min(rect.width / width, rect.height / height);
+
+        scaleRatio.value = scale;
+    }
 
     canvasImageEl.width = width;
     canvasImageEl.height = height;
