@@ -223,6 +223,19 @@ export function screenListener(options: ScreenEventOption) {
         );
     }
 
+    function wheelZoom(event: WheelEvent) {
+        event.preventDefault();
+
+        const pos = getPosition(event, options.rect.value);
+        const oldScale = options.scale.value;
+        const zoomFactor = event.deltaY > 0 ? 1 / 1.1 : 1.1;
+        const newRatio = oldScale * zoomFactor;
+        const offsetDx = pos[0] * (newRatio - oldScale) / oldScale;
+        const offsetDy = pos[1] * (newRatio - oldScale) / oldScale;
+
+        options.onZoom(newRatio, offsetDx, offsetDy, event);
+    }
+
     function mouseMove(event: MouseEvent) {
         const lastPos = lastPosition.get(-1);
 
@@ -253,7 +266,7 @@ export function screenListener(options: ScreenEventOption) {
         );
     }
 
-    function screenEvent(event: TouchEvent | MouseEvent) {
+    function screenEvent(event: TouchEvent | MouseEvent | WheelEvent) {
         switch(event.type) {
             case 'touchstart':
                 return touchStart(event as TouchEvent);
@@ -267,6 +280,8 @@ export function screenListener(options: ScreenEventOption) {
                 return mouseMove(event as MouseEvent);
             case 'mouseup':
                 return mouseUp(event as MouseEvent);
+            case 'wheel':
+                return wheelZoom(event as WheelEvent);
         }
     }
 

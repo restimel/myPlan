@@ -19,6 +19,7 @@
             @touchend="screenEvent"
             @mousemove="screenEvent"
             @touchmove="screenEvent"
+            @wheel.prevent="screenEvent"
         ></canvas>
         <slot />
         <GuideMessage :message="message" />
