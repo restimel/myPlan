@@ -8,8 +8,8 @@
             * [x] edit
             * [x] view
 * [ ] Build
-    * [ ] capturing image
-        * [ ] capture several images to create a larger image (for long wall)
+    * [x] capturing image
+        * [x] capture several images to create a larger image (for long wall)
     * [ ] Actions
         * [ ] move: also move when "selection"
         * [ ] link: create a Link selection (without drag&drop)
@@ -35,7 +35,10 @@
 
 ## Known bugs
 
-* [ ] (minor) improve icon file (used to load)
+* [ ] (minor) improve icon file
+    * [ ] used to load an image (from device)
+    * [ ] used to add a picture at bottom
+    * [ ] used to add a picture at top
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio

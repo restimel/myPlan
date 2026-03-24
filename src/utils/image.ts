@@ -335,6 +335,72 @@ function unsetGreyHoldOnImage(data: ImageDataArray | number[], originImage: Imag
     return data as ImageDataArray;
 }
 
+function imageDataToCanvas(imageData: ImageData): HTMLCanvasElement {
+    const canvas = document.createElement('canvas');
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    canvas.getContext('2d')!.putImageData(imageData, 0, 0);
+
+    return canvas;
+}
+
+/**
+ * Stitch two images with a diagonal cut.
+ * imageTop is placed at (0, 0); imageBottom is placed at (offsetX, offsetY).
+ * offsetY < imageTop.height means the images overlap vertically.
+ * cutY (0..1) is the separator position as a ratio of (offsetY + imageBottom.height).
+ * cutAngle (-45..45 degrees) tilts the separator line.
+ */
+export function stitchImages(
+    imageTop: ImageData,
+    imageBottom: ImageData,
+    cutY: number,
+    cutAngle: number,
+    offsetX: number,
+    offsetY: number
+): ImageData {
+    const width = Math.max(imageTop.width, imageBottom.width);
+    const totalHeight = offsetY + imageBottom.height;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = totalHeight;
+    const ctx = canvas.getContext('2d')!;
+
+    const topCanvas = imageDataToCanvas(imageTop);
+    const bottomCanvas = imageDataToCanvas(imageBottom);
+
+    const midY = cutY * totalHeight;
+    const rad = (cutAngle * Math.PI) / 180;
+    const slope = Math.tan(rad);
+    const leftY = midY - slope * (width / 2);
+    const rightY = midY + slope * (width / 2);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(width, 0);
+    ctx.lineTo(width, rightY);
+    ctx.lineTo(0, leftY);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(topCanvas, 0, 0);
+    ctx.restore();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(0, leftY);
+    ctx.lineTo(width, rightY);
+    ctx.lineTo(width, totalHeight);
+    ctx.lineTo(0, totalHeight);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(bottomCanvas, offsetX, offsetY);
+    ctx.restore();
+
+    return ctx.getImageData(0, 0, width, totalHeight);
+}
+
 export function filterToGrey(originImage: ImageData, holds: Hold[], color?: ColorRGB): ImageData {
     const data = Array.from(originImage.data);
     const refMeanValue = meanColorValue(color);

@@ -8,10 +8,22 @@
             ref="canvas"
             class="hidden"
         ></canvas>
-        <GuideMessage :message="t('build.captureVideo')" />
+        <canvas v-if="adjacentImage"
+            ref="overlayCanvas"
+            class="overlay"
+            :class="adjacentImage.side === 'bottom' ? 'overlay-top' : 'overlay-bottom'"
+        ></canvas>
+        <GuideMessage :message="guideMessage" />
         <ErrorMessage v-if="doNotAllowed" />
     </div>
     <footer class="footer-actions">
+        <button v-if="adjacentImage"
+            class="action"
+            @click="emit('cancel')"
+            :title="t('action.cancel')"
+        >
+            <MyIcon icon="cancel" />
+        </button>
         <button
             class="action"
             @click="capture"
@@ -27,7 +39,7 @@
             ref="inputFile"
             @change="loadFile"
         />
-        <button
+        <button v-if="!adjacentImage"
             class="action"
             @click="inputFile?.click()"
             :title="t('action.file')"
@@ -37,24 +49,40 @@
     </footer>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, useTemplateRef, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, watch, useTemplateRef, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { log } from '@/utils/debug';
 import MyIcon from '@/components/myIcon.vue';
 import ErrorMessage from '@/components/errorMessage.vue';
 import GuideMessage from '@/components/guideMessage.vue';
 
+const props = defineProps<{
+    adjacentImage?: { image: ImageData; side: 'top' | 'bottom' };
+}>();
+
 const { t } = useI18n();
 
 const video = useTemplateRef('video');
 const canvas = useTemplateRef('canvas');
+const overlayCanvas = useTemplateRef<HTMLCanvasElement>('overlayCanvas');
 const inputFile = useTemplateRef('inputFile');
 
 const emit = defineEmits<{
     image: [ImageData];
+    cancel: [];
 }>();
 
 const doNotAllowed = ref(false);
+
+const guideMessage = computed(() => {
+    if (!props.adjacentImage) {
+        return t('build.captureVideo');
+    }
+
+    return props.adjacentImage.side === 'bottom'
+        ? t('build.captureBelow')
+        : t('build.captureAbove');
+});
 
 onMounted(() => {
     startVideo();
@@ -63,6 +91,44 @@ onMounted(() => {
 onBeforeUnmount(() => {
     stopVideo();
 });
+
+/* Draw the adjacent-image overlay once the canvas element is in the DOM (v-if) */
+watch(overlayCanvas, (el) => {
+    if (el) {
+        drawOverlay();
+    }
+});
+
+function drawOverlay() {
+    const overlayEl = overlayCanvas.value;
+    const adj = props.adjacentImage;
+
+    if (!overlayEl || !adj) {
+        return;
+    }
+
+    const videoEl = video.value!;
+    const rect = videoEl.getBoundingClientRect();
+    const displayWidth = rect.width || 300;
+    const displayHeight = rect.height || 400;
+    const overlayHeight = Math.round(displayHeight * 0.3);
+
+    overlayEl.width = displayWidth;
+    overlayEl.height = overlayHeight;
+
+    const tmpCanvas = document.createElement('canvas');
+    tmpCanvas.width = adj.image.width;
+    tmpCanvas.height = adj.image.height;
+    tmpCanvas.getContext('2d')!.putImageData(adj.image, 0, 0);
+
+    const ctx = overlayEl.getContext('2d')!;
+    const srcY = adj.side === 'bottom' ? adj.image.height * 0.7 : 0;
+    const srcHeight = adj.image.height * 0.3;
+
+    ctx.globalAlpha = 0.45;
+    ctx.drawImage(tmpCanvas, 0, srcY, adj.image.width, srcHeight, 0, 0, displayWidth, overlayHeight);
+    ctx.globalAlpha = 1;
+}
 
 async function startVideo() {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -198,6 +264,21 @@ video {
     height: 100%;
     grid-area: content;
     background-color: var(--color-bg-media);
+}
+
+.overlay {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+.overlay-top {
+    top: 0;
+}
+
+.overlay-bottom {
+    bottom: 0;
 }
 
 </style>

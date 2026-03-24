@@ -2,7 +2,10 @@ export default {
     build: {
         title: 'Créer un plan',
         captureVideo: 'Capturez ou chargez une image de la voie',
+        captureAbove: 'Alignez la caméra sur la partie supérieure de la voie',
+        captureBelow: 'Alignez la caméra sur la partie inférieure de la voie',
         setHolds: 'Placez les prises sur la voie',
+        stitchImages: 'Ajustez le séparateur pour fusionner les images',
         youtubeTitle: 'Choisissez la vidéo YouTube que vous voulez insérer',
         confirmLeave: 'Des modifications non sauvegardées seront perdues. Voulez-vous vraiment quitter ?',
     },
@@ -54,6 +57,8 @@ export default {
         cameraDenied: 'Autorisez l\'accès à la caméra pour prendre une photo de la voie. Ou alors vous pouvez charger une image.',
     },
     action: {
+        addPhotoAbove: 'Ajouter une photo au-dessus',
+        addPhotoBelow: 'Ajouter une photo en-dessous',
         anotherPhoto: 'Prendre une autre photo',
         cancel: 'Annuler',
         confirm: 'Confirmer',

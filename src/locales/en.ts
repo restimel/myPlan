@@ -2,7 +2,10 @@ export default {
     build: {
         title: 'Build plan',
         captureVideo: 'Take or upload a picture of the route',
+        captureAbove: 'Align the camera on the upper part of the route',
+        captureBelow: 'Align the camera on the lower part of the route',
         setHolds: 'Set holds on the route',
+        stitchImages: 'Adjust the separator to merge the images',
         youtubeTitle: 'Choose the YouTube video you want to insert',
         confirmLeave: 'Unsaved changes will be lost. Do you really want to leave?',
     },
@@ -54,6 +57,8 @@ export default {
         cameraDenied: 'Allow the access to the camera in order to take a picture of the route. Or you can upload an image.',
     },
     action: {
+        addPhotoAbove: 'Add a picture above',
+        addPhotoBelow: 'Add a picture below',
         anotherPhoto: 'take another photo',
         cancel: 'Cancel',
         confirm: 'Confirm',

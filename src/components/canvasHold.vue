@@ -35,6 +35,16 @@
                     icon: 'recapture',
                 },
                 {
+                    type: 'addPhotoAbove',
+                    icon: 'up',
+                    title: t('action.addPhotoAbove'),
+                },
+                {
+                    type: 'addPhotoBelow',
+                    icon: 'down',
+                    title: t('action.addPhotoBelow'),
+                },
+                {
                     type: 'magicHold',
                     icon: 'magic',
                     active: willApplyGrey,
@@ -112,6 +122,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     back: [];
     view: [];
+    addPhoto: ['top' | 'bottom'];
 }>();
 
 const { t } = useI18n();
@@ -147,6 +158,12 @@ function menuAction(action: string) {
     switch (action) {
         case 'back':
             emit('back');
+            break;
+        case 'addPhotoAbove':
+            emit('addPhoto', 'top');
+            break;
+        case 'addPhotoBelow':
+            emit('addPhoto', 'bottom');
             break;
         case 'magicHold':
             toggleGrey();
