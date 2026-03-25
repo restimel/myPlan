@@ -37,8 +37,8 @@
 
 * [ ] (minor) improve icon file
     * [ ] used to load an image (from device)
-    * [ ] used to add a picture at bottom
-    * [ ] used to add a picture at top
+    * [x] used to add a picture at bottom
+    * [x] used to add a picture at top
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio

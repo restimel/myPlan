@@ -7,6 +7,8 @@ import { computed } from 'vue';
 import IconAdd from '@/components/icons/IconAdd.vue';
 import IconBug from '@/components/icons/IconBug.vue';
 import IconCancel from '@/components/icons/IconCancel.vue';
+import IconCaptureAbove from '@/components/icons/IconCaptureAbove.vue';
+import IconCaptureBelow from '@/components/icons/IconCaptureBelow.vue';
 import IconChrono from '@/components/icons/IconChrono.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconDown from '@/components/icons/IconDown.vue';
@@ -39,6 +41,8 @@ export type Icons =
     | 'add'
     | 'bug'
     | 'cancel'
+    | 'captureAbove'
+    | 'captureBelow'
     | 'chronometer'
     | 'delete'
     | 'down'
@@ -79,6 +83,8 @@ const mapElement = {
     add: IconAdd,
     bug: IconBug,
     cancel: IconCancel,
+    captureAbove: IconCaptureAbove,
+    captureBelow: IconCaptureBelow,
     chronometer: IconChrono,
     delete: IconDelete,
     down: IconDown,

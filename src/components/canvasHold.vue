@@ -36,12 +36,12 @@
                 },
                 {
                     type: 'addPhotoAbove',
-                    icon: 'up',
+                    icon: 'captureAbove',
                     title: t('action.addPhotoAbove'),
                 },
                 {
                     type: 'addPhotoBelow',
-                    icon: 'down',
+                    icon: 'captureBelow',
                     title: t('action.addPhotoBelow'),
                 },
                 {
