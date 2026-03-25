@@ -8,7 +8,7 @@
         <CanvasHold v-if="mode === 'canvas'"
             :image="routeStore.image"
             :store="routeStore"
-            @back="mode = 'video'"
+            @back="onBackToVideo"
             @view="toView"
             @addPhoto="onAddPhoto"
         />
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter, onBeforeRouteLeave, type RouteLocationRaw } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import VideoPlan from '@/components/videoPlan.vue';
@@ -42,8 +42,10 @@ const { t } = useI18n();
 
 const mode = ref<'video' | 'stitch' | 'canvas'>(routeStore.image ? 'canvas' : 'video');
 const intentionalLeave = ref(false);
+const hasChanges = ref(false);
 const showConfirm = ref(false);
 const pendingRoute = ref<RouteLocationRaw | null>(null);
+const pendingBackToVideo = ref(false);
 
 const isAddingPhoto = ref(false);
 const adjacentSide = ref<'top' | 'bottom'>('bottom');
@@ -65,7 +67,7 @@ const imageBottomForStitch = computed(() =>
 );
 
 const shouldWarnBeforeLeave = computed(() =>
-    !intentionalLeave.value && routeStore.image !== null && routeStore.holds.length > 0
+    !intentionalLeave.value && routeStore.image !== null && hasChanges.value && mode.value === 'canvas'
 );
 
 function handleBeforeUnload(evt: BeforeUnloadEvent) {
@@ -76,6 +78,9 @@ function handleBeforeUnload(evt: BeforeUnloadEvent) {
 
 onMounted(() => {
     window.addEventListener('beforeunload', handleBeforeUnload);
+    watch(() => routeStore.holds, () => {
+        hasChanges.value = true;
+    }, { deep: true });
 });
 
 onBeforeUnmount(() => {
@@ -92,6 +97,13 @@ onBeforeRouteLeave((to) => {
 
 function onConfirmLeave() {
     showConfirm.value = false;
+
+    if (pendingBackToVideo.value) {
+        pendingBackToVideo.value = false;
+        mode.value = 'video';
+        return;
+    }
+
     intentionalLeave.value = true;
     router.push(pendingRoute.value ?? '/');
 }
@@ -99,12 +111,24 @@ function onConfirmLeave() {
 function onCancelLeave() {
     showConfirm.value = false;
     pendingRoute.value = null;
+    pendingBackToVideo.value = false;
+}
+
+function onBackToVideo() {
+    if (routeStore.holds.length > 0) {
+        pendingBackToVideo.value = true;
+        showConfirm.value = true;
+    } else {
+        mode.value = 'video';
+    }
 }
 
 function getImage(data: ImageData | null) {
     if (!data) {
         return;
     }
+
+    hasChanges.value = true;
 
     if (isAddingPhoto.value) {
         newCapturedImage.value = data;

@@ -229,7 +229,7 @@ export function drawInformation(holds: Hold[], settings: RouteSettings, info: Co
         return;
     }
 
-    const lastValue = def(holds[holds.length - 1]).value;
+    const lastValue = holds[holds.length - 1]?.value ?? 0;
     const top = (Array.isArray(lastValue) ? def(lastValue[lastValue.length - 1]) : lastValue) + 1;
 
     const size = info.defaultHoldSize * 1.5;

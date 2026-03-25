@@ -38,6 +38,7 @@ const routeStore = reactive<RouteStore>({
         this.image = data.image;
         this.holds = data.holds;
         this.setSettings(data.settings);
+        this.resetValues();
     },
 
     setSettings(value?: RouteSettings) {
