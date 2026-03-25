@@ -56,6 +56,13 @@ const MAX_ANGLE = 45;
 /* Default overlap: bottom 30% of imageTop overlaps top of imageBottom */
 const DEFAULT_OVERLAP_RATIO = 0.3;
 
+const COLOR_SEPARATOR = 'white';
+const COLOR_HANDLE_STROKE = 'rgba(0, 0, 0, 0.6)';
+const COLOR_HANDLE_POSITION = 'rgba(255, 255, 255, 0.85)';
+const COLOR_HANDLE_ROTATION = 'rgba(180, 200, 255, 0.85)';
+const COLOR_HANDLE_MOVE = 'rgba(255, 220, 100, 0.85)';
+const COLOR_ARROW_FILL = 'white';
+
 /* All positions stored in actual image pixel coordinates */
 let cutYImg = 0;       /* separator Y, in image pixels */
 let cutAngle = 0;      /* degrees -45..45 */
@@ -90,7 +97,7 @@ function initState() {
 
 /*
  * Returns the scale factor: image pixels → canvas pixels.
- * Uses a fixed total height (no overlap) so scale doesn't change when the user drags. 
+ * Uses a fixed total height (no overlap) so scale doesn't change when the user drags.
  */
 function getImageScale(): number {
     const previewEl = previewRef.value!;
@@ -99,6 +106,50 @@ function getImageScale(): number {
     const totalH = props.imageTop.height + props.imageBottom.height;
 
     return Math.min(container.clientWidth / imageWidth, container.clientHeight / totalH);
+}
+
+function drawArrow(ctx: CanvasRenderingContext2D, angleDeg: number) {
+    const armLen = HANDLE_RADIUS * 0.75;
+    const headH = HANDLE_RADIUS * 0.32;
+    const headW = HANDLE_RADIUS * 0.42;
+    const stemW = HANDLE_RADIUS * 0.16;
+    const innerGap = HANDLE_RADIUS * 0.1;
+
+    ctx.save();
+    ctx.rotate((angleDeg * Math.PI) / 180);
+    ctx.beginPath();
+    ctx.moveTo(0, -armLen);
+    ctx.lineTo(-headW / 2, -(armLen - headH));
+    ctx.lineTo(-stemW / 2, -(armLen - headH));
+    ctx.lineTo(-stemW / 2, -innerGap);
+    ctx.lineTo(stemW / 2, -innerGap);
+    ctx.lineTo(stemW / 2, -(armLen - headH));
+    ctx.lineTo(headW / 2, -(armLen - headH));
+    ctx.closePath();
+    ctx.fillStyle = COLOR_ARROW_FILL;
+    ctx.fill();
+    ctx.strokeStyle = COLOR_HANDLE_STROKE;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+    ctx.restore();
+}
+
+function drawMoveHandle(ctx: CanvasRenderingContext2D, cx: number, cy: number) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, HANDLE_RADIUS, 0, Math.PI * 2);
+    ctx.fillStyle = COLOR_HANDLE_MOVE;
+    ctx.fill();
+    ctx.strokeStyle = COLOR_HANDLE_STROKE;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    drawArrow(ctx, 0);
+    drawArrow(ctx, 90);
+    drawArrow(ctx, 180);
+    drawArrow(ctx, 270);
+    ctx.restore();
 }
 
 function drawPreview() {
@@ -160,7 +211,7 @@ function drawPreview() {
     ctx.beginPath();
     ctx.moveTo(0, leftY);
     ctx.lineTo(width, rightY);
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = COLOR_SEPARATOR;
     ctx.lineWidth = 2;
     ctx.setLineDash([8, 5]);
     ctx.stroke();
@@ -169,9 +220,9 @@ function drawPreview() {
     /* Position handle — center of separator */
     ctx.beginPath();
     ctx.arc(width / 2, midY, HANDLE_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.fillStyle = COLOR_HANDLE_POSITION;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.strokeStyle = COLOR_HANDLE_STROKE;
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -180,27 +231,21 @@ function drawPreview() {
 
     ctx.beginPath();
     ctx.arc(rhx, rightY, Math.round(HANDLE_RADIUS * 0.75), 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(180, 200, 255, 0.85)';
+    ctx.fillStyle = COLOR_HANDLE_ROTATION;
     ctx.fill();
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.strokeStyle = COLOR_HANDLE_STROKE;
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    /* Move handle — on the movable image (top-center of imageBottom or bottom-center of imageTop) */
+    /* Move handle — center of the movable image */
     const moveHx = props.movableImage === 'top'
         ? Math.round(topW / 2)
         : offsetXPrev + Math.round(bottomW / 2);
     const moveHy = props.movableImage === 'top'
-        ? topH - HANDLE_RADIUS - 4
-        : offsetYPrev + HANDLE_RADIUS + 4;
+        ? Math.round(topH / 2)
+        : offsetYPrev + Math.round(bottomH / 2);
 
-    ctx.beginPath();
-    ctx.arc(moveHx, moveHy, HANDLE_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255, 220, 100, 0.85)';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.4)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    drawMoveHandle(ctx, moveHx, moveHy);
 }
 
 function canvasPoint(evt: PointerEvent): [number, number] {
@@ -228,12 +273,13 @@ function onPointerDown(evt: PointerEvent) {
     const topW = Math.round(props.imageTop.width * scale);
     const topH = Math.round(props.imageTop.height * scale);
     const bottomW = Math.round(props.imageBottom.width * scale);
+    const bottomH = Math.round(props.imageBottom.height * scale);
     const moveHx = props.movableImage === 'top'
         ? Math.round(topW / 2)
         : offsetXPrev + Math.round(bottomW / 2);
     const moveHy = props.movableImage === 'top'
-        ? topH - HANDLE_RADIUS - 4
-        : offsetYPrev + HANDLE_RADIUS + 4;
+        ? Math.round(topH / 2)
+        : offsetYPrev + Math.round(bottomH / 2);
     const dxPos = px - width / 2;
     const dyPos = py - midY;
     const dxRot = px - rhx;
