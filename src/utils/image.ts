@@ -225,10 +225,10 @@ function meanColorValue(color?: ColorRGB): number {
     return 127;
 }
 
-function isSameHue(pixel: ColorRGB, hueReference: number): boolean {
+function isSameHue(pixel: ColorRGB, hueReference: number, margin = 15): boolean {
     const [h] = rgbToHsl(pixel);
 
-    return isAround(h, hueReference, 15, 360);
+    return isAround(h, hueReference, margin, 360);
 }
 
 type HoldBox = {
@@ -401,7 +401,7 @@ export function stitchImages(
     return ctx.getImageData(0, 0, width, totalHeight);
 }
 
-export function filterToGrey(originImage: ImageData, holds: Hold[], color?: ColorRGB): ImageData {
+export function filterToGrey(originImage: ImageData, holds: Hold[], color?: ColorRGB, colorMargin = 15): ImageData {
     const data = Array.from(originImage.data);
     const refMeanValue = meanColorValue(color);
     /* Darken or lighten the greyValue at the opposite of the chosen value */
@@ -421,7 +421,7 @@ export function filterToGrey(originImage: ImageData, holds: Hold[], color?: Colo
         const blue = def(data[index + 2]);
         const pixelColor: ColorRGB = [red, green, blue];
 
-        if (!color || !isSameHue(pixelColor, hueReference) && !isUnderHold(getXY(index, width), boxes)) {
+        if (!color || !isSameHue(pixelColor, hueReference, colorMargin) && !isUnderHold(getXY(index, width), boxes)) {
             const meanValue = meanColorValue(pixelColor);
             const newValue = clampValue(meanValue * modification);
 
@@ -449,4 +449,41 @@ export function filterToGrey(originImage: ImageData, holds: Hold[], color?: Colo
     );
 
     return image;
+}
+
+/** Scale factor to convert a [-100, +100] input to the [-255, +255] byte range */
+const INPUT_TO_BYTE_SCALE = 255 / 100;
+/**
+ * Offset used in the standard contrast formula: ensures factor=1 at contrast=0
+ * and avoids division by zero at the extremes (±255)
+ */
+const CONTRAST_OFFSET = 259;
+/** Midpoint of the [0, 255] byte range, used as pivot for contrast adjustment */
+const BYTE_MIDPOINT = 128;
+/** Maximum value of the [0, 255] byte range */
+const BYTE_MAX = 255;
+
+export function applyBrightnessContrast(originImage: ImageData, brightness: number, contrast: number): ImageData {
+    if (brightness === 0 && contrast === 0) {
+        return originImage;
+    }
+
+    const data = Array.from(originImage.data);
+    const contrastInBytes = contrast * INPUT_TO_BYTE_SCALE;
+    const contrastFactor = (CONTRAST_OFFSET * (contrastInBytes + BYTE_MAX)) / (BYTE_MAX * (CONTRAST_OFFSET - contrastInBytes));
+    const length = originImage.height * originImage.width * 4;
+    let index = 0;
+
+    while (index + 2 < length) {
+        const red = def(data[index]);
+        const green = def(data[index + 1]);
+        const blue = def(data[index + 2]);
+
+        data[index] = clampValue(contrastFactor * (red - BYTE_MIDPOINT) + BYTE_MIDPOINT + brightness);
+        data[index + 1] = clampValue(contrastFactor * (green - BYTE_MIDPOINT) + BYTE_MIDPOINT + brightness);
+        data[index + 2] = clampValue(contrastFactor * (blue - BYTE_MIDPOINT) + BYTE_MIDPOINT + brightness);
+        index += 4;
+    }
+
+    return convertToImageData(data, originImage.width, originImage.height);
 }

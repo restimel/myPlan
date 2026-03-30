@@ -4,9 +4,9 @@ import { crossRect } from '@/utils/geometry';
 import type { ComposerTranslation } from 'vue-i18n';
 import { def } from '../tools';
 
-const bgHoldColor = '#ffffff33';
+const bgHoldColor = '#ffffff55';
 const borderHoldColor = '#000000ff';
-const bgHoldHoverColor = '#fefe0022';
+const bgHoldHoverColor = '#fefe0044';
 const borderHoldHoverColor = '#786238ff';
 
 type Options = {

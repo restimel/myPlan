@@ -5,16 +5,19 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import IconAdd from '@/components/icons/IconAdd.vue';
+import IconBrightness from '@/components/icons/IconBrightness.vue';
 import IconBug from '@/components/icons/IconBug.vue';
 import IconCancel from '@/components/icons/IconCancel.vue';
 import IconCaptureAbove from '@/components/icons/IconCaptureAbove.vue';
 import IconCaptureBelow from '@/components/icons/IconCaptureBelow.vue';
+import IconContrast from '@/components/icons/IconContrast.vue';
 import IconChrono from '@/components/icons/IconChrono.vue';
 import IconDelete from '@/components/icons/IconDelete.vue';
 import IconDown from '@/components/icons/IconDown.vue';
 import IconEdit from '@/components/icons/IconEdit.vue';
 import IconFile from '@/components/icons/IconFile.vue';
 import IconGithub from '@/components/icons/IconGithub.vue';
+import IconImageCorrection from '@/components/icons/IconImageCorrection.vue';
 import IconLink from '@/components/icons/IconLink.vue';
 import IconMagic from '@/components/icons/IconMagic.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
@@ -39,8 +42,10 @@ import IconYouTube from '@/components/icons/IconYouTube.vue';
 
 export type Icons =
     | 'add'
+    | 'brightness'
     | 'bug'
     | 'cancel'
+    | 'contrast'
     | 'captureAbove'
     | 'captureBelow'
     | 'chronometer'
@@ -49,6 +54,7 @@ export type Icons =
     | 'edit'
     | 'file'
     | 'github'
+    | 'imageCorrection'
     | 'link'
     | 'magic'
     | 'menu'
@@ -81,6 +87,7 @@ const props = defineProps<Props>();
 
 const mapElement = {
     add: IconAdd,
+    brightness: IconBrightness,
     bug: IconBug,
     cancel: IconCancel,
     captureAbove: IconCaptureAbove,
@@ -90,7 +97,9 @@ const mapElement = {
     down: IconDown,
     edit: IconEdit,
     file: IconFile,
+    contrast: IconContrast,
     github: IconGithub,
+    imageCorrection: IconImageCorrection,
     link: IconLink,
     magic: IconMagic,
     menu: IconMenu,

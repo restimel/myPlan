@@ -19,6 +19,15 @@
             :store="routeStore"
             @close="closeMenu"
         />
+        <ImageCorrection v-if="correctionMenuOpen"
+            :magicActive="willApplyGrey"
+            :contrast="contrast"
+            :brightness="brightness"
+            @close="correctionMenuOpen = false"
+            @toggleMagic="toggleGrey"
+            @update:contrast="onContrastUpdate"
+            @update:brightness="onBrightnessUpdate"
+        />
     </CanvasDisplay>
     <footer class="footer-actions">
         <button v-show="!menuOpen"
@@ -45,9 +54,10 @@
                     title: t('action.addPhotoBelow'),
                 },
                 {
-                    type: 'magicHold',
-                    icon: 'magic',
-                    active: willApplyGrey,
+                    type: 'imageCorrection',
+                    icon: 'imageCorrection',
+                    active: correctionMenuOpen,
+                    title: t('action.imageCorrection'),
                 },
                 {
                     type: 'removeHold',
@@ -108,7 +118,13 @@ import HoldMenu from '@/components/holdMenu.vue';
 import ActionMenu from '@/components/viewer/actionsMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
 import { exportImage } from '@/utils/files';
-import { filterToGrey, unsetGreyHold, aggregateCanvas } from '@/utils/image';
+import {
+    filterToGrey,
+    unsetGreyHold,
+    aggregateCanvas,
+    applyBrightnessContrast,
+} from '@/utils/image';
+import ImageCorrection from '@/components/imageCorrection.vue';
 import type { RouteStore } from '@/stores/RouteStore';
 import routeStore from '@/stores/RouteStore';
 import type { ScreenAction } from '@/utils/screenStates';
@@ -136,6 +152,9 @@ const willApplyGrey = ref(false);
 const highlightColor = ref(false);
 const referenceColor = ref<ColorRGB>(props.store.settings.greyedImage.color ?? [0, 0, 0]);
 const menuOpen = ref(false);
+const correctionMenuOpen = ref(false);
+const contrast = ref(0);
+const brightness = ref(0);
 
 /* Accessors to state exposed by CanvasDisplay (defineExpose auto-unwraps refs) */
 const selectHold = computed(() => canvasDisplayRef.value?.selectHold ?? null);
@@ -168,6 +187,9 @@ function menuAction(action: string) {
         case 'magicHold':
             toggleGrey();
             break;
+        case 'imageCorrection':
+            correctionMenuOpen.value = !correctionMenuOpen.value;
+            break;
         case 'removeHold':
             removeHold();
             break;
@@ -196,7 +218,9 @@ function applyGreyFilter() {
         return;
     }
 
-    activeImage.value = filterToGrey(props.image, props.store.holds, referenceColor.value);
+    const correctedImage = applyBrightnessContrast(props.image, brightness.value, contrast.value);
+
+    activeImage.value = filterToGrey(correctedImage, props.store.holds, referenceColor.value);
 }
 
 function setGrey(point?: Point) {
@@ -211,9 +235,11 @@ function setGrey(point?: Point) {
         return;
     }
 
+    const correctedImage = applyBrightnessContrast(originImage, brightness.value, contrast.value);
+
     if (!point) {
         props.store.setGrey();
-        activeImage.value = originImage;
+        activeImage.value = correctedImage;
 
         return;
     }
@@ -227,7 +253,7 @@ function setGrey(point?: Point) {
 
     if (partialColor[0] === undefined) {
         log('warning', `No color [${pointIndex} / ${originImage.data.length}]`);
-        activeImage.value = originImage;
+        activeImage.value = correctedImage;
 
         return;
     }
@@ -236,7 +262,7 @@ function setGrey(point?: Point) {
 
     referenceColor.value = color;
 
-    const image = filterToGrey(originImage, props.store.holds, color);
+    const image = filterToGrey(correctedImage, props.store.holds, color);
 
     props.store.setGrey({ color });
     activeImage.value = image;
@@ -326,15 +352,52 @@ function onCanvasAction(action: ScreenAction, point: Point, fromPoint?: Point) {
     }
 }
 
+function getCorrectedImage(): ImageData | null {
+    if (!props.image) {
+        return null;
+    }
+
+    return applyBrightnessContrast(props.image, brightness.value, contrast.value);
+}
+
+function refreshImage() {
+    const correctedImage = getCorrectedImage();
+
+    if (!correctedImage) {
+        activeImage.value = null;
+
+        return;
+    }
+
+    if (highlightColor.value) {
+        activeImage.value = filterToGrey(correctedImage, props.store.holds, referenceColor.value);
+
+        return;
+    }
+
+    activeImage.value = correctedImage;
+}
+
+function onContrastUpdate(value: number) {
+    contrast.value = value;
+    refreshImage();
+}
+
+function onBrightnessUpdate(value: number) {
+    brightness.value = value;
+    refreshImage();
+}
+
 function setHold(point: Point) {
     if (willApplyGrey.value) {
         return setGrey(point);
     }
 
     const hold = props.store.addHold(point[0], point[1], props.store.defaultHoldSize);
+    const correctedImage = getCorrectedImage();
 
-    if (highlightColor.value && activeImage.value && props.image) {
-        activeImage.value = unsetGreyHold(activeImage.value, props.image, hold);
+    if (highlightColor.value && activeImage.value && correctedImage) {
+        activeImage.value = unsetGreyHold(activeImage.value, correctedImage, hold);
     }
 }
 
