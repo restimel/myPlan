@@ -44,15 +44,18 @@ const routeStore = reactive<RouteStore>({
     setSettings(value?: RouteSettings) {
         this.settings.routeName = value?.routeName ?? '';
         this.settings.greyedImage.color = value?.greyedImage.color;
+        this.settings.greyedImage.colorMargin = value?.greyedImage.colorMargin;
     },
 
     setGrey(options?: GreySettings) {
         if (!options) {
             this.settings.greyedImage.color = undefined;
+            this.settings.greyedImage.colorMargin = undefined;
             return;
         }
 
         this.settings.greyedImage.color = options.color;
+        this.settings.greyedImage.colorMargin = options.colorMargin;
     },
 
     needAction(action: Actions, value = true) {

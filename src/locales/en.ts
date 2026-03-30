@@ -65,6 +65,7 @@ export default {
         double: 'Double the hold',
         file: 'Use a file',
         brightness: 'Brightness',
+        colorMargin: 'Color margin',
         contrast: 'Contrast',
         imageCorrection: 'Image correction',
         link: 'link',

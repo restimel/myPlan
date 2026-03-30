@@ -21,10 +21,13 @@
         />
         <ImageCorrection v-if="correctionMenuOpen"
             :magicActive="willApplyGrey"
+            :hasColor="highlightColor"
+            :colorMargin="colorMargin"
             :contrast="contrast"
             :brightness="brightness"
             @close="correctionMenuOpen = false"
             @toggleMagic="toggleGrey"
+            @update:colorMargin="onColorMarginUpdate"
             @update:contrast="onContrastUpdate"
             @update:brightness="onBrightnessUpdate"
         />
@@ -153,6 +156,7 @@ const highlightColor = ref(false);
 const referenceColor = ref<ColorRGB>(props.store.settings.greyedImage.color ?? [0, 0, 0]);
 const menuOpen = ref(false);
 const correctionMenuOpen = ref(false);
+const colorMargin = ref(props.store.settings.greyedImage.colorMargin ?? 15);
 const contrast = ref(0);
 const brightness = ref(0);
 
@@ -220,7 +224,7 @@ function applyGreyFilter() {
 
     const correctedImage = applyBrightnessContrast(props.image, brightness.value, contrast.value);
 
-    activeImage.value = filterToGrey(correctedImage, props.store.holds, referenceColor.value);
+    activeImage.value = filterToGrey(correctedImage, props.store.holds, referenceColor.value, colorMargin.value);
 }
 
 function setGrey(point?: Point) {
@@ -262,9 +266,9 @@ function setGrey(point?: Point) {
 
     referenceColor.value = color;
 
-    const image = filterToGrey(correctedImage, props.store.holds, color);
+    const image = filterToGrey(correctedImage, props.store.holds, color, colorMargin.value);
 
-    props.store.setGrey({ color });
+    props.store.setGrey({ color, colorMargin: colorMargin.value });
     activeImage.value = image;
 
     highlightColor.value = true;
@@ -286,6 +290,7 @@ function validate() {
         routeName: props.store.routeName,
         greyedImage: {
             color: highlightColor.value ? referenceColor.value : undefined,
+            colorMargin: highlightColor.value ? colorMargin.value : undefined,
         },
     };
 
@@ -370,12 +375,22 @@ function refreshImage() {
     }
 
     if (highlightColor.value) {
-        activeImage.value = filterToGrey(correctedImage, props.store.holds, referenceColor.value);
+        activeImage.value = filterToGrey(correctedImage, props.store.holds, referenceColor.value, colorMargin.value);
 
         return;
     }
 
     activeImage.value = correctedImage;
+}
+
+function onColorMarginUpdate(value: number) {
+    colorMargin.value = value;
+
+    if (highlightColor.value) {
+        props.store.setGrey({ color: referenceColor.value, colorMargin: value });
+    }
+
+    refreshImage();
 }
 
 function onContrastUpdate(value: number) {

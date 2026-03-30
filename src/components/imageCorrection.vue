@@ -21,6 +21,27 @@
         <div class="correction-row">
             <button
                 class="action"
+                :class="{ active: marginOpen }"
+                :disabled="!hasColor"
+                :title="t('action.colorMargin')"
+                @click="marginOpen = !marginOpen"
+            >
+                <MyIcon icon="size" />
+            </button>
+            <div v-if="marginOpen" class="slider-overlay">
+                <input
+                    type="range"
+                    min="1"
+                    max="90"
+                    :value="colorMargin"
+                    class="slider"
+                    @input="onColorMarginInput"
+                />
+            </div>
+        </div>
+        <div class="correction-row">
+            <button
+                class="action"
                 :class="{ active: contrastOpen }"
                 :title="t('action.contrast')"
                 @click="contrastOpen = !contrastOpen"
@@ -67,6 +88,8 @@ import MyIcon from '@/components/myIcon.vue';
 
 defineProps<{
     magicActive: boolean;
+    hasColor: boolean;
+    colorMargin: number;
     contrast: number;
     brightness: number;
 }>();
@@ -74,14 +97,22 @@ defineProps<{
 const emit = defineEmits<{
     close: [];
     toggleMagic: [];
+    'update:colorMargin': [number];
     'update:contrast': [number];
     'update:brightness': [number];
 }>();
 
 const { t } = useI18n();
 
+const marginOpen = ref(false);
 const contrastOpen = ref(false);
 const brightnessOpen = ref(false);
+
+function onColorMarginInput(event: Event) {
+    const input = event.currentTarget as HTMLInputElement;
+
+    emit('update:colorMargin', +input.value);
+}
 
 function onContrastInput(event: Event) {
     const input = event.currentTarget as HTMLInputElement;

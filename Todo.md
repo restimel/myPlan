@@ -18,7 +18,7 @@
     * [ ] Create image menu
         * [x] improve image quality: add a tool to change contrast
         * [x] improve image quality: add a tool to change light (dark/light)
-        * [ ] Magic color to adjust around the color
+        * [x] Magic color to adjust around the color
         * [ ] Manage (all) hold size ? (not really related to image...)
     * [ ] add a button to zoom to view port
 * [ ] Add a guide page to explain how to use the application

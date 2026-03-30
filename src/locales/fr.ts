@@ -65,6 +65,7 @@ export default {
         double: 'Doubler la prise',
         file: 'Utiliser un fichier',
         brightness: 'Luminosité',
+        colorMargin: 'Marge de couleur',
         contrast: 'Contraste',
         imageCorrection: 'Correction d\'image',
         link: 'lier',

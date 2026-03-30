@@ -177,6 +177,7 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
     const canvasHoldsEl = canvasHolds.value!;
     let imgData: ImageData | undefined;
     const color = props.noGreyFilter ? undefined : props.store.settings.greyedImage.color;
+    const colorMargin = props.store.settings.greyedImage.colorMargin;
 
     if (!canvasImageEl || (!data && !props.image)) {
         activeImage.value = null;
@@ -185,7 +186,7 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
     }
 
     if (color) {
-        imgData = filterToGrey(data ?? props.image!, props.store.holds, color);
+        imgData = filterToGrey(data ?? props.image!, props.store.holds, color, colorMargin);
     } else {
         imgData = data ?? props.image!;
     }

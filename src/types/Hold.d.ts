@@ -19,6 +19,7 @@ type Hold = {
 
 type GreySettings = {
     color?: ColorRGB;
+    colorMargin?: number;
 };
 
 type RouteSettings = {
