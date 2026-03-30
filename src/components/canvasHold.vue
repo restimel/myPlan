@@ -22,14 +22,11 @@
         <ImageCorrection v-if="correctionMenuOpen"
             :magicActive="willApplyGrey"
             :hasColor="highlightColor"
-            :colorMargin="colorMargin"
-            :contrast="contrast"
-            :brightness="brightness"
+            v-model:colorMargin="colorMargin"
+            v-model:contrast="contrast"
+            v-model:brightness="brightness"
             @close="correctionMenuOpen = false"
             @toggleMagic="toggleGrey"
-            @update:colorMargin="onColorMarginUpdate"
-            @update:contrast="onContrastUpdate"
-            @update:brightness="onBrightnessUpdate"
         />
     </CanvasDisplay>
     <footer class="footer-actions">
@@ -175,6 +172,14 @@ onMounted(() => {
 watch(() => props.image, () => {
     /* It will reset the effect on image and apply the image to canvas */
     setGrey();
+});
+
+watch([contrast, brightness, colorMargin], refreshImage);
+
+watch(colorMargin, (value) => {
+    if (highlightColor.value) {
+        props.store.setGrey({ color: referenceColor.value, colorMargin: value });
+    }
 });
 
 function menuAction(action: string) {
@@ -381,26 +386,6 @@ function refreshImage() {
     }
 
     activeImage.value = correctedImage;
-}
-
-function onColorMarginUpdate(value: number) {
-    colorMargin.value = value;
-
-    if (highlightColor.value) {
-        props.store.setGrey({ color: referenceColor.value, colorMargin: value });
-    }
-
-    refreshImage();
-}
-
-function onContrastUpdate(value: number) {
-    contrast.value = value;
-    refreshImage();
-}
-
-function onBrightnessUpdate(value: number) {
-    brightness.value = value;
-    refreshImage();
 }
 
 function setHold(point: Point) {

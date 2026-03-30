@@ -33,9 +33,8 @@
                     type="range"
                     min="1"
                     max="90"
-                    :value="colorMargin"
+                    v-model.number="colorMargin"
                     class="slider"
-                    @input="onColorMarginInput"
                 />
             </div>
         </div>
@@ -53,9 +52,8 @@
                     type="range"
                     min="-100"
                     max="100"
-                    :value="contrast"
+                    v-model.number="contrast"
                     class="slider"
-                    @input="onContrastInput"
                 />
             </div>
         </div>
@@ -73,9 +71,8 @@
                     type="range"
                     min="-100"
                     max="100"
-                    :value="brightness"
+                    v-model.number="brightness"
                     class="slider"
-                    @input="onBrightnessInput"
                 />
             </div>
         </div>
@@ -89,42 +86,22 @@ import MyIcon from '@/components/myIcon.vue';
 defineProps<{
     magicActive: boolean;
     hasColor: boolean;
-    colorMargin: number;
-    contrast: number;
-    brightness: number;
 }>();
 
 const emit = defineEmits<{
     close: [];
     toggleMagic: [];
-    'update:colorMargin': [number];
-    'update:contrast': [number];
-    'update:brightness': [number];
 }>();
+
+const colorMargin = defineModel<number>('colorMargin', { required: true });
+const contrast = defineModel<number>('contrast', { required: true });
+const brightness = defineModel<number>('brightness', { required: true });
 
 const { t } = useI18n();
 
 const marginOpen = ref(false);
 const contrastOpen = ref(false);
 const brightnessOpen = ref(false);
-
-function onColorMarginInput(event: Event) {
-    const input = event.currentTarget as HTMLInputElement;
-
-    emit('update:colorMargin', +input.value);
-}
-
-function onContrastInput(event: Event) {
-    const input = event.currentTarget as HTMLInputElement;
-
-    emit('update:contrast', +input.value);
-}
-
-function onBrightnessInput(event: Event) {
-    const input = event.currentTarget as HTMLInputElement;
-
-    emit('update:brightness', +input.value);
-}
 
 </script>
 <style scoped>
