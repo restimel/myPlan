@@ -244,6 +244,7 @@ function changeSizeDown() {
         background: var(--color-background);
         border: var(--field-border);
         box-shadow: var(--shadow-md);
+        pointer-events: auto;
     }
 
     .head {

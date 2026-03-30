@@ -1,28 +1,32 @@
 <template>
-    <div
-        ref="container"
-        class="canvas-container"
-        :style="`--scale: ${scaleRatio};`"
-        @scroll="scrollContainer"
-    >
-        <canvas
-            ref="canvasBackground"
-            id="canvasBackground"
-        ></canvas>
-        <canvas
-            ref="canvasLayer"
-            id="canvasLayer"
-            :class="layerClass"
-            @mousedown="screenEvent"
-            @touchstart="screenEvent"
-            @mouseup="screenEvent"
-            @touchend="screenEvent"
-            @mousemove="screenEvent"
-            @touchmove="screenEvent"
-            @wheel.prevent="screenEvent"
-        ></canvas>
-        <slot />
-        <GuideMessage :message="message" />
+    <div class="canvas-wrapper">
+        <div
+            ref="container"
+            class="canvas-container"
+            :style="`--scale: ${scaleRatio};`"
+            @scroll="scrollContainer"
+        >
+            <canvas
+                ref="canvasBackground"
+                id="canvasBackground"
+            ></canvas>
+            <canvas
+                ref="canvasLayer"
+                id="canvasLayer"
+                :class="layerClass"
+                @mousedown="screenEvent"
+                @touchstart="screenEvent"
+                @mouseup="screenEvent"
+                @touchend="screenEvent"
+                @mousemove="screenEvent"
+                @touchmove="screenEvent"
+                @wheel.prevent="screenEvent"
+            ></canvas>
+        </div>
+        <div class="canvas-overlay">
+            <slot />
+            <GuideMessage :message="message" />
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
@@ -359,12 +363,24 @@ defineExpose({
     touch-action: none;
 }
 
-.canvas-container {
+.canvas-wrapper {
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
+}
+
+.canvas-container {
+    position: absolute;
+    inset: 0;
     overflow: auto;
     background: var(--color-bg-media);
+}
+
+.canvas-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 </style>

@@ -79,11 +79,11 @@
     </aside>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 
-defineProps<{
+const props = defineProps<{
     magicActive: boolean;
     hasColor: boolean;
 }>();
@@ -103,6 +103,12 @@ const marginOpen = ref(false);
 const contrastOpen = ref(false);
 const brightnessOpen = ref(false);
 
+watch(() => props.hasColor, (hasColor) => {
+    if (!hasColor) {
+        marginOpen.value = false;
+    }
+});
+
 </script>
 <style scoped>
 .correction-panel {
@@ -111,6 +117,7 @@ const brightnessOpen = ref(false);
     left: var(--spacing-sm);
     top: 50%;
     transform: translateY(-50%);
+    pointer-events: auto;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
