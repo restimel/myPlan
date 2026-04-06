@@ -169,7 +169,7 @@ watch(
     display: grid;
     grid-template: "name options delete" "duration options delete" "action options delete" / 1fr max-content max-content;
     align-items: center;
-    gap: var(--field-padding);
+    gap: var(--spacing-sm);
     width: 100%;
     padding: var(--field-padding);
 }
@@ -220,7 +220,7 @@ watch(
 }
 
 .disabled {
-    opacity: 0.4;
+    opacity: var(--disabled-opacity);
 }
 
 .demo-effect {

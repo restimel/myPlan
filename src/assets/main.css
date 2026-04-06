@@ -30,8 +30,13 @@
 
 a {
     text-decoration: none;
-    transition: 0.4s;
+    transition: var(--transition-normal);
     padding: 3px;
+}
+
+a:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
 }
 
 @media (hover: hover) {
@@ -45,6 +50,38 @@ a {
     color: var(--color-text-details)
 }
 
+/* {{{ Form fields */
+
+input,
+select,
+textarea {
+    padding: var(--field-padding) var(--spacing-sm);
+    border: var(--field-border);
+    border-radius: var(--border-radius-sm);
+    background: var(--color-background);
+    color: var(--color-text);
+    font-size: inherit;
+    min-height: 2.5rem;
+    transition: border-color var(--transition-fast);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 2px rgba(1, 161, 229, 0.2);
+    outline: none;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    min-height: auto;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-primary);
+}
+
+/* }}} */
 /* {{{ Buttons */
 
 button {
@@ -54,12 +91,23 @@ button {
     justify-content: center;
     gap: var(--spacing-letter);
     padding: var(--spacing-sm) var(--spacing-sm);
-    transition: 0.3s;
+    transition: var(--transition-normal);
     cursor: pointer;
 }
 
 button[disabled] {
     cursor: not-allowed;
+    opacity: var(--disabled-opacity);
+    pointer-events: none;
+}
+
+button:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+}
+
+button:active:not([disabled]) {
+    transform: scale(0.96);
 }
 
 button.btn-small {
@@ -76,7 +124,14 @@ button.btn-transparent {
 button.action {
     width: var(--button-size);
     height: var(--button-size);
+    border-radius: var(--border-radius);
     --icon-size: calc(var(--button-size) / 2);
+}
+
+@media (hover: hover) {
+    button.action:not([disabled]):hover {
+        box-shadow: var(--shadow-sm);
+    }
 }
 
 button.active,
@@ -88,6 +143,22 @@ button.active,
 button.active:not([disabled]):hover,
 .primary-btn:not([disabled]):hover {
     background: var(--color-primary-hover);
+}
+
+.btn-secondary {
+    background: var(--color-secondary);
+    color: var(--color-txt-secondary);
+}
+
+.btn-outline {
+    border: 2px solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+}
+
+.btn-danger {
+    background: var(--color-error);
+    color: var(--vt-c-white);
 }
 
 /* }}} */

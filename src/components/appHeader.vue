@@ -111,7 +111,7 @@ nav a:first-of-type {
         display: none;
         flex-direction: column;
         background: var(--color-bg);
-        font-size: 1.2em;
+        font-size: var(--font-size-lg);
 
         position: absolute;
         z-index: var(--zIndex-main-menu);

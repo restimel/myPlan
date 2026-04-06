@@ -115,6 +115,21 @@
     /* Fields */
     --field-border: 1px solid var(--color-border);
 
+    /* Transitions */
+    --transition-fast: 150ms;
+    --transition-normal: 300ms;
+
+    /* Focus */
+    --focus-ring: 2px solid var(--color-secondary);
+    --focus-offset: 2px;
+
+    /* Disabled */
+    --disabled-opacity: 0.5;
+
+    /* Surfaces */
+    --color-surface: var(--color-background-soft);
+    --color-surface-elevated: var(--color-background);
+
     /* Buttons */
     --button-size: 1.6cm;
 

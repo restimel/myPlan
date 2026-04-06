@@ -93,7 +93,7 @@ function actionButton() {
 
 .v-enter-active,
 .v-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity var(--transition-normal) ease;
 }
 
 .v-enter-from,
