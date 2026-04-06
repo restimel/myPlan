@@ -7,33 +7,35 @@
         <MyIcon icon="menu" />
     </button>
 
-    <aside v-if="open"
-        class="menu"
-    >
-        <button
-            class="inner-menu-handle action"
-            @click="toggleMenu"
+    <Transition name="slide-up">
+        <aside v-if="open"
+            class="menu"
         >
-            <MyIcon icon="menu" />
-        </button>
-
-        <section
-            class="actions"
-        >
-            <button v-for="actionItem of actions"
-                class="action"
-                :class="{
-                    active: !!actionItem.active,
-                }"
-                :key="actionItem.type"
-                :title="actionItem.title"
-                :disabled="actionItem.disabled"
-                @click="action(actionItem.type)"
+            <button
+                class="inner-menu-handle action"
+                @click="toggleMenu"
             >
-                <MyIcon :icon="actionItem.icon" />
+                <MyIcon icon="menu" />
             </button>
-        </section>
-    </aside>
+
+            <section
+                class="actions"
+            >
+                <button v-for="actionItem of actions"
+                    class="action"
+                    :class="{
+                        active: !!actionItem.active,
+                    }"
+                    :key="actionItem.type"
+                    :title="actionItem.title"
+                    :disabled="actionItem.disabled"
+                    @click="action(actionItem.type)"
+                >
+                    <MyIcon :icon="actionItem.icon" />
+                </button>
+            </section>
+        </aside>
+    </Transition>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
@@ -115,6 +117,17 @@ function action(type: string) {
     cursor: pointer;
 
     box-shadow: var(--shadow-primary);
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+    transition: transform var(--transition-normal), opacity var(--transition-normal);
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+    transform: translate(-50%, 100%);
+    opacity: 0;
 }
 
 </style>

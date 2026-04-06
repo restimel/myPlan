@@ -243,8 +243,22 @@ function changeSizeDown() {
         top: var(--y);
         background: var(--color-background);
         border: var(--field-border);
+        border-radius: var(--border-radius);
         box-shadow: var(--shadow-md);
         pointer-events: auto;
+        --menu-width: 200px;
+        animation: menu-appear var(--transition-normal) ease;
+    }
+
+    @keyframes menu-appear {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
 
     .head {
@@ -255,13 +269,18 @@ function changeSizeDown() {
     }
 
     .item {
-        width: 200px;
+        width: var(--menu-width);
     }
 
     .item button {
         width: 100%;
         display: grid;
         grid-template-columns: 25px 1fr;
+        transition: background-color var(--transition-fast);
+    }
+
+    .item button:not([disabled]):hover {
+        background-color: var(--color-background-mute);
     }
 
     .item label {
