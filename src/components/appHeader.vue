@@ -7,6 +7,11 @@
             <MyIcon icon="menu" :size="iconSizeMenu" />
             {{ 'Menu' }}
         </div>
+        <div
+            v-if="isMenuOpen"
+            class="backdrop"
+            @click="isMenuOpen = false"
+        />
         <nav
             :class="{
                 open: isMenuOpen,
@@ -85,6 +90,8 @@ nav a {
     align-items: center;
     padding: 0 1rem;
     border-left: 1px solid var(--color-border);
+    box-shadow: inset 0 -3px 0 transparent;
+    transition: box-shadow var(--transition-fast);
 }
 
 nav a > :deep(.icon) {
@@ -92,12 +99,22 @@ nav a > :deep(.icon) {
 }
 
 nav a.router-link-exact-active {
-    background: var(--color-secondary);
-    color: var(--color-txt-secondary);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 -3px 0 var(--color-secondary);
+}
+
+@media (orientation:landscape) {
+    nav a {
+        box-shadow: inset 3px 0 0 transparent;
+    }
+
+    nav a.router-link-exact-active {
+        box-shadow: inset 3px 0 0 var(--color-secondary);
+    }
 }
 
 nav a:first-of-type {
-    border: 0;
+    border-left: 0;
 }
 
 /* {{{ Mobile Styles */
@@ -108,21 +125,29 @@ nav a:first-of-type {
 
 @media (max-width: 810px) {
     nav {
-        display: none;
         flex-direction: column;
-        background: var(--color-bg);
         font-size: var(--font-size-lg);
-
         position: absolute;
         z-index: var(--zIndex-main-menu);
         height: auto;
         background-color: var(--color-primary);
         box-shadow: var(--shadow-primary);
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform var(--transition-normal), opacity var(--transition-normal);
     }
 
     nav.open {
         border-top: var(--field-border);
-        display: flex;
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    nav a {
+        padding: var(--spacing-sm) var(--spacing-md);
+        min-height: 2.75rem;
     }
 
     .mobile-menu-button {
@@ -133,6 +158,13 @@ nav a:first-of-type {
         align-items: center;
         font-size: var(--font-main-title-size);
         cursor: pointer;
+    }
+
+    .backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: calc(var(--zIndex-main-menu) - 1);
+        background: rgba(0, 0, 0, 0.3);
     }
 }
 
