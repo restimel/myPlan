@@ -1,14 +1,16 @@
 <template>
-    <ModalPrompt v-if="showSettings"
-        :title="t('view.settingsTitle')"
-        :items="[{
-            type: 'text',
-            label: t('label.routeName'),
-            value: store.settings.routeName,
-            name: 'routeName',
-        }]"
-        @close="closeSettings"
-    />
+    <Transition name="modal">
+        <ModalPrompt v-if="showSettings"
+            :title="t('view.settingsTitle')"
+            :items="[{
+                type: 'text',
+                label: t('label.routeName'),
+                value: store.settings.routeName,
+                name: 'routeName',
+            }]"
+            @close="closeSettings"
+        />
+    </Transition>
 </template>
 <script lang="ts" setup>
 import { ref, watch } from 'vue';

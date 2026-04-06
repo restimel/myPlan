@@ -19,11 +19,13 @@
             @merged="onMerged"
             @cancel="onStitchCancel"
         />
-        <DialogConfirm v-if="showConfirm"
-            :message="t('build.confirmLeave')"
-            @confirm="onConfirmLeave"
-            @cancel="onCancelLeave"
-        />
+        <Transition name="modal">
+            <DialogConfirm v-if="showConfirm"
+                :message="t('build.confirmLeave')"
+                @confirm="onConfirmLeave"
+                @cancel="onCancelLeave"
+            />
+        </Transition>
     </div>
 </template>
 

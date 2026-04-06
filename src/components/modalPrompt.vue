@@ -34,6 +34,7 @@
             {{ t('action.confirm') }}
         </button>
         <button
+            class="btn-outline"
             @click="close(false)"
         >
             <MyIcon icon="cancel" />
@@ -158,11 +159,13 @@ onMounted(() => {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: var(--zIndex-modal);
-    box-shadow: var(--shadow-primary);
-
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--border-radius);
+    max-width: min(90vw, 400px);
+    max-height: 85vh;
+    overflow-y: auto;
     background: var(--color-background);
     color: var(--color-text);
-
     padding: var(--spacing-md);
 }
 
@@ -177,6 +180,6 @@ footer {
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
 }
 </style>

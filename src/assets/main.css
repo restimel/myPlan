@@ -183,4 +183,15 @@ button.active:not([disabled]):hover,
     }
 }
 
+.modal-enter-active,
+.modal-leave-active {
+    transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
 /* }}} */

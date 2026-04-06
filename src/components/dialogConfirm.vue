@@ -7,7 +7,7 @@
                     <MyIcon icon="ok" />
                     {{ t('action.confirm') }}
                 </button>
-                <button @click="emit('cancel')">
+                <button class="btn-outline" @click="emit('cancel')">
                     <MyIcon icon="cancel" />
                     {{ t('action.cancel') }}
                 </button>
@@ -47,8 +47,11 @@ const { t } = useI18n();
     background: var(--color-background);
     color: var(--color-text);
     padding: var(--spacing-md);
-    box-shadow: var(--shadow-primary);
-    max-width: 90vw;
+    box-shadow: var(--shadow-lg);
+    border-radius: var(--border-radius);
+    max-width: min(90vw, 400px);
+    max-height: 85vh;
+    overflow-y: auto;
 }
 
 .message {
@@ -62,6 +65,6 @@ footer {
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
 }
 </style>
