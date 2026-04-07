@@ -36,6 +36,7 @@
                     v-model.number="colorMargin"
                     class="slider"
                 />
+                <span class="slider-value">{{ colorMargin }}</span>
             </div>
         </div>
         <div class="correction-row">
@@ -55,6 +56,7 @@
                     v-model.number="contrast"
                     class="slider"
                 />
+                <span class="slider-value">{{ contrast }}%</span>
             </div>
         </div>
         <div class="correction-row">
@@ -74,6 +76,7 @@
                     v-model.number="brightness"
                     class="slider"
                 />
+                <span class="slider-value">{{ brightness }}%</span>
             </div>
         </div>
     </aside>
@@ -141,12 +144,19 @@ watch(() => props.hasColor, (hasColor) => {
     display: flex;
     align-items: center;
     padding: var(--spacing-xs);
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.7);
     border-radius: var(--border-radius);
 }
 
 .slider {
     width: min(200px, calc(100vw - var(--button-size) - var(--spacing-sm) * 3));
     cursor: pointer;
+}
+
+.slider-value {
+    color: var(--vt-c-white);
+    font-size: var(--font-size-sm);
+    width: 5ch;
+    text-align: end;
 }
 </style>
