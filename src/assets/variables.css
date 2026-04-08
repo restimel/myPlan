@@ -156,7 +156,15 @@
         --color-border: var(--vt-c-divider-dark-2);
         --color-border-hover: var(--vt-c-divider-dark-1);
 
-        --color-text: var(--vt-c-text-dark-2);
-        --color-text-information: var(--vt-c-grey);
+        --color-text: var(--vt-c-text-dark-1);
+        --color-text-information: #999999;
+        --color-text-details: #999999;
+
+        --color-surface: var(--vt-c-black-soft);
+        --color-surface-elevated: var(--vt-c-black-light);
+
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 5px 10px 15px rgba(0, 0, 0, 0.6);
     }
 }
