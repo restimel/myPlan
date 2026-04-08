@@ -194,4 +194,36 @@ button.active:not([disabled]):hover,
     transform: scale(0.95);
 }
 
+.page-enter-active,
+.page-leave-active {
+    transition: opacity 100ms;
+}
+
+.page-enter-from,
+.page-leave-to {
+    opacity: 0;
+}
+
+/* }}} */
+/* {{{ Scrollbar */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-background-mute);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border-hover);
+    border-radius: 3px;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-hover) var(--color-background-mute);
+}
+
 /* }}} */
