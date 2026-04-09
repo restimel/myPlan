@@ -90,9 +90,9 @@
     --font-size-xs: 0.5rem;
     --font-size-sm: 0.875rem;
     --font-size-md: 1rem;
-    --font-size-lg: 1.25rem;
-    --font-size-xl: 1.5rem;
-    --font-size-xxl: 2rem;
+    --font-size-lg: clamp(1.1rem, 2.5vw, 1.25rem);
+    --font-size-xl: clamp(1.25rem, 3vw, 1.5rem);
+    --font-size-xxl: clamp(1.5rem, 4vw, 2rem);
 
     --font-title-size: 5mm;
     --font-main-title-size: 7mm;
