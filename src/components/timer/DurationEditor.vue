@@ -1,5 +1,5 @@
 <template>
-    <span class="duration-editor">
+    <span class="duration-editor" @click.prevent>
         <NumberSelection
             v-model="hours"
             :max="24"
@@ -38,4 +38,11 @@ watch([hours, minutes, seconds], () => {
 </script>
 
 <style scoped>
+.duration-editor {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: bold;
+}
 </style>

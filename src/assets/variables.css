@@ -118,6 +118,7 @@
     /* Transitions */
     --transition-fast: 150ms;
     --transition-normal: 300ms;
+    --transition-debug: 3s;
 
     /* Focus */
     --focus-ring: 2px solid var(--color-secondary);
