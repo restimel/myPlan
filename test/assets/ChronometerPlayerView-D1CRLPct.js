@@ -1,1 +1,0 @@
-import{C as e}from"./ChronometerPlayer-5reKFl0B.js";import{d as o,c as r,b as t,o as a,_ as s}from"./index-D8Gi5dzD.js";import"./keepScreenAwake-toEOB0oL.js";const c={class:"container view-page"},n=o({__name:"ChronometerPlayerView",setup(_){return(m,p)=>(a(),r("div",c,[t(e)]))}}),f=s(n,[["__scopeId","data-v-66671c39"]]);export{f as default};
