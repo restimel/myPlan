@@ -11,12 +11,14 @@
         </RouterView>
     </main>
     <DebugMessage />
+    <PwaPrompt />
 </template>
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import DebugMessage from '@/components/debugMessage.vue';
 import AppHeader from '@/components/appHeader.vue';
+import PwaPrompt from '@/components/PwaPrompt.vue';
 import { onMounted } from 'vue';
 
 /* Hides mobile browser's address bar when page is done loading. */

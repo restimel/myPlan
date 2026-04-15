@@ -103,4 +103,9 @@ export default {
     route: {
         top: 'TOP = {top}',
     },
+    pwa: {
+        updateAvailable: 'Une nouvelle version est disponible',
+        update: 'Mettre à jour',
+        dismiss: 'Plus tard',
+    },
 };
