@@ -42,12 +42,14 @@
     * [x] Keep the holds of correct color in color
 3. click on the screen
     * [x] it should add a hold
+    * [x] the zoom level should not change (magic color filter is reapplied without resetting zoom)
 4. click on the screen again
     * [x] it should add a hold (incrementing number)
 5. add several holds
     * [x] There should be as many hold as clicks
 6. click on "trash"
     * [x] the last hold should be removed
+    * [x] the zoom level should not change (magic color filter is reapplied without resetting zoom)
 7. double click on the 1st hold
     * [x] the hold should be double
     * [x] the next holds should have incrementing their number

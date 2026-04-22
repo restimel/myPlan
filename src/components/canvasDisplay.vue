@@ -80,8 +80,19 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const holdList = computed(() => props.store.holds);
 
+/* Track image dimensions to detect genuine image changes vs filter-only updates.
+ * Only reset zoom when the image dimensions change (i.e. a new photo was loaded).
+ * When magic color reapplies a filter on the same image, dimensions are identical
+ * and the zoom level should be preserved. */
+let prevImageSize = { width: 0, height: 0 };
+
 watch(() => props.image, () => {
-    loadImage();
+    const img = props.image;
+    const newSize = img ? { width: img.width, height: img.height } : { width: 0, height: 0 };
+    const dimensionsChanged = newSize.width !== prevImageSize.width || newSize.height !== prevImageSize.height;
+
+    prevImageSize = newSize;
+    loadImage(undefined, dimensionsChanged);
 });
 watch(holdList, () => {
     loadImage(undefined, false);
