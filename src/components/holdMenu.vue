@@ -106,18 +106,21 @@ const style = computed(() => {
     const holdRadius = hold.size * ratio + margin;
     const menuHeight = measuredHeight.value;
     const menuWidth = 200;
-    const minX = props.offsetX;
-    const maxX = minX + props.containerSize.width;
-    const minY = props.offsetY;
-    const maxY = minY + props.containerSize.height;
+    const minX = 0;
+    const maxX = props.containerSize.width;
+    const minY = 0;
+    const maxY = props.containerSize.height;
 
     /*
      * Compute the bounding box of the entire group (anchor + linked holds).
      * Candidates placed outside this box cannot overlap any hold by construction.
      */
+    /* Convert hold positions from image space to screen space:
+     * multiply by scale (canvas transform) then subtract scroll offset
+     * (canvas-overlay is not scrolled, so menu coordinates must be viewport-relative) */
     const positions = hold.position.map((pos) => ({
-        x: def(pos[0]) * ratio,
-        y: def(pos[1]) * ratio,
+        x: def(pos[0]) * ratio - props.offsetX,
+        y: def(pos[1]) * ratio - props.offsetY,
     }));
 
     let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity, sumX = 0, sumY = 0;

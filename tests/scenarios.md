@@ -75,6 +75,10 @@
 16. when zoomed-in, scroll the image
     * [ ] The image should follow your finger
         * The image is moved but does not follow exactly the finger
+17. With 2 fingers, zoom-in, then hold on a hold
+    * [x] a menu should appear near the hold (not off-screen)
+18. With 2 fingers, zoom-in and scroll, then hold on a hold
+    * [x] a menu should appear near the hold, correctly positioned relative to the visible area
 
 ## Re-use a route
 
