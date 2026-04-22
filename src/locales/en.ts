@@ -51,6 +51,8 @@ export default {
         clearPeriods: 'Clear all periods',
         deletePeriodConfirm: 'Click a second time to confirm the period deletion',
         fullscreenPlayer: 'Run in fullscreen',
+        resetBehaviorTitle: 'Reset behavior',
+        resetToPeriod1: 'Return to period 1 on reset',
         warningTitle: 'Effect at the end of the period',
     },
     message: {

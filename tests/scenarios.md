@@ -118,6 +118,8 @@
         * [x] start the next period
 10. Click on reset icon
     * [x] The timer should be re-initialized
+    * [x] With multiple periods, the current period should NOT change (stays on current period)
+    * [x] With multiple periods and "Return to period 1" enabled on current period, clicking reset should go back to period 1
 11. Refresh the page
     * [x] All periods should stay the same as before
 12. Add new period

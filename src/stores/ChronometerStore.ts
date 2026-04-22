@@ -22,6 +22,8 @@ export type Period = {
     activateSound: boolean;
     soundWarning: boolean;
     colors: PeriodColors;
+    /** If true, pressing reset also jumps back to period 1 */
+    resetToPeriod1?: boolean;
 };
 
 const REFRESH_PERIOD = 200; /* ms */

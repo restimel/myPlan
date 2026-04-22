@@ -51,6 +51,8 @@ export default {
         clearPeriods: 'Supprimer toutes les périodes',
         deletePeriodConfirm: 'Cliquez une deuxième fois pour confirmer la suppression de cette période',
         fullscreenPlayer: 'Démarrer en plein écran',
+        resetBehaviorTitle: 'Comportement lors du reset',
+        resetToPeriod1: 'Revenir à la période 1 lors du reset',
         warningTitle: 'Effet à la fin de la période',
     },
     message: {

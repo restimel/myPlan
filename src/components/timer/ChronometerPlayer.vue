@@ -132,7 +132,9 @@ function changeToNextPeriod() {
 }
 
 function restartChrono() {
-    setPeriod(0);
+    if (currentPeriod.value.resetToPeriod1) {
+        setPeriod(0);
+    }
     restartPeriod();
 }
 

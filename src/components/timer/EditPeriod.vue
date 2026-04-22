@@ -80,6 +80,18 @@
                 />
             </label>
         </fieldset>
+        <fieldset class="period-reset">
+            <legend>
+                {{ t('chronometer.resetBehaviorTitle') }}
+            </legend>
+            <label>
+                <input
+                    type="checkbox"
+                    v-model="localPeriod.resetToPeriod1"
+                >
+                {{ t('chronometer.resetToPeriod1') }}
+            </label>
+        </fieldset>
         <ConfirmButton
             class="period-delete btn-small"
             :disabled="alone"
@@ -167,7 +179,12 @@ watch(
 .edit-timer {
     position: relative;
     display: grid;
-    grid-template: "name options delete" "duration options delete" "action options delete" / 1fr max-content max-content;
+    grid-template:
+        "name options delete"
+        "duration options delete"
+        "action optionReset delete"
+        "color optionReset delete"
+        / 1fr max-content max-content;
     align-items: center;
     gap: var(--spacing-sm);
     width: 100%;
@@ -176,7 +193,14 @@ watch(
 
 @media (max-width: 600px) {
     .edit-timer {
-        grid-template: "name delete" "duration  delete" "action delete" "options delete" / 1fr max-content;
+        grid-template:
+            "name delete"
+            "duration  delete"
+            "action delete"
+            "color delete"
+            "options delete"
+            "optionReset delete"
+            / 1fr max-content;
     }
 }
 
@@ -203,6 +227,14 @@ watch(
     grid-area: options;
 }
 
+.period-colors {
+    grid-area: color;
+}
+
+.period-reset {
+    grid-area: optionReset;
+}
+
 .period-delete {
     grid-area: delete;
 }
@@ -212,6 +244,7 @@ watch(
     flex-direction: column;
 }
 
+.period-reset label,
 .period-options label {
     display: flex;
     flex-direction: row;
