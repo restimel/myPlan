@@ -164,6 +164,10 @@ export function deletePeriod(index: number) {
         periodsValue.splice(index, 1);
         periods.value = periodsValue;
 
+        if (periodSelected.value >= periodsValue.length) {
+            periodSelected.value = Math.max(0, periodsValue.length - 1);
+        }
+
         return true;
     }
 
@@ -179,7 +183,7 @@ export function clearPeriods() {
 /* {{{ chronometer */
 
 export const periodSelected = ref<number>(0);
-export const currentPeriod = computed<Period>(() => periods.value[periodSelected.value]!);
+export const currentPeriod = computed<Period>(() => periods.value[periodSelected.value] ?? defaultPeriod);
 export const isRunning = computed(() => chronometerTimer.value !== 0);
 
 const timerSpent = ref<number>(0);

@@ -15,6 +15,7 @@
                 :class="{ active: period.id === currentPeriod.id }"
                 :period-index="periodIndex"
                 :alone="periods.length === 1"
+                :collapsed="period.id !== currentPeriod.id"
                 :key="`edit-period-${period.id}`"
                 @active="setPeriod(periodIndex)"
             />
@@ -57,7 +58,8 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 function addPeriod() {
-    updatePeriod(-1);
+    const newIndex = updatePeriod(-1);
+    setPeriod(newIndex);
 }
 </script>
 

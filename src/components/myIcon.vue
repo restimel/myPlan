@@ -29,6 +29,7 @@ import IconPhoto from '@/components/icons/IconPhoto.vue';
 import IconPlay from '@/components/icons/IconPlay.vue';
 import IconQuestion from '@/components/icons/IconQuestion.vue';
 import IconRecapture from '@/components/icons/IconRecapture.vue';
+import IconRight from '@/components/icons/IconRight.vue';
 import IconRestart from '@/components/icons/IconRestart.vue';
 import IconSave from '@/components/icons/IconSave.vue';
 import IconSettings from '@/components/icons/IconSettings.vue';
@@ -66,6 +67,7 @@ export type Icons =
     | 'play'
     | 'question'
     | 'recapture'
+    | 'right'
     | 'restart'
     | 'save'
     | 'settings'
@@ -111,6 +113,7 @@ const mapElement = {
     play: IconPlay,
     question: IconQuestion,
     recapture: IconRecapture,
+    right: IconRight,
     restart: IconRestart,
     save: IconSave,
     settings: IconSettings,

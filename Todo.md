@@ -24,7 +24,8 @@
 * [ ] Add a guide page to explain how to use the application
 * [ ] Chronometer
     * [x] allow to change background color for a period
-    * [ ] create settings template (we should be able to share them to another device)
+    * [ ] create settings template (to re-use previous configuration)
+        * [ ] be able to share them to another device
 
 ## Maybe to be done
 

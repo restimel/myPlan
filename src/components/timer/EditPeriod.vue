@@ -1,104 +1,101 @@
 <template>
-    <div class="edit-timer" @click.self="emit('active')">
-        <label class="period-name">
-            {{ t('label.periodName') }}
-            <input
-                type="text"
-                v-model="localPeriod.name"
-            >
-        </label>
-        <label class="period-duration">
-            {{ t('label.periodDuration') }}
-            <DurationEditor
-                v-model="localPeriod.duration"
+    <div class="edit-timer" :class="{ collapsed: props.collapsed }">
+        <button class="period-summary" @click="emit('active')">
+            <span class="summary-name">{{ localPeriod.name }}</span>
+            <span class="summary-duration">{{ formattedDuration }}</span>
+            <MyIcon :icon="props.collapsed ? 'right' : 'down'" />
+        </button>
+        <template v-if="!props.collapsed">
+            <label class="period-name">
+                {{ t('label.periodName') }}
+                <input
+                    type="text"
+                    v-model="localPeriod.name"
+                >
+            </label>
+            <label class="period-duration">
+                {{ t('label.periodDuration') }}
+                <DurationEditor
+                    v-model="localPeriod.duration"
+                />
+            </label>
+            <label class="period-action">
+                {{ t('label.periodAction') }}
+                <select
+                    v-model="localPeriod.endEffect"
+                >
+                    <option value="stop">{{ t('chronometer.actionStop') }}</option>
+                    <option value="startNext">{{ t('chronometer.actionStartNext') }}</option>
+                    <option value="restart">{{ t('chronometer.actionRepeat') }}</option>
+                    <option value="continue">{{ t('chronometer.actionContinue') }}</option>
+                </select>
+            </label>
+            <label class="period-colors">
+                <EditColors
+                    v-model="localPeriod.colors"
+                    :title="localPeriod.name"
+                />
+            </label>
+            <fieldset class="period-options">
+                <legend>
+                    {{ t('chronometer.warningTitle') }}
+                </legend>
+                <label :disabled="!isVibrateSupported">
+                    <input v-model="localPeriod.activateVibration"
+                        type="checkbox"
+                        :disabled="!localPeriod.activateVibration && !canUseVibration"
+                    >
+                    {{ t('chronometer.activateVibration') }}
+                    <MyIcon
+                        icon="play"
+                        :size="10"
+                        class="demo-effect"
+                        @click.stop.prevent="vibrate()"
+                    />
+                </label>
+                <label>
+                    <input v-model="localPeriod.activateSound"
+                        type="checkbox"
+                    >
+                    {{ t('chronometer.activateSound') }}
+                    <MyIcon
+                        icon="play"
+                        :size="10"
+                        class="demo-effect"
+                        @click.stop.prevent="beepTimeout()"
+                    />
+                </label>
+                <label :class="{ disabled: !localPeriod.activateSound }">
+                    <input v-model="localPeriod.soundWarning"
+                        type="checkbox"
+                    >
+                    {{ t('chronometer.activateBeepWarning') }}
+                    <MyIcon
+                        icon="play"
+                        :size="10"
+                        class="demo-effect"
+                        @click.stop.prevent="beepTime()"
+                    />
+                </label>
+            </fieldset>
+            <fieldset class="period-reset">
+                <legend>
+                    {{ t('chronometer.resetBehaviorTitle') }}
+                </legend>
+                <label>
+                    <input v-model="localPeriod.resetToPeriod1"
+                        type="checkbox"
+                    >
+                    {{ t('chronometer.resetToPeriod1') }}
+                </label>
+            </fieldset>
+            <ConfirmButton v-if="!alone"
+                class="period-delete btn-small"
+                :message="t('chronometer.deletePeriodConfirm')"
+                position="left"
+                @click="deletePeriod(periodIndex)"
             />
-        </label>
-        <label class="period-action">
-            {{ t('label.periodAction') }}
-            <select
-                v-model="localPeriod.endEffect"
-            >
-                <option value="stop">{{ t('chronometer.actionStop') }}</option>
-                <option value="startNext">{{ t('chronometer.actionStartNext') }}</option>
-                <option value="restart">{{ t('chronometer.actionRepeat') }}</option>
-                <option value="continue">{{ t('chronometer.actionContinue') }}</option>
-            </select>
-        </label>
-        <label class="period-colors">
-            <EditColors
-                v-model="localPeriod.colors"
-                :title="localPeriod.name"
-            />
-        </label>
-        <fieldset class="period-options">
-            <legend>
-                {{ t('chronometer.warningTitle') }}
-            </legend>
-
-            <label :disabled="!isVibrateSupported">
-                <input
-                    type="checkbox"
-                    v-model="localPeriod.activateVibration"
-                    :disabled="!localPeriod.activateVibration && !canUseVibration"
-                >
-                {{ t('chronometer.activateVibration') }}
-                <MyIcon
-                    icon="play"
-                    :size="10"
-                    class="demo-effect"
-                    @click.stop.prevent="vibrate()"
-                />
-            </label>
-            <label>
-                <input
-                    type="checkbox"
-                    v-model="localPeriod.activateSound"
-                >
-                {{ t('chronometer.activateSound') }}
-                <MyIcon
-                    icon="play"
-                    :size="10"
-                    class="demo-effect"
-                    @click.stop.prevent="beepTimeout()"
-                />
-            </label>
-            <label
-                :class="{
-                    disabled: !localPeriod.activateSound,
-                }"
-            >
-                <input
-                    type="checkbox"
-                    v-model="localPeriod.soundWarning"
-                >
-                {{ t('chronometer.activateBeepWarning') }}
-                <MyIcon
-                    icon="play"
-                    :size="10"
-                    class="demo-effect"
-                    @click.stop.prevent="beepTime()"
-                />
-            </label>
-        </fieldset>
-        <fieldset class="period-reset">
-            <legend>
-                {{ t('chronometer.resetBehaviorTitle') }}
-            </legend>
-            <label>
-                <input
-                    type="checkbox"
-                    v-model="localPeriod.resetToPeriod1"
-                >
-                {{ t('chronometer.resetToPeriod1') }}
-            </label>
-        </fieldset>
-        <ConfirmButton
-            class="period-delete btn-small"
-            :disabled="alone"
-            :message="t('chronometer.deletePeriodConfirm')"
-            position="left"
-            @click="deletePeriod(periodIndex)"
-        />
+        </template>
     </div>
 </template>
 
@@ -126,6 +123,7 @@ const { t } = useI18n();
 const props = defineProps<{
     periodIndex: number;
     alone: boolean;
+    collapsed: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -138,6 +136,19 @@ const localPeriod = ref<Period>({
 
 const canUseVibration = computed<boolean>(() => {
     return true;
+});
+
+const formattedDuration = computed(() => {
+    const totalSeconds = localPeriod.value.duration;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor(totalSeconds / 60) % 60;
+    const seconds = totalSeconds % 60;
+
+    function padTime(value: number): string {
+        return String(value).padStart(2, '0');
+    }
+
+    return `${padTime(hours)}:${padTime(minutes)}:${padTime(seconds)}`;
 });
 
 watch(() => props.periodIndex,
@@ -180,6 +191,7 @@ watch(
     position: relative;
     display: grid;
     grid-template:
+        "summary summary summary"
         "name options delete"
         "duration options delete"
         "action optionReset delete"
@@ -191,9 +203,17 @@ watch(
     padding: var(--field-padding);
 }
 
+.edit-timer.collapsed {
+    grid-template:
+        "summary"
+        / 1fr;
+    padding: 0;
+}
+
 @media (max-width: 600px) {
     .edit-timer {
         grid-template:
+            "summary summary"
             "name delete"
             "duration  delete"
             "action delete"
@@ -229,6 +249,29 @@ watch(
 
 .period-colors {
     grid-area: color;
+}
+
+.period-summary {
+    grid-area: summary;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+    width: 100%;
+    padding: var(--field-padding);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: start;
+}
+
+.summary-name {
+    flex: 1;
+    font-weight: bold;
+}
+
+.summary-duration {
+    color: var(--color-text-secondary);
 }
 
 .period-reset {
