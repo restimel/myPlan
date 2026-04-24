@@ -22,6 +22,7 @@
             <RouterLink to="/chronometerSettings"><MyIcon icon="chronometer" :size="iconSize" /> {{ t('chronometer.title') }}</RouterLink>
             <RouterLink to="/about"><MyIcon icon="question" :size="iconSize" /> {{ t('about.title') }}</RouterLink>
             <LanguageSelector />
+            <CurrentTime class="nav-clock" />
         </nav>
     </div>
 </template>
@@ -32,6 +33,7 @@ import { RouterLink, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import LanguageSelector from '@/components/LanguageSelector.vue';
+import CurrentTime from '@/components/timer/CurrentTime.vue';
 
 const { t } = useI18n();
 
@@ -66,6 +68,10 @@ onUnmounted(() => {
 
 </script>
 <style scoped>
+
+.wrapper {
+    height: 100%;
+}
 
 nav {
     width: 100%;
@@ -165,6 +171,22 @@ nav a:first-of-type {
         inset: 0;
         z-index: calc(var(--zIndex-main-menu) - 1);
         background: rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* }}} */
+/* {{{ Clock */
+
+.nav-clock {
+    display: none;
+}
+
+@media (orientation: landscape) {
+    .nav-clock {
+        display: block;
+        margin-block-start: auto;
+        text-align: center;
+        color: var(--color-txt-primary);
     }
 }
 

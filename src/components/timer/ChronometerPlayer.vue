@@ -24,6 +24,7 @@
         <div class="period-name">
             {{ currentPeriod.name }}
         </div>
+        <CurrentTime v-if="showClock" class="clock-overlay" />
         <aside class="period-actions">
             <button v-if="isRunning"
                 class="btn-transparent btn-small action"
@@ -70,8 +71,13 @@ import {
     timerSpentSecond,
 } from '@/stores/ChronometerStore';
 import ChronometerDisplay from '@/components/timer/ChronometerDisplay.vue';
+import CurrentTime from '@/components/timer/CurrentTime.vue';
 import { useElementSize } from '@vueuse/core';
 import MyIcon from '@/components/myIcon.vue';
+
+defineProps<{
+    showClock?: boolean;
+}>();
 
 const chronometerPlayer = useTemplateRef('chronometerPlayer');
 const { width, height } = useElementSize(chronometerPlayer);
@@ -148,11 +154,16 @@ function restartChrono() {
 
     --color-bg-chronometer: var(--color-bg-chronometer-default);
     background: var(--color-bg-chronometer);
-    color: var(--vt-c-white-soft); /* default color */
-    /* contrast color */
-    color: hsl(from var(--color-bg-chronometer) 0 0 calc(clamp(0, 60 - l, 1) * 95%));
+
+    --color-chronometer-text: var(--vt-c-white-soft);
+    color: var(--color-chronometer-text);
 
     --size: clamp(5em, 100%);
+}
+@supports (color: hsl(from red 0 0 0%)) {
+    .chronometer-player {
+        --color-chronometer-text: hsl(from var(--color-bg-chronometer) 0 0 calc(clamp(0, 60 - l, 1) * 95%));
+    }
 }
 .chronometer-player.timeout {
     --color-bg-chronometer: var(--color-bg-chronometer-timeout);
@@ -167,6 +178,12 @@ function restartChrono() {
     position: absolute;
     top: 0;
     font-size: 0.8em;
+    z-index: var(--zIndex-chronometer);
+}
+.clock-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
     z-index: var(--zIndex-chronometer);
 }
 .period-actions {
