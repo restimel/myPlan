@@ -70,6 +70,7 @@ export default {
         colorMargin: 'Color margin',
         contrast: 'Contrast',
         imageCorrection: 'Image correction',
+        imageStructure: 'Image modification',
         link: 'link',
         magicHold: 'Select hold color',
         moveUp: 'Move up',

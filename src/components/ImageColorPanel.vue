@@ -1,14 +1,6 @@
 <template>
-    <aside class="correction-panel" @pointerdown.stop>
-        <div class="correction-action">
-            <button
-                class="btn-small close-btn"
-                @click="emit('close')"
-            >
-                <MyIcon icon="cancel" />
-            </button>
-        </div>
-        <div class="correction-row">
+    <SidePanel @close="emit('close')">
+        <div class="color-row">
             <button
                 class="action"
                 :class="{ active: magicActive }"
@@ -18,7 +10,7 @@
                 <MyIcon icon="magic" />
             </button>
         </div>
-        <div class="correction-row">
+        <div class="color-row">
             <button
                 class="action"
                 :class="{ active: marginOpen }"
@@ -39,7 +31,7 @@
                 <span class="slider-value">{{ colorMargin }}</span>
             </div>
         </div>
-        <div class="correction-row">
+        <div class="color-row">
             <button
                 class="action"
                 :class="{ active: contrastOpen }"
@@ -59,7 +51,7 @@
                 <span class="slider-value">{{ contrast }}%</span>
             </div>
         </div>
-        <div class="correction-row">
+        <div class="color-row">
             <button
                 class="action"
                 :class="{ active: brightnessOpen }"
@@ -79,12 +71,14 @@
                 <span class="slider-value">{{ brightness }}%</span>
             </div>
         </div>
-    </aside>
+    </SidePanel>
 </template>
+
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
+import SidePanel from '@/components/SidePanel.vue';
 
 const props = defineProps<{
     magicActive: boolean;
@@ -111,29 +105,10 @@ watch(() => props.hasColor, (hasColor) => {
         marginOpen.value = false;
     }
 });
-
 </script>
+
 <style scoped>
-.correction-panel {
-    position: absolute;
-    z-index: var(--zIndex-menu);
-    left: var(--spacing-sm);
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-}
-
-.correction-action {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: var(--button-size);
-}
-
-.correction-row {
+.color-row {
     display: flex;
     flex-direction: row;
     align-items: center;

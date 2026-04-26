@@ -19,14 +19,22 @@
             :store="routeStore"
             @close="closeMenu"
         />
-        <ImageCorrection v-if="correctionMenuOpen"
+        <ImageColorPanel v-if="openPanel === 'color'"
             :magicActive="willApplyGrey"
             :hasColor="highlightColor"
             v-model:colorMargin="colorMargin"
             v-model:contrast="contrast"
             v-model:brightness="brightness"
-            @close="correctionMenuOpen = false"
+            @close="openPanel = null"
             @toggleMagic="toggleGrey"
+        />
+        <ImageStructurePanel v-if="openPanel === 'structure'"
+            @close="openPanel = null"
+            @addPhotoAbove="emit('addPhoto', 'top')"
+            @addPhotoBelow="emit('addPhoto', 'bottom')"
+        />
+        <HoldsPanel v-if="openPanel === 'holds'"
+            @close="openPanel = null"
         />
     </CanvasDisplay>
     <footer class="footer-actions">
@@ -44,19 +52,15 @@
                     icon: 'recapture',
                 },
                 {
-                    type: 'addPhotoAbove',
-                    icon: 'captureAbove',
-                    title: t('action.addPhotoAbove'),
+                    type: 'structurePanel',
+                    icon: 'imageStructure',
+                    active: openPanel === 'structure',
+                    title: t('action.imageStructure'),
                 },
                 {
-                    type: 'addPhotoBelow',
-                    icon: 'captureBelow',
-                    title: t('action.addPhotoBelow'),
-                },
-                {
-                    type: 'imageCorrection',
+                    type: 'colorPanel',
                     icon: 'imageCorrection',
-                    active: correctionMenuOpen,
+                    active: openPanel === 'color',
                     title: t('action.imageCorrection'),
                 },
                 {
@@ -124,7 +128,9 @@ import {
     aggregateCanvas,
     applyBrightnessContrast,
 } from '@/utils/image';
-import ImageCorrection from '@/components/imageCorrection.vue';
+import ImageColorPanel from '@/components/ImageColorPanel.vue';
+import ImageStructurePanel from '@/components/ImageStructurePanel.vue';
+import HoldsPanel from '@/components/HoldsPanel.vue';
 import type { RouteStore } from '@/stores/RouteStore';
 import routeStore from '@/stores/RouteStore';
 import type { ScreenAction } from '@/utils/screenStates';
@@ -152,7 +158,7 @@ const willApplyGrey = ref(false);
 const highlightColor = ref(false);
 const referenceColor = ref<ColorRGB>(props.store.settings.greyedImage.color ?? [0, 0, 0]);
 const menuOpen = ref(false);
-const correctionMenuOpen = ref(false);
+const openPanel = ref<'color' | 'structure' | 'holds' | null>(null);
 const colorMargin = ref(props.store.settings.greyedImage.colorMargin ?? 15);
 const contrast = ref(0);
 const brightness = ref(0);
@@ -182,22 +188,20 @@ watch(colorMargin, (value) => {
     }
 });
 
+function togglePanel(panel: 'color' | 'structure' | 'holds') {
+    openPanel.value = openPanel.value === panel ? null : panel;
+}
+
 function menuAction(action: string) {
     switch (action) {
         case 'back':
             emit('back');
             break;
-        case 'addPhotoAbove':
-            emit('addPhoto', 'top');
+        case 'colorPanel':
+            togglePanel('color');
             break;
-        case 'addPhotoBelow':
-            emit('addPhoto', 'bottom');
-            break;
-        case 'magicHold':
-            toggleGrey();
-            break;
-        case 'imageCorrection':
-            correctionMenuOpen.value = !correctionMenuOpen.value;
+        case 'structurePanel':
+            togglePanel('structure');
             break;
         case 'removeHold':
             removeHold();

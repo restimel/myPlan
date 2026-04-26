@@ -70,6 +70,7 @@ export default {
         colorMargin: 'Marge de couleur',
         contrast: 'Contraste',
         imageCorrection: 'Correction d\'image',
+        imageStructure: 'Modification de l\'image',
         link: 'lier',
         magicHold: 'Sélectionner la couleur des prises',
         moveUp: 'Monter',

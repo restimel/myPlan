@@ -18,6 +18,7 @@ import IconEdit from '@/components/icons/IconEdit.vue';
 import IconFile from '@/components/icons/IconFile.vue';
 import IconGithub from '@/components/icons/IconGithub.vue';
 import IconImageCorrection from '@/components/icons/IconImageCorrection.vue';
+import IconImageStructure from '@/components/icons/IconImageStructure.vue';
 import IconLink from '@/components/icons/IconLink.vue';
 import IconMagic from '@/components/icons/IconMagic.vue';
 import IconMenu from '@/components/icons/IconMenu.vue';
@@ -56,6 +57,7 @@ export type Icons =
     | 'file'
     | 'github'
     | 'imageCorrection'
+    | 'imageStructure'
     | 'link'
     | 'magic'
     | 'menu'
@@ -102,6 +104,7 @@ const mapElement = {
     contrast: IconContrast,
     github: IconGithub,
     imageCorrection: IconImageCorrection,
+    imageStructure: IconImageStructure,
     link: IconLink,
     magic: IconMagic,
     menu: IconMenu,
