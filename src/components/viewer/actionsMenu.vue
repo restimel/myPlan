@@ -79,8 +79,6 @@ function action(type: string) {
     bottom: 0;
     left: 50%;
     transform: translate(-50%, 0);
-
-    box-shadow: var(--shadow-primary);
 }
 
 .actions {
@@ -95,9 +93,12 @@ function action(type: string) {
 
     border-top-left-radius: var(--border-radius);
     border-top-right-radius: var(--border-radius);
+    border: 1px solid var(--glass-border);
+    border-bottom: none;
 
-    background: var(--color-background);
-    color: var(--color-text);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 .inner-menu-handle {
@@ -109,14 +110,17 @@ function action(type: string) {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--color-background);
-    color: var(--color-text);
     border-top-left-radius: var(--border-radius);
     border-top-right-radius: var(--border-radius);
+    border: 1px solid var(--glass-border);
+    border-bottom: none;
     padding: var(--spacing-xs);
     cursor: pointer;
 
-    box-shadow: var(--shadow-primary);
+    color: var(--vt-c-white);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
 .slide-up-enter-active,

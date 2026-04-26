@@ -32,10 +32,10 @@ const emit = defineEmits<{
     flex-direction: column;
     gap: var(--spacing-xs);
     padding: var(--spacing-xs);
-    background: transparent;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
     border-radius: var(--border-radius);
 }
 

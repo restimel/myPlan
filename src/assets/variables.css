@@ -127,6 +127,11 @@
     /* Disabled */
     --disabled-opacity: 0.5;
 
+    /* Glass effect */
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-bg: rgba(0, 0, 0, 0.15);
+    --glass-blur: 8px;
+
     /* Surfaces */
     --color-surface: var(--color-background-soft);
     --color-surface-elevated: var(--color-background);

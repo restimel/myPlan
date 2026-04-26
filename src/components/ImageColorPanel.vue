@@ -109,17 +109,22 @@ watch(() => props.hasColor, (hasColor) => {
 
 <style scoped>
 .color-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--spacing-xs);
+    position: relative;
 }
 
 .slider-overlay {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: var(--spacing-xs);
     display: flex;
     align-items: center;
     padding: var(--spacing-xs);
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
     border-radius: var(--border-radius);
 }
 
