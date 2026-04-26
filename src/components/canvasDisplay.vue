@@ -30,7 +30,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { drawHolds, drawInformation } from '@/utils/canvas/draw';
 import GuideMessage from '@/components/guideMessage.vue';
@@ -50,6 +50,7 @@ const props = defineProps<{
     onAction: ActionCb;
     noGreyFilter?: boolean;
     layerClass?: string | Record<string, boolean>;
+    holdTransform?: (point: Point) => Point;
 }>();
 
 const emit = defineEmits<{
@@ -80,18 +81,23 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const holdList = computed(() => props.store.holds);
 
-/* Track image dimensions to detect genuine image changes vs filter-only updates.
+/*
+ * Track image dimensions to detect genuine image changes vs filter-only updates.
  * Only reset zoom when the image dimensions change (i.e. a new photo was loaded).
  * When magic color reapplies a filter on the same image, dimensions are identical
- * and the zoom level should be preserved. */
+ * and the zoom level should be preserved. 
+ */
 let prevImageSize = { width: 0, height: 0 };
 
 watch(() => props.image, () => {
     const img = props.image;
-    const newSize = img ? { width: img.width, height: img.height } : { width: 0, height: 0 };
-    const dimensionsChanged = newSize.width !== prevImageSize.width || newSize.height !== prevImageSize.height;
+    const newWidth = img?.width ?? 0;
+    const dimensionsChanged = newWidth !== prevImageSize.width;
 
-    prevImageSize = newSize;
+    prevImageSize = {
+        width: img?.width ?? 0,
+        height: img?.height ?? 0,
+    };
     loadImage(undefined, dimensionsChanged);
 });
 watch(holdList, () => {
@@ -239,9 +245,15 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
 }
 
 function drawRoute() {
-    const firstPos = selectHold.value?.position[0];
+    const transform = props.holdTransform;
+    const holds = transform
+        ? holdList.value.map(hold => ({ ...hold, position: hold.position.map(transform) as Point[] }))
+        : holdList.value;
 
-    drawHolds(holdList.value, canvasHolds.value!, {
+    const rawFirstPos = selectHold.value?.position[0];
+    const firstPos = transform && rawFirstPos ? transform(rawFirstPos) : rawFirstPos;
+
+    drawHolds(holds, canvasHolds.value!, {
         refresh: !props.details,
         line: !props.details && mouseAction.value === 'link' && firstPos ?
             [firstPos, lastPosition.value] : undefined,
@@ -267,8 +279,12 @@ const screenState = setup(holdList.value, (action: ScreenAction, point: Point, f
             return;
         }
 
-        offsetX.value += dx * scaleRatio.value;
-        offsetY.value += dy * scaleRatio.value;
+        const containerEl = container.value;
+
+        if (containerEl) {
+            containerEl.scrollLeft += dx * scaleRatio.value;
+            containerEl.scrollTop += dy * scaleRatio.value;
+        }
 
         lastPosition.value = point;
 
@@ -333,8 +349,23 @@ function moveContext(point: Point, fromPoint: Point, distance: number, event: Ev
 
 function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
     scaleRatio.value = newRatio;
-    offsetX.value += offsetDx;
-    offsetY.value += offsetDy;
+
+    /*
+     * Apply the scroll delta after the new scale is rendered, and let the
+     * browser clamp it to the valid scroll range. The scroll event then syncs
+     * offsetX/offsetY to the actual scrollLeft/scrollTop, so the overlay math
+     * stays consistent even when the requested delta is out of bounds. 
+     */
+    nextTick(() => {
+        const containerEl = container.value;
+
+        if (!containerEl) {
+            return;
+        }
+
+        containerEl.scrollLeft += offsetDx;
+        containerEl.scrollTop += offsetDy;
+    });
 }
 
 /* }}} */

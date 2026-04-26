@@ -40,6 +40,7 @@ import IconTrophy from '@/components/icons/IconTrophy.vue';
 import IconUnlink from '@/components/icons/IconUnlink.vue';
 import IconUp from '@/components/icons/IconUp.vue';
 import IconView from '@/components/icons/IconView.vue';
+import IconWarpStretch from '@/components/icons/IconWarpStretch.vue';
 import IconYouTube from '@/components/icons/IconYouTube.vue';
 
 export type Icons =
@@ -79,6 +80,7 @@ export type Icons =
     | 'unlink'
     | 'up'
     | 'view'
+    | 'warpStretch'
     | 'youtube'
 ;
 
@@ -126,6 +128,7 @@ const mapElement = {
     unlink: IconUnlink,
     up: IconUp,
     view: IconView,
+    warpStretch: IconWarpStretch,
     youtube: IconYouTube,
 };
 

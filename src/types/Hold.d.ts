@@ -22,7 +22,20 @@ type GreySettings = {
     colorMargin?: number;
 };
 
+type WarpZone = {
+    /** percentage of source height, integer [0, 100] */
+    top: number;
+
+    /** percentage of source height, integer [0, 100] */
+    bottom: number;
+
+    /** stretch factor × 100, integer (e.g. 150 = ×1.5) */
+    factor: number;
+};
+
 type RouteSettings = {
     routeName: string;
     greyedImage: GreySettings;
+    /* Array to allow multiple zones in the future; only [0] is used for now */
+    warpZones?: WarpZone[];
 };

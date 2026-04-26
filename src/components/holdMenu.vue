@@ -115,9 +115,11 @@ const style = computed(() => {
      * Compute the bounding box of the entire group (anchor + linked holds).
      * Candidates placed outside this box cannot overlap any hold by construction.
      */
-    /* Convert hold positions from image space to screen space:
+    /*
+     * Convert hold positions from image space to screen space:
      * multiply by scale (canvas transform) then subtract scroll offset
-     * (canvas-overlay is not scrolled, so menu coordinates must be viewport-relative) */
+     * (canvas-overlay is not scrolled, so menu coordinates must be viewport-relative) 
+     */
     const positions = hold.position.map((pos) => ({
         x: def(pos[0]) * ratio - props.offsetX,
         y: def(pos[1]) * ratio - props.offsetY,

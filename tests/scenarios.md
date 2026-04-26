@@ -82,6 +82,57 @@
 18. With 2 fingers, zoom-in and scroll, then hold on a hold
     * [x] a menu should appear near the hold, correctly positioned relative to the visible area
 
+## Image structure (warp)
+
+1. Have a picture in "set hold" mode, open the structure panel (icon rectangle+arrows)
+    * [ ] The panel should appear on the side
+    * [ ] The warp button should NOT be in active state (no warp defined yet)
+2. Click on the warp button (magnify+arrows)
+    * [ ] The warp edition panel should replace the structure panel
+    * [ ] Two horizontal lines should appear on the image, one in the upper zone, one in the lower zone
+    * [ ] The lines should be positioned correctly on the image (not offset)
+    * [ ] The delete button should NOT be visible (no saved warp yet)
+3. Move the top boundary slider
+    * [ ] The top line should move accordingly on the image
+    * [ ] The slider value (%) should update
+    * [ ] The slider cannot be set above the bottom boundary value
+    * [ ] When holds change area, they should be still correctly positioned
+4. Move the bottom boundary slider
+    * [ ] The bottom line should move accordingly on the image
+    * [ ] The slider value (%) should update
+    * [ ] The slider cannot be set below the top boundary value
+    * [ ] When holds change area, they should be still correctly positioned
+5. Move the factor slider
+    * [ ] The image should be stretched in real time between the two lines
+    * [ ] Holds above the top boundary should not move
+    * [ ] Holds inside the band should be repositioned proportionally
+    * [ ] Holds below the bottom boundary should be shifted down
+6. Zoom in and out while the warp edition panel is open
+    * [ ] The two lines should stay correctly positioned on the image
+    * [ ] The handle (pill) on each line should remain visible on screen
+7. Pan (drag) the image while the warp edition panel is open
+    * [ ] The two lines should follow the image correctly (no offset)
+8. Click cancel (× on the panel)
+    * [ ] The warp edition panel should close, back to the structure panel
+    * [ ] The image should be unchanged (no warp applied)
+    * [ ] The warp button should still NOT be in active state
+9. Re-open warp edition and click validate
+    * [ ] The panel should close
+    * [ ] The warp button in the structure panel should now be in active state
+    * [ ] The image remains stretched as configured
+10. Re-open warp edition
+    * [ ] Sliders should reflect the previously saved values
+    * [ ] The delete button should now be visible
+11. Click delete
+    * [ ] The warp edition panel should close
+    * [ ] The image should return to its original (non-stretched) state
+    * [ ] The warp button should no longer be in active state
+12. Apply a warp, then add holds
+    * [ ] New holds should be placed at the correct position on the stretched image
+    * [ ] Removing or moving holds should not reset the zoom level
+13. Re-capture a new image
+    * [ ] The previous warp should not be applied
+
 ## Re-use a route
 
 ## Chronometer

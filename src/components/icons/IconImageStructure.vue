@@ -7,8 +7,8 @@
         preserveAspectRatio="xMidYMid meet"
         viewBox="0 0 32 32"
     >
-        <!-- Central image frame -->
-        <rect x="1" y="12" width="30" height="8" rx="2"/>
+        <!-- Central image frame (hollow) -->
+        <rect x="1" y="12" width="30" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
         <!-- Up arrow: stem + arrowhead -->
         <rect x="13.5" y="9" width="5" height="3"/>
         <polygon points="16,2 22,10 10,10"/>

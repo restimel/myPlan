@@ -18,6 +18,16 @@
                 <MyIcon icon="captureBelow" />
             </button>
         </div>
+        <div class="panel-row">
+            <button
+                class="action"
+                :class="{ active: warpDefined }"
+                :title="t('action.warpStretch')"
+                @click="emit('editWarp')"
+            >
+                <MyIcon icon="warpStretch" />
+            </button>
+        </div>
     </SidePanel>
 </template>
 
@@ -26,10 +36,15 @@ import { useI18n } from 'vue-i18n';
 import MyIcon from '@/components/myIcon.vue';
 import SidePanel from '@/components/SidePanel.vue';
 
+defineProps<{
+    warpDefined: boolean;
+}>();
+
 const emit = defineEmits<{
     close: [];
     addPhotoAbove: [];
     addPhotoBelow: [];
+    editWarp: [];
 }>();
 
 const { t } = useI18n();
@@ -37,9 +52,6 @@ const { t } = useI18n();
 
 <style scoped>
 .panel-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: var(--spacing-xs);
+    position: relative;
 }
 </style>

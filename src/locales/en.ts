@@ -82,6 +82,11 @@ export default {
         save: 'Save to picture file',
         unlink: 'Unlink',
         validate: 'Validate this route',
+        removeWarp: 'Remove vertical stretch',
+        warpStretch: 'Stretch a vertical zone',
+        warpTop: 'Top boundary of the stretch zone',
+        warpBottom: 'Bottom boundary of the stretch zone',
+        warpFactor: 'Stretch factor',
         youtube: 'Use a YouTube video',
     },
     label: {

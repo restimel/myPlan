@@ -12,6 +12,7 @@ export type RouteStore = HoldManager & {
     initialize: (data: StoredRoute | null) => void;
     setSettings: (value?: RouteSettings) => void;
     setGrey: (options?: GreySettings) => void;
+    setWarpZones: (zones: WarpZone[]) => void;
     needAction: (action: Actions, value?: boolean) => void;
 };
 
@@ -45,6 +46,11 @@ const routeStore = reactive<RouteStore>({
         this.settings.routeName = value?.routeName ?? '';
         this.settings.greyedImage.color = value?.greyedImage.color;
         this.settings.greyedImage.colorMargin = value?.greyedImage.colorMargin;
+        this.settings.warpZones = value?.warpZones;
+    },
+
+    setWarpZones(zones: WarpZone[]) {
+        this.settings.warpZones = zones.length > 0 ? zones : undefined;
     },
 
     setGrey(options?: GreySettings) {

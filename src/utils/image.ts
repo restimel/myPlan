@@ -451,6 +451,83 @@ export function filterToGrey(originImage: ImageData, holds: Hold[], color?: Colo
     return image;
 }
 
+/*
+ * WarpZone uses integer storage values: top/bottom are [0, 100] percentages,
+ * factor is the stretch multiplier × 100 (e.g. 150 = ×1.5).
+ * Conversion to fractions/floats happens inside these functions. 
+ */
+
+export function warpY(y: number, zone: WarpZone, sourceHeight: number): number {
+    const top = (zone.top / 100) * sourceHeight;
+    const bottom = (zone.bottom / 100) * sourceHeight;
+    const factor = zone.factor / 100;
+
+    if (y < top) {
+        return y;
+    }
+
+    if (y <= bottom) {
+        return top + (y - top) * factor;
+    }
+
+    return y + (bottom - top) * (factor - 1);
+}
+
+export function unwarpY(yw: number, zone: WarpZone, sourceHeight: number): number {
+    const top = (zone.top / 100) * sourceHeight;
+    const bottom = (zone.bottom / 100) * sourceHeight;
+    const factor = zone.factor / 100;
+    const stretchedBottom = top + (bottom - top) * factor;
+    
+    if (yw < top) {
+        return yw;
+    }
+
+    if (yw <= stretchedBottom) {
+        return top + (yw - top) / factor;
+    }
+
+    return yw - (bottom - top) * (factor - 1);
+}
+
+export function warpPoint(point: Point, zone: WarpZone, sourceHeight: number): Point {
+    return [point[0], warpY(point[1], zone, sourceHeight)];
+}
+
+export function unwarpPoint(point: Point, zone: WarpZone, sourceHeight: number): Point {
+    return [point[0], unwarpY(point[1], zone, sourceHeight)];
+}
+
+export function warpVerticalBand(source: ImageData, zone: WarpZone): ImageData {
+    const srcH = source.height;
+    const srcW = source.width;
+    const bandHeight = ((zone.bottom - zone.top) / 100) * srcH;
+    const factor = zone.factor / 100;
+    const outH = Math.round(srcH + bandHeight * (factor - 1));
+    const outData = new Uint8ClampedArray(srcW * outH * 4);
+    const srcData = source.data;
+
+    for (let yw = 0; yw < outH; yw++) {
+        const ysFloat = unwarpY(yw, zone, srcH);
+        const ys0 = Math.min(Math.floor(ysFloat), srcH - 1);
+        const ys1 = Math.min(ys0 + 1, srcH - 1);
+        const frac = ysFloat - ys0;
+
+        for (let x = 0; x < srcW; x++) {
+            const i0 = (ys0 * srcW + x) * 4;
+            const i1 = (ys1 * srcW + x) * 4;
+            const iOut = (yw * srcW + x) * 4;
+
+            outData[iOut] = Math.round(srcData[i0]! * (1 - frac) + srcData[i1]! * frac);
+            outData[iOut + 1] = Math.round(srcData[i0 + 1]! * (1 - frac) + srcData[i1 + 1]! * frac);
+            outData[iOut + 2] = Math.round(srcData[i0 + 2]! * (1 - frac) + srcData[i1 + 2]! * frac);
+            outData[iOut + 3] = 255;
+        }
+    }
+
+    return new ImageData(outData, srcW, outH);
+}
+
 /** Scale factor to convert a [-100, +100] input to the [-255, +255] byte range */
 const INPUT_TO_BYTE_SCALE = 255 / 100;
 /**

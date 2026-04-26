@@ -139,6 +139,7 @@ function getImage(data: ImageData | null) {
     }
 
     routeStore.resetHolds();
+    routeStore.setWarpZones([]);
     routeStore.image = data;
     mode.value = 'canvas';
 }
@@ -155,6 +156,7 @@ function onCancelCapture() {
 }
 
 function onMerged(data: ImageData) {
+    routeStore.setWarpZones([]);
     routeStore.image = data;
     newCapturedImage.value = null;
     isAddingPhoto.value = false;
