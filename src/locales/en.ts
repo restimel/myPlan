@@ -84,6 +84,7 @@ export default {
         save: 'Save to picture file',
         unlink: 'Unlink',
         validate: 'Validate this route',
+        zoomReset: 'Reset zoom',
         removeWarp: 'Remove vertical stretch',
         warpStretch: 'Stretch a vertical zone',
         warpTop: 'Top boundary of the stretch zone',

@@ -84,6 +84,7 @@ export default {
         save: 'Enregistrer dans un fichier image',
         unlink: 'Dissocier',
         validate: 'Valider ce plan',
+        zoomReset: 'Réinitialiser le zoom',
         removeWarp: 'Supprimer l\'étirement vertical',
         warpStretch: 'Étirer une zone verticale',
         warpTop: 'Limite haute de la zone d\'étirement',

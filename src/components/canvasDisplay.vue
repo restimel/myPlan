@@ -381,10 +381,16 @@ defineExpose({
     offsetX,
     offsetY,
     scaleRatio,
+    minScale,
     containerRect,
     clearSelection() {
         mouseAction.value = 'none';
         selectHold.value = null;
+    },
+    resetZoom() {
+        scaleRatio.value = minScale.value;
+        offsetX.value = 0;
+        offsetY.value = 0;
     },
 });
 

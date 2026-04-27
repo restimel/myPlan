@@ -174,6 +174,13 @@
             class="status"
             @click="setGrey()"
         />
+        <button v-if="isZoomed"
+            class="zoom-reset"
+            @click="canvasDisplayRef?.resetZoom()"
+            :title="t('action.zoomReset')"
+        >
+            ×{{ Math.round(scaleRatioValue / minScaleValue * 10) / 10 }}
+        </button>
     </footer>
 </template>
 <script lang="ts" setup>
@@ -303,6 +310,8 @@ const mouseAction = computed(() => canvasDisplayRef.value?.mouseAction ?? 'none'
 const offsetXValue = computed(() => canvasDisplayRef.value?.offsetX ?? 0);
 const offsetYValue = computed(() => canvasDisplayRef.value?.offsetY ?? 0);
 const scaleRatioValue = computed(() => canvasDisplayRef.value?.scaleRatio ?? 1);
+const minScaleValue = computed(() => canvasDisplayRef.value?.minScale ?? 1);
+const isZoomed = computed(() => scaleRatioValue.value > minScaleValue.value * 1.01);
 const containerRectValue = computed(() => canvasDisplayRef.value?.containerRect ?? new DOMRect());
 
 const imageDisplayLeft = computed(() => -offsetXValue.value);
@@ -701,6 +710,21 @@ function removeWarp() {
     border-radius: 25px;
     cursor: pointer;
     --icon-size: 1cm;
+}
+
+.zoom-reset {
+    position: absolute;
+    z-index: var(--zIndex-status);
+    left: var(--spacing-lg);
+    bottom: calc(var(--spacing-lg) + var(--button-size));
+    background: var(--color-primary);
+    color: var(--color-txt-primary);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    padding: 4px 10px;
+    font-size: var(--font-size-md);
+    font-weight: bold;
 }
 
 .insert-dialog-input {
