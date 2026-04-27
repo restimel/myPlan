@@ -43,7 +43,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    merged: [ImageData];
+    merged: [ImageData, number, number];
     cancel: [];
 }>();
 
@@ -369,7 +369,7 @@ function validate() {
     const cutY = cutYImg / totalH;
     const result = stitchImages(props.imageTop, props.imageBottom, cutY, cutAngle, Math.round(imageOffsetX), Math.round(imageOffsetY));
 
-    emit('merged', result);
+    emit('merged', result, Math.round(imageOffsetX), Math.round(imageOffsetY));
 }
 
 onMounted(() => {

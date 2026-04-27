@@ -34,6 +34,8 @@ export type HoldManager = {
     moveHold: (idx: number, from: Point, to: Point) => boolean;
     changeHoldSize: (idx: number, size: number) => boolean;
     changeAllHoldsSize: (size: number) => void;
+    offsetHolds: (dx: number, dy: number) => void;
+    scaleHoldSizes: (ratio: number) => void;
     insertHold: (x: number, y: number, size: number, atValue: number) => Hold;
     getHold: (point: Point) => Hold | null;
     getHoldInArea: (point1: Point, point2: Point) => Hold[];
@@ -213,6 +215,19 @@ export const holdManager: HoldManager = {
             hold.size = size;
         });
         this.defaultHoldSize = size;
+    },
+
+    offsetHolds(dx: number, dy: number): void {
+        this.holds.forEach((hold) => {
+            hold.position = hold.position.map(([x, y]) => [x + dx, y + dy] as Point);
+        });
+    },
+
+    scaleHoldSizes(ratio: number): void {
+        this.holds.forEach((hold) => {
+            hold.size = hold.size * ratio;
+        });
+        this.defaultHoldSize = this.defaultHoldSize * ratio;
     },
 
     insertHold(x: number, y: number, size: number, atValue: number): Hold {

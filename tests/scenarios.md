@@ -148,6 +148,24 @@
 13. Re-capture a new image
     * [ ] The previous warp should not be applied
 
+## Multi-photo route (add photo above / below)
+
+1. Have a picture with several holds placed, open the structure panel
+    * [ ] "Add photo above" and "Add photo below" buttons should be visible
+2. Click "Add photo below", capture a new image, validate the stitch
+    * [ ] The combined image should be displayed (original on top, new on bottom)
+    * [ ] All existing holds should still be at the correct positions on the original area
+    * [ ] Existing hold sizes should appear visually proportional to the combined image (scaled up slightly)
+    * [ ] New holds added in the original area should match the size of existing holds
+3. Click "Add photo above", capture a new image, validate the stitch
+    * [ ] The combined image should be displayed (new on top, original on bottom)
+    * [ ] All existing holds should be shifted down to their correct position in the combined image
+    * [ ] Existing hold sizes should appear visually proportional to the combined image
+4. In the stitch view, drag the overlap position handle up or down before validating
+    * [ ] After validating, holds should still land at the correct position in the combined image (offset accounts for the adjusted overlap)
+5. Export the combined route
+    * [ ] Holds should be at the correct positions in the exported image
+
 ## Re-use a route
 
 ## Chronometer

@@ -155,8 +155,21 @@ function onCancelCapture() {
     mode.value = 'canvas';
 }
 
-function onMerged(data: ImageData) {
+function onMerged(data: ImageData, offsetX: number, offsetY: number) {
     routeStore.setWarpZones([]);
+
+    if (routeStore.image) {
+        const sizeRatio = data.height / routeStore.image.height;
+
+        if (adjacentSide.value === 'top') {
+            routeStore.offsetHolds(offsetX, offsetY);
+        }
+
+        if (sizeRatio !== 1) {
+            routeStore.scaleHoldSizes(sizeRatio);
+        }
+    }
+
     routeStore.image = data;
     newCapturedImage.value = null;
     isAddingPhoto.value = false;
