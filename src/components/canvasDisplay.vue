@@ -76,6 +76,7 @@ const canvasHolds = computed(() => {
 const activeImage = ref<ImageData | null>(null);
 
 const scaleRatio = ref(1);
+const minScale = ref(0.1);
 const updateRect = ref(0);
 const offsetX = ref(0);
 const offsetY = ref(0);
@@ -115,8 +116,8 @@ if (props.details) {
 
 /* assert ratio is in bound */
 watch(scaleRatio, (value, oldValue) => {
-    if (value < 0.1) {
-        scaleRatio.value = 0.1;
+    if (value < minScale.value) {
+        scaleRatio.value = minScale.value;
     } else if (value > 10) {
         scaleRatio.value = 10;
     }
@@ -218,6 +219,7 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
         const rect = containerRect.value;
         const scale = Math.min(rect.width / width, rect.height / height);
 
+        minScale.value = scale;
         scaleRatio.value = scale;
     }
 
