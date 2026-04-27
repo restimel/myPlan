@@ -8,8 +8,8 @@
         * [ ] link: create a Link selection (without drag&drop)
         * [ ] link: starting on hold and restarting on hold
     * [ ] Shrink image size to allow sending editable route (set this as option?)
-    * [ ] Create image menu
-        * [ ] Manage (all) hold size ? (not really related to image...)
+    * [x] Create image menu
+        * [x] Manage (all) hold size ? (not really related to image...)
     * [ ] add a button to zoom to view port
 * [ ] Add a guide page to explain how to use the application
 * [ ] Chronometer

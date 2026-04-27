@@ -2,6 +2,7 @@
     <div class="backdrop" @click.self="emit('cancel')">
         <aside class="modal">
             <p class="message">{{ message }}</p>
+            <slot />
             <footer>
                 <button class="primary-btn" @click="emit('confirm')">
                     <MyIcon icon="ok" />
@@ -56,11 +57,11 @@ const { t } = useI18n();
 
 .message {
     font-size: var(--font-size-lg);
-    margin-bottom: var(--field-margin);
     text-align: center;
 }
 
 footer {
+    margin-top: var(--field-margin);
     display: flex;
     flex-direction: row;
     justify-content: flex-end;

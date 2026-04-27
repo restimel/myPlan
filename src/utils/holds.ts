@@ -34,6 +34,7 @@ export type HoldManager = {
     moveHold: (idx: number, from: Point, to: Point) => boolean;
     changeHoldSize: (idx: number, size: number) => boolean;
     changeAllHoldsSize: (size: number) => void;
+    insertHold: (x: number, y: number, size: number, atValue: number) => Hold;
     getHold: (point: Point) => Hold | null;
     getHoldInArea: (point1: Point, point2: Point) => Hold[];
     load: (newRoute: StoredRoute) => void;
@@ -212,6 +213,32 @@ export const holdManager: HoldManager = {
             hold.size = size;
         });
         this.defaultHoldSize = size;
+    },
+
+    insertHold(x: number, y: number, size: number, atValue: number): Hold {
+        const hold: Hold = {
+            position: [[x, y]],
+            value: 0,
+            size: size,
+            index: 0,
+        };
+
+        const insertIdx = this.holds.findIndex((hld) => {
+            const holdValue = hld.value;
+            const minVal = Array.isArray(holdValue) ? Math.min(...holdValue) : holdValue;
+
+            return minVal >= atValue;
+        });
+
+        if (insertIdx === -1) {
+            this.holds.push(hold);
+        } else {
+            this.holds.splice(insertIdx, 0, hold);
+        }
+
+        this.resetValues();
+
+        return hold;
     },
 
     getHold(point: Point): Hold | null {

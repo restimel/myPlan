@@ -81,6 +81,19 @@
             botY={{ warpBottomDisplayY.toFixed(0) }}
         </div>
     </CanvasDisplay>
+    <DialogConfirm v-if="insertPending"
+        :message="t('action.insertHold')"
+        @confirm="confirmInsert"
+        @cancel="cancelInsert"
+    >
+        <input
+            type="number"
+            class="insert-dialog-input"
+            :min="1"
+            :max="store.top"
+            v-model.number="insertValue"
+        />
+    </DialogConfirm>
     <footer class="footer-actions">
         <button v-show="!menuOpen"
             class="action"
@@ -168,6 +181,7 @@ import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { debug, log } from '@/utils/debug';
 import { saveRoute } from '@/utils/storage';
+import DialogConfirm from '@/components/dialogConfirm.vue';
 import HoldMenu from '@/components/holdMenu.vue';
 import ActionMenu from '@/components/viewer/actionsMenu.vue';
 import MyIcon from '@/components/myIcon.vue';
@@ -226,6 +240,8 @@ const highlightColor = ref(false);
 const referenceColor = ref<ColorRGB>(props.store.settings.greyedImage.color ?? [0, 0, 0]);
 const menuOpen = ref(false);
 const openPanel = ref<'color' | 'structure' | 'holds' | 'warpEdit' | null>(null);
+const insertPending = ref<Point | null>(null);
+const insertValue = ref(1);
 const colorMargin = ref(props.store.settings.greyedImage.colorMargin ?? 15);
 const contrast = ref(0);
 const brightness = ref(0);
@@ -521,6 +537,12 @@ function onCanvasAction(action: ScreenAction, point: Point, fromPoint?: Point) {
             }
             break;
         }
+        case 'longPress':
+            if (!willApplyGrey.value) {
+                insertPending.value = pt;
+                insertValue.value = props.store.top;
+            }
+            break;
         case 'scroll':
             log('error', 'Scroll: should be managed by another route');
             break;
@@ -570,6 +592,28 @@ function setHold(point: Point) {
         filteredImage.value = unsetGreyHold(filteredImage.value, correctedImage, hold);
         updateActiveImage();
     }
+}
+
+function confirmInsert() {
+    const point = insertPending.value;
+
+    if (!point) {
+        return;
+    }
+
+    const hold = props.store.insertHold(point[0], point[1], props.store.defaultHoldSize, insertValue.value);
+    const correctedImage = getCorrectedImage();
+
+    if (highlightColor.value && filteredImage.value && correctedImage) {
+        filteredImage.value = unsetGreyHold(filteredImage.value, correctedImage, hold);
+        updateActiveImage();
+    }
+
+    insertPending.value = null;
+}
+
+function cancelInsert() {
+    insertPending.value = null;
 }
 
 function startDragLine(which: 'top' | 'bottom', event: PointerEvent) {
@@ -659,6 +703,17 @@ function removeWarp() {
     --icon-size: 1cm;
 }
 
+.insert-dialog-input {
+    font-size: var(--font-size-xl);
+    text-align: center;
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: var(--field-border);
+    border-radius: var(--border-radius-sm);
+    background: var(--color-input-bg, var(--color-background));
+    color: var(--color-text);
+}
+
 .warp-zone-overlay {
     position: absolute;
     inset: 0;
@@ -703,8 +758,8 @@ function removeWarp() {
     width: 48px;
     height: 20px;
     background: var(--color-secondary);
-    border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
 }
 
 .warp-line--top {
@@ -719,7 +774,7 @@ function removeWarp() {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 9999;
+    z-index: var(--zIndex-debug-message);
     background: rgba(0, 0, 0, 0.7);
     color: #fff;
     font-family: monospace;

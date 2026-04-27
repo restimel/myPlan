@@ -1,53 +1,35 @@
 <template>
-<aside class="modal">
-    <header>
-        {{ title }}
-    </header>
-
-    <form
-        @submit.prevent.stop="submitForm"
-        ref="modalForm"
+    <DialogConfirm
+        :message="title"
+        @confirm="close(true)"
+        @cancel="close(false)"
     >
-        <label v-for="item of items"
-            :key="item.name"
+        <form
+            @submit.prevent.stop="submitForm"
+            ref="modalForm"
         >
-            {{ item.label }}
-            <input v-if="item.type === 'number'"
-                type="number"
-                v-model="internalValue[item.name]"
-                :data-name="item.name"
+            <label v-for="item of items"
+                :key="item.name"
             >
-            <input v-else
-                type="text"
-                v-model="internalValue[item.name]"
-                :data-name="item.name"
-            >
-        </label>
-    </form>
-
-    <footer>
-        <button
-            class="primary-btn"
-            @click="close(true)"
-        >
-            <MyIcon icon="ok" />
-            {{ t('action.confirm') }}
-        </button>
-        <button
-            class="btn-outline"
-            @click="close(false)"
-        >
-            <MyIcon icon="cancel" />
-            {{ t('action.cancel') }}
-        </button>
-    </footer>
-</aside>
+                {{ item.label }}
+                <input v-if="item.type === 'number'"
+                    type="number"
+                    v-model="internalValue[item.name]"
+                    :data-name="item.name"
+                >
+                <input v-else
+                    type="text"
+                    v-model="internalValue[item.name]"
+                    :data-name="item.name"
+                >
+            </label>
+        </form>
+    </DialogConfirm>
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import MyIcon from '@/components/myIcon.vue';
+import DialogConfirm from '@/components/dialogConfirm.vue';
 
 type ItemText = {
     label: string;
@@ -79,7 +61,6 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
     close: [Result | undefined];
 }>();
-const { t } = useI18n();
 
 const internalValue = ref<Result>({});
 const modalForm = ref<HTMLFormElement>();
@@ -151,35 +132,3 @@ onMounted(() => {
 });
 
 </script>
-
-<style scoped>
-.modal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: var(--zIndex-modal);
-    box-shadow: var(--shadow-lg);
-    border-radius: var(--border-radius);
-    max-width: min(90vw, 400px);
-    max-height: 85vh;
-    overflow-y: auto;
-    background: var(--color-background);
-    color: var(--color-text);
-    padding: var(--spacing-md);
-}
-
-header {
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--field-margin);
-    text-align: center;
-}
-footer {
-    margin-top: var(--field-margin);
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-</style>

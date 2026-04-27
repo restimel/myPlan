@@ -70,6 +70,7 @@ export default {
         colorMargin: 'Color margin',
         contrast: 'Contrast',
         imageCorrection: 'Image correction',
+        insertHold: 'Insert hold',
         imageStructure: 'Image modification',
         link: 'link',
         holdSize: 'Hold size',
