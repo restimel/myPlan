@@ -230,8 +230,10 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
 
     context.putImageData(imgData, 0, 0);
 
-    /* This is to draw around 30 holds on height */
-    props.store.setDefaultSize(canvasHoldsEl.height / 60);
+    if (resetZoom) {
+        /* Set default hold size proportional to image height (~30 holds fit vertically) */
+        props.store.setDefaultSize(canvasHoldsEl.height / 60);
+    }
 
     drawRoute();
     if (props.details) {

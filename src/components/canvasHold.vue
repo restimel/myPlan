@@ -64,6 +64,7 @@
             />
         </div>
         <HoldsPanel v-if="openPanel === 'holds'"
+            :store="store"
             @close="openPanel = null"
         />
         <div v-if="debug && openPanel === 'warpEdit'"
@@ -105,6 +106,12 @@
                     icon: 'imageCorrection',
                     active: openPanel === 'color',
                     title: t('action.imageCorrection'),
+                },
+                {
+                    type: 'holdsPanel',
+                    icon: 'hold',
+                    active: openPanel === 'holds',
+                    title: t('action.holdSize'),
                 },
                 {
                     type: 'removeHold',
@@ -350,6 +357,9 @@ function menuAction(action: string) {
             break;
         case 'structurePanel':
             togglePanel('structure');
+            break;
+        case 'holdsPanel':
+            togglePanel('holds');
             break;
         case 'removeHold':
             removeHold();

@@ -72,6 +72,7 @@ export default {
         imageCorrection: 'Image correction',
         imageStructure: 'Image modification',
         link: 'link',
+        holdSize: 'Hold size',
         magicHold: 'Select hold color',
         moveUp: 'Move up',
         moveDown: 'Move down',

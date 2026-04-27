@@ -33,6 +33,7 @@ export type HoldManager = {
     changeValue: (idx: number, up: boolean) => boolean;
     moveHold: (idx: number, from: Point, to: Point) => boolean;
     changeHoldSize: (idx: number, size: number) => boolean;
+    changeAllHoldsSize: (size: number) => void;
     getHold: (point: Point) => Hold | null;
     getHoldInArea: (point1: Point, point2: Point) => Hold[];
     load: (newRoute: StoredRoute) => void;
@@ -204,6 +205,13 @@ export const holdManager: HoldManager = {
         this.defaultHoldSize = size;
 
         return true;
+    },
+
+    changeAllHoldsSize(size: number): void {
+        this.holds.forEach((hold) => {
+            hold.size = size;
+        });
+        this.defaultHoldSize = size;
     },
 
     getHold(point: Point): Hold | null {

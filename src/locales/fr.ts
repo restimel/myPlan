@@ -72,6 +72,7 @@ export default {
         imageCorrection: 'Correction d\'image',
         imageStructure: 'Modification de l\'image',
         link: 'lier',
+        holdSize: 'Taille des prises',
         magicHold: 'Sélectionner la couleur des prises',
         moveUp: 'Monter',
         moveDown: 'Descendre',
