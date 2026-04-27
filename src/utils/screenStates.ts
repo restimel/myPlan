@@ -95,6 +95,7 @@ export function setup(holds: Hold[], onActions: ActionCb) {
                 break;
             }
             case 'active':
+                clearTimeout(timerHold);
                 actionState.value = 'zoom';
                 break;
             case 'target':

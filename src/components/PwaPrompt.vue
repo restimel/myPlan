@@ -42,6 +42,7 @@ function dismiss() {
     left: 50%;
     transform: translateX(-50%);
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-sm) var(--spacing-md);
@@ -49,8 +50,8 @@ function dismiss() {
     color: var(--color-txt-primary);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-lg);
-    z-index: 1000;
-    white-space: nowrap;
+    z-index: var(--zIndex-modal);
+    max-width: min(90vw, 360px);
 }
 
 .pwa-prompt-actions {

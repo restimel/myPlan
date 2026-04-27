@@ -17,7 +17,7 @@
                 :alone="periods.length === 1"
                 :collapsed="period.id !== currentPeriod.id"
                 :key="`edit-period-${period.id}`"
-                @active="setPeriod(periodIndex)"
+                @active="onPeriodActive(periodIndex)"
             />
             <button
                 class="primary-btn"
@@ -60,6 +60,16 @@ const { t } = useI18n();
 function addPeriod() {
     const newIndex = updatePeriod(-1);
     setPeriod(newIndex);
+}
+
+function onPeriodActive(periodIndex: number) {
+    const isCurrentPeriod = periods.value[periodIndex]?.id === currentPeriod.value.id;
+
+    if (isCurrentPeriod && periodIndex < periods.value.length - 1) {
+        setPeriod(periodIndex + 1);
+    } else {
+        setPeriod(periodIndex);
+    }
 }
 </script>
 

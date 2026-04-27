@@ -261,6 +261,7 @@ watch(
     padding: var(--field-padding);
     background: none;
     border: none;
+    color: var(--color-text);
     cursor: pointer;
     text-align: start;
 }

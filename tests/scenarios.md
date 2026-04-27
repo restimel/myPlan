@@ -74,13 +74,28 @@
     * [x] numbers should be updated accordingly
 15. With 2 fingers, zoom-in and zoom-out
     * [x] It should zoom-in and out smoothly
-16. when zoomed-in, scroll the image
+16. when zoomed-in, scroll the image
     * [ ] The image should follow your finger
-        * The image is moved but does not follow exactly the finger
 17. With 2 fingers, zoom-in, then hold on a hold
     * [x] a menu should appear near the hold (not off-screen)
 18. With 2 fingers, zoom-in and scroll, then hold on a hold
     * [x] a menu should appear near the hold, correctly positioned relative to the visible area
+19. With 2 fingers, pinch zoom (keep fingers on screen a moment after zooming)
+    * [ ] No hold insertion dialog should appear
+    * [ ] Zoom level should remain at the adjusted value
+20. Open the holds panel (hold icon) and move the size slider
+    * [ ] All hold sizes should update at once
+    * [ ] The slider position should reflect the current default hold size
+21. Long press (~0.5s) on an empty area of the canvas (no hold under finger, without moving)
+    * [ ] A dialog should appear asking for a hold number
+    * [ ] Default value should be the next available number (last + 1)
+    * [ ] Entering a number already in use (e.g. 3) and confirming should insert a new hold at that position, shifting existing ones (3→4, 4→5…)
+    * [ ] Cancelling should add no hold
+22. Zoom in, then try to zoom out beyond the initial fit-to-viewport level
+    * [ ] It should not be possible to zoom-out below the initial fit level
+23. Zoom in, observe the zoom-reset button (×N.N, bottom-left), then click it
+    * [ ] The button should only appear when zoomed above fit level
+    * [ ] Clicking it should return to fit-to-viewport and reset scroll to origin
 
 ## Image structure (warp)
 
@@ -181,13 +196,25 @@
 13. Click on a collapsed period summary
     * [x] it should become the active period and expand
     * [x] the previously active period should collapse to its summary line
-14. Delete a period
+14. Click on the summary of the currently active (expanded) period when other periods exist
+    * [ ] The next period should become active (expand), the clicked period should collapse
+    * [ ] If it is the last period, clicking its summary should have no effect
+15. In dark mode, check the period summaries (collapsed periods)
+    * [ ] Period name and duration text should be clearly readable on the dark background
+16. Delete a period
     * [x] A confirm system should prevent wrong deletion (current implementation is we need to click again on the button)
     * [x] The given period should be removed
-15. Click on "Clear all periods"
+17. Click on "Clear all periods"
     * [x] It should reset all periods and display the default one
     * [x] The button should now be disabled
-16. Click on fullscreen
+18. Click on fullscreen
     * [ ] The timer should be displayed in fullscreen.
     * [ ] All operations (play/stop/restart) should be available
     * [ ] We should be available to leave this mode
+
+## PWA
+
+1. When a new version is deployed, the update banner appears
+    * [ ] The message should be fully readable (text wraps on narrow screens, not cut off)
+    * [ ] Clicking "Update" should reload the app with the new version
+    * [ ] Clicking "Later" should dismiss the banner
