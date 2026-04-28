@@ -15,23 +15,25 @@ type ScreenEventOption = {
     onZoom: (ratio: number, offsetDx: number, offsetDy: number, event: Event) => void;
 };
 
-function getPosition(event: MouseEvent | Touch, rect: DOMRect): Point {
-    /* DOM position relative to the canvas element */
-    const cursorX = Math.round(event.clientX - rect.left);
-    const cursorY = Math.round(event.clientY - rect.top);
-
-    return [cursorX, cursorY];
+function getClientPoint(event: MouseEvent | Touch): Point {
+    /* Raw clientX/clientY — independent of rect changes. */
+    return [event.clientX, event.clientY];
 }
 
-function rescalePoint(point: Point, ratio: number): Point {
+function toImagePoint(clientPoint: Point, rect: DOMRect, ratio: number): Point {
+    /*
+     * Convert raw client coords to image coords using the CURRENT rect.
+     * Both lastPos and newPos must be converted with the same rect, so any
+     * rect change between events (e.g. caused by scroll) cancels out in the delta.
+     */
     return [
-        point[0] / ratio,
-        point[1] / ratio,
+        (clientPoint[0] - rect.left) / ratio,
+        (clientPoint[1] - rect.top) / ratio,
     ];
 }
 
-function rescale(points: LastPositions, ratio: number): Point[] {
-    return Array.from(points.values(), (point) => rescalePoint(point, ratio));
+function rescaleAll(points: LastPositions, rect: DOMRect, ratio: number): Point[] {
+    return Array.from(points.values(), (point) => toImagePoint(point, rect, ratio));
 }
 
 export function screenListener(options: ScreenEventOption) {
@@ -80,8 +82,8 @@ export function screenListener(options: ScreenEventOption) {
         const rect = options.rect.value;
         const lastP1 = lastPosition.get(finger1.identifier) ?? [0, 0];
         const lastP2 = lastPosition.get(finger2.identifier) ?? [0, 0];
-        const newP1 = getPosition(finger1, rect);
-        const newP2 = getPosition(finger2, rect);
+        const newP1 = getClientPoint(finger1);
+        const newP2 = getClientPoint(finger2);
 
         const oldDist = getDistance(lastP1, lastP2);
         const newDist = getDistance(newP1, newP2);
@@ -116,8 +118,10 @@ export function screenListener(options: ScreenEventOption) {
         const newRatio = oldScale * ratio;
 
         const center = getMiddle(newP1, newP2);
-        const offsetDx = center[0] * (newRatio - oldScale) / oldScale;
-        const offsetDy = center[1] * (newRatio - oldScale) / oldScale;
+        const centerRelX = center[0] - rect.left;
+        const centerRelY = center[1] - rect.top;
+        const offsetDx = centerRelX * (newRatio - oldScale) / oldScale;
+        const offsetDy = centerRelY * (newRatio - oldScale) / oldScale;
 
         /* save state for future event */
         lastPosition.set(finger1.identifier, newP1);
@@ -135,12 +139,10 @@ export function screenListener(options: ScreenEventOption) {
         stopMove();
 
         for ( const touch of list) {
-            const position = getPosition(touch, rectValue);
-
-            lastPosition.set(touch.identifier, position);
+            lastPosition.set(touch.identifier, getClientPoint(touch));
         }
 
-        options.onStart(rescale(lastPosition, ratio), event);
+        options.onStart(rescaleAll(lastPosition, rectValue, ratio), event);
 
         if (list.length > 1) {
             event.preventDefault();
@@ -151,15 +153,19 @@ export function screenListener(options: ScreenEventOption) {
         const list = event.changedTouches;
         const rectValue = options.rect.value;
         const ratio = options.scale.value;
-        let point: Point  = [0, 0];
+        let clientPoint: Point = [0, 0];
 
         for (const touch of list) {
-            point = getPosition(touch, rectValue);
+            clientPoint = getClientPoint(touch);
 
             lastPosition.delete(touch.identifier);
         }
 
-        options.onEnd(rescalePoint(point, ratio), rescale(lastPosition, ratio), event);
+        options.onEnd(
+            toImagePoint(clientPoint, rectValue, ratio),
+            rescaleAll(lastPosition, rectValue, ratio),
+            event
+        );
         stopMove();
 
         /* To avoid triggering mouse click */
@@ -175,7 +181,7 @@ export function screenListener(options: ScreenEventOption) {
 
         const touch = list[0]!;
         const identifier = touch.identifier;
-        const newPos = getPosition(touch, options.rect.value);
+        const newPos = getClientPoint(touch);
         const lastPos = lastPosition.get(identifier);
 
         if (!lastPos) {
@@ -194,11 +200,12 @@ export function screenListener(options: ScreenEventOption) {
         startMove();
         lastPosition.set(identifier, newPos);
 
+        const rect = options.rect.value;
         const ratio = options.scale.value;
 
         options.onMove(
-            rescalePoint(newPos, ratio),
-            rescalePoint(lastPos, ratio),
+            toImagePoint(newPos, rect, ratio),
+            toImagePoint(lastPos, rect, ratio),
             distance / ratio,
             event
         );
@@ -206,19 +213,25 @@ export function screenListener(options: ScreenEventOption) {
 
     function mouseDown(event: MouseEvent) {
         /* TODO: maybe if lastPosition.size then drop event */
-        lastPosition.set(-1, getPosition(event, options.rect.value));
+        lastPosition.set(-1, getClientPoint(event));
         stopMove();
 
-        options.onStart(rescale(lastPosition, options.scale.value), event);
+        options.onStart(
+            rescaleAll(lastPosition, options.rect.value, options.scale.value),
+            event
+        );
     }
 
     function mouseUp(event: MouseEvent) {
         lastPosition.delete(-1);
         stopMove();
 
+        const rect = options.rect.value;
+        const ratio = options.scale.value;
+
         options.onEnd(
-            rescalePoint(getPosition(event, options.rect.value), options.scale.value),
-            rescale(lastPosition, options.scale.value),
+            toImagePoint(getClientPoint(event), rect, ratio),
+            rescaleAll(lastPosition, rect, ratio),
             event
         );
     }
@@ -226,12 +239,15 @@ export function screenListener(options: ScreenEventOption) {
     function wheelZoom(event: WheelEvent) {
         event.preventDefault();
 
-        const pos = getPosition(event, options.rect.value);
+        const rect = options.rect.value;
+        const clientPoint = getClientPoint(event);
+        const posX = clientPoint[0] - rect.left;
+        const posY = clientPoint[1] - rect.top;
         const oldScale = options.scale.value;
         const zoomFactor = event.deltaY > 0 ? 1 / 1.1 : 1.1;
         const newRatio = oldScale * zoomFactor;
-        const offsetDx = pos[0] * (newRatio - oldScale) / oldScale;
-        const offsetDy = pos[1] * (newRatio - oldScale) / oldScale;
+        const offsetDx = posX * (newRatio - oldScale) / oldScale;
+        const offsetDy = posY * (newRatio - oldScale) / oldScale;
 
         options.onZoom(newRatio, offsetDx, offsetDy, event);
     }
@@ -244,7 +260,7 @@ export function screenListener(options: ScreenEventOption) {
             return;
         }
 
-        const newPos = getPosition(event, options.rect.value);
+        const newPos = getClientPoint(event);
         const distance = getDistance(lastPos, newPos);
         /* XXX: 1e-6 is used to avoid triggering on movement 0 */
         const minDistance = isMoving ? 1e-6 : minMove.value;
@@ -256,11 +272,12 @@ export function screenListener(options: ScreenEventOption) {
         startMove();
         lastPosition.set(-1, newPos);
 
+        const rect = options.rect.value;
         const ratio = options.scale.value;
 
         options.onMove(
-            rescalePoint(newPos, ratio),
-            rescalePoint(lastPos, ratio),
+            toImagePoint(newPos, rect, ratio),
+            toImagePoint(lastPos, rect, ratio),
             distance / ratio,
             event
         );

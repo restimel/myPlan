@@ -29,8 +29,8 @@
         </div>
         <div v-if="debug" class="scroll-debug">
             <div>scale={{ scaleRatio.toFixed(3) }} min={{ minScale.toFixed(3) }}</div>
-            <div>scroll=({{ Math.round(offsetX) }}, {{ Math.round(offsetY) }}) of ({{ scrollSize.w }}×{{ scrollSize.h }})</div>
-            <div>client=({{ scrollSize.cw }}×{{ scrollSize.ch }})</div>
+            <div>scroll=({{ Math.round(offsetX) }}, {{ Math.round(offsetY) }}) of ({{ scrollSize.width }}×{{ scrollSize.height }})</div>
+            <div>client=({{ scrollSize.clientWidth }}×{{ scrollSize.clientHeight }})</div>
             <div>last_dx={{ debugScroll.dx.toFixed(1) }} dy={{ debugScroll.dy.toFixed(1) }} (img px)</div>
             <div>scroll_Δ=({{ debugScroll.scrollDx.toFixed(1) }}, {{ debugScroll.scrollDy.toFixed(1) }}) (CSS px)</div>
             <div>screen_Δ=({{ debugScroll.screenDx.toFixed(1) }}, {{ debugScroll.screenDy.toFixed(1) }}) (px)</div>
@@ -103,8 +103,8 @@ const logging = computed(() => {
 
     const logInteraction = [
         `scale=${scaleRatio.value.toFixed(3)} min=${minScale.value.toFixed(3)}`,
-        `scroll=(${Math.round(offsetX.value)}, ${Math.round(offsetY.value)}) of (${scrollSize.value.w}×${scrollSize.value.h})`,
-        `client=(${scrollSize.value.cw}×${scrollSize.value.ch})`,
+        `scroll=(${Math.round(offsetX.value)}, ${Math.round(offsetY.value)}) of (${scrollSize.value.width}×${scrollSize.value.height})`,
+        `client=(${scrollSize.value.clientWidth}×${scrollSize.value.clientHeight})`,
         `last_dx=${debugScroll.value.dx.toFixed(1)} dy=${debugScroll.value.dy.toFixed(1)} (img px)`,
         `scroll_Δ=(${debugScroll.value.scrollDx.toFixed(1)}, ${debugScroll.value.scrollDy.toFixed(1)}) (CSS px)`,
         `screen_Δ=(${debugScroll.value.screenDx.toFixed(1)}, ${debugScroll.value.screenDy.toFixed(1)}) (px)`,
@@ -121,6 +121,35 @@ const debugScroll = ref({
     dx: 0, dy: 0,
     scrollDx: 0, scrollDy: 0,
     screenDx: 0, screenDy: 0,
+});
+
+type ScrollSize = {
+    width: number;
+    height: number;
+    clientWidth: number;
+    clientHeight: number;
+};
+
+const scrollSize = computed<ScrollSize>(() => {
+    /* eslint-disable-next-line @typescript-eslint/no-unused-expressions -- forces recomputation */
+    updateRect.value;
+    const el = container.value;
+
+    if (!el) {
+        return {
+            width: 0,
+            height: 0,
+            clientWidth: 0,
+            clientHeight: 0,
+        };
+    }
+
+    return {
+        width: el.scrollWidth,
+        height: el.scrollHeight,
+        clientWidth: el.clientWidth,
+        clientHeight: el.clientHeight,
+    };
 });
 
 /*
@@ -318,7 +347,25 @@ function drawDetails() {
 
 const screenState = setup(holdList.value, (action: ScreenAction, point: Point, fromPoint?: Point) => {
     if (action === 'scroll' || (props.details && action === 'moveHold')) {
-        const [dx = 0, dy = 0] = scrollPoints(point);
+        /*
+         * Use the per-frame delta from screenEvent (fromPoint→point) directly.
+         * Both points are converted with the same current rect, so any
+         * scroll-induced rect change between events cancels out in the delta.
+         */
+        const dx = fromPoint ? fromPoint[0] - point[0] : 0;
+        const dy = fromPoint ? fromPoint[1] - point[1] : 0;
+
+        if (debug.value) {
+            const scaleVal = scaleRatio.value;
+
+            debugScroll.value = {
+                dx, dy,
+                scrollDx: dx * scaleVal,
+                scrollDy: dy * scaleVal,
+                screenDx: -dx * scaleVal,
+                screenDy: -dy * scaleVal,
+            };
+        }
 
         if (!dx && !dy) {
             return;

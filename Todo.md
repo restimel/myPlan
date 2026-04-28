@@ -31,7 +31,7 @@
 * [ ] videos dimensions
 * [ ] canvas dimensions
     * [ ] It should not resize to the whole screen but preserve aspect ratio
-* [ ] improve scroll stability (do not compute position relative to canvas for scroll)
+* [x] improve scroll stability (do not compute position relative to canvas for scroll)
 * [ ] iPhone/iPad -- seems that application to not work with them
 * [ ] editor mode
     * [ ] during capture, video size may hide menu (needs more details, maybe it appears on mobile?)
