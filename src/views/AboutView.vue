@@ -12,7 +12,7 @@
             {{ t('label.version') }}
             <output>{{ appVersion }}</output>
         </label>
-        <label @dblclick="openDebug">
+        <label>
             {{ t('label.author') }}
             <output>Benoît Mariat</output>
         </label>
@@ -91,6 +91,12 @@
             </section>
         </section>
 
+        <button v-if="!debug"
+            class="btn-transparent activeDebug"
+            @click="openDebug"
+        >
+            → Enable Debug mode
+        </button>
         <label v-if="debug">
             Debug
             <output>
@@ -265,4 +271,8 @@ legend {
 .status-dot.pending  { background: var(--color-warning); }
 .status-dot.inactive { background: var(--color-error); }
 
+.activeDebug {
+    font-size: var(--font-size-xs);
+    font-style: italic;
+}
 </style>

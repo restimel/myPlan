@@ -27,6 +27,18 @@
             <slot />
             <GuideMessage :message="message" />
         </div>
+        <div v-if="debug" class="scroll-debug">
+            <div>scale={{ scaleRatio.toFixed(3) }} min={{ minScale.toFixed(3) }}</div>
+            <div>scroll=({{ Math.round(offsetX) }}, {{ Math.round(offsetY) }}) of ({{ scrollSize.w }}×{{ scrollSize.h }})</div>
+            <div>client=({{ scrollSize.cw }}×{{ scrollSize.ch }})</div>
+            <div>last_dx={{ debugScroll.dx.toFixed(1) }} dy={{ debugScroll.dy.toFixed(1) }} (img px)</div>
+            <div>scroll_Δ=({{ debugScroll.scrollDx.toFixed(1) }}, {{ debugScroll.scrollDy.toFixed(1) }}) (CSS px)</div>
+            <div>screen_Δ=({{ debugScroll.screenDx.toFixed(1) }}, {{ debugScroll.screenDy.toFixed(1) }}) (px)</div>
+            <div>filter: dist={{ scrollPoints.debug.distance.toFixed(1) }} old={{ scrollPoints.debug.oldDistance.toFixed(1) }} thr={{ scrollPoints.debug.threshold.toFixed(2) }} Δa={{ (scrollPoints.debug.diffAngle * 180 / Math.PI).toFixed(0) }}°</div>
+            <div>drops/pass={{ scrollPoints.debug.drops }}/{{ scrollPoints.debug.passes }} {{ scrollPoints.debug.dropped ? '(DROPPED)' : '' }}</div>
+            <br>
+            <div @click="logDebug = !logDebug">log: {{ logging }}</div>
+        </div>
     </div>
 </template>
 <script lang="ts" setup>
@@ -37,6 +49,7 @@ import GuideMessage from '@/components/guideMessage.vue';
 import { screenListener } from '@/utils/screenEvent';
 import { setup, type ActionCb, type ScreenAction } from '@/utils/screenStates';
 import { hysterisPoint } from '@/utils/movePoint';
+import { debug, log } from '@/utils/debug';
 import type { RouteStore } from '@/stores/RouteStore';
 import { filterToGrey } from '@/utils/image';
 
@@ -82,11 +95,39 @@ const offsetX = ref(0);
 const offsetY = ref(0);
 const holdList = computed(() => props.store.holds);
 
+const logDebug = ref(false);
+const logging = computed(() => {
+    if (!logDebug.value) {
+        return 'OFF';
+    }
+
+    const logInteraction = [
+        `scale=${scaleRatio.value.toFixed(3)} min=${minScale.value.toFixed(3)}`,
+        `scroll=(${Math.round(offsetX.value)}, ${Math.round(offsetY.value)}) of (${scrollSize.value.w}×${scrollSize.value.h})`,
+        `client=(${scrollSize.value.cw}×${scrollSize.value.ch})`,
+        `last_dx=${debugScroll.value.dx.toFixed(1)} dy=${debugScroll.value.dy.toFixed(1)} (img px)`,
+        `scroll_Δ=(${debugScroll.value.scrollDx.toFixed(1)}, ${debugScroll.value.scrollDy.toFixed(1)}) (CSS px)`,
+        `screen_Δ=(${debugScroll.value.screenDx.toFixed(1)}, ${debugScroll.value.screenDy.toFixed(1)}) (px)`,
+        `filter: dist=${scrollPoints.debug.distance.toFixed(1)} old=${scrollPoints.debug.oldDistance.toFixed(1)} thr=${scrollPoints.debug.threshold.toFixed(2)} Δa=${(scrollPoints.debug.diffAngle * 180 / Math.PI).toFixed(0)}°`,
+        `drops/pass=${scrollPoints.debug.drops}/${scrollPoints.debug.passes} ${scrollPoints.debug.dropped ? '(DROPPED)' : ''}`,
+    ];
+
+    log('interaction', logInteraction.join(' ~~ '));
+
+    return 'ON';
+});
+
+const debugScroll = ref({
+    dx: 0, dy: 0,
+    scrollDx: 0, scrollDy: 0,
+    screenDx: 0, screenDy: 0,
+});
+
 /*
  * Track image dimensions to detect genuine image changes vs filter-only updates.
  * Only reset zoom when the image dimensions change (i.e. a new photo was loaded).
  * When magic color reapplies a filter on the same image, dimensions are identical
- * and the zoom level should be preserved. 
+ * and the zoom level should be preserved.
  */
 let prevImageSize = { width: 0, height: 0 };
 
@@ -358,7 +399,7 @@ function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
      * Apply the scroll delta after the new scale is rendered, and let the
      * browser clamp it to the valid scroll range. The scroll event then syncs
      * offsetX/offsetY to the actual scrollLeft/scrollTop, so the overlay math
-     * stays consistent even when the requested delta is out of bounds. 
+     * stays consistent even when the requested delta is out of bounds.
      */
     nextTick(() => {
         const containerEl = container.value;
@@ -433,6 +474,21 @@ defineExpose({
     position: absolute;
     inset: 0;
     pointer-events: none;
+}
+
+.scroll-debug {
+    position: absolute;
+    top: var(--spacing-xs);
+    right: var(--spacing-xs);
+    background: rgba(0, 0, 0, 0.7);
+    color: #0f0;
+    font-family: monospace;
+    font-size: 10px;
+    padding: 4px 6px;
+    line-height: 1.3;
+    z-index: var(--zIndex-modal);
+    border-radius: 3px;
+    white-space: nowrap;
 }
 
 </style>
