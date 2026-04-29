@@ -1,30 +1,53 @@
 <template>
     <Transition name="pwa-prompt">
-        <div
-            v-if="needRefresh"
+        <div v-if="needRefresh"
             class="pwa-prompt"
         >
-            <span>{{ t('pwa.updateAvailable') }}</span>
+            <div>{{ t('pwa.updateAvailable') }}</div>
+            <small>v{{ oldVersion }}{{ newVersion ? ` → v${newVersion}` : ' to a newer version' }}</small>
             <div class="pwa-prompt-actions">
                 <button
                     class="btn-primary btn-small"
                     @click="update"
-                >{{ t('pwa.update') }}</button>
+                >
+                    {{ t('pwa.update') }}
+                </button>
                 <button
-                    class="btn-transparent btn-small"
+                    class="btn-default btn-small"
                     @click="dismiss"
-                >{{ t('pwa.dismiss') }}</button>
+                >
+                    {{ t('pwa.dismiss') }}
+                </button>
             </div>
         </div>
     </Transition>
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from 'vue';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const { needRefresh, updateServiceWorker } = useRegisterSW();
+
+const oldVersion = __APP_VERSION__;
+const newVersion = ref<string | null>(null);
+
+watch(needRefresh, async (value) => {
+    if (!value) {
+        return;
+    }
+
+    try {
+        const response = await fetch('./version.json', { cache: 'no-store' });
+        const data = await response.json();
+
+        newVersion.value = data.version;
+    } catch {
+        /* ignore, newVersion stays null */
+    }
+}, {immediate: true});
 
 function update() {
     updateServiceWorker(true);
