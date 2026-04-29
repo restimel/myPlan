@@ -3,7 +3,7 @@
         <div
             ref="container"
             class="canvas-container"
-            :style="`--scale: ${scaleRatio};`"
+            :style="`--canvas-w: ${canvasDisplayWidth}px; --canvas-h: ${canvasDisplayHeight}px;`"
             @scroll="scrollContainer"
         >
             <canvas
@@ -93,6 +93,10 @@ const minScale = ref(0.1);
 const updateRect = ref(0);
 const offsetX = ref(0);
 const offsetY = ref(0);
+const imageWidth = ref(0);
+const imageHeight = ref(0);
+const canvasDisplayWidth = computed(() => imageWidth.value * scaleRatio.value);
+const canvasDisplayHeight = computed(() => imageHeight.value * scaleRatio.value);
 const holdList = computed(() => props.store.holds);
 
 const logDebug = ref(false);
@@ -163,11 +167,12 @@ let prevImageSize = { width: 0, height: 0 };
 watch(() => props.image, () => {
     const img = props.image;
     const newWidth = img?.width ?? 0;
-    const dimensionsChanged = newWidth !== prevImageSize.width;
+    const newHeight = img?.height ?? 0;
+    const dimensionsChanged = newWidth !== prevImageSize.width || newHeight !== prevImageSize.height;
 
     prevImageSize = {
-        width: img?.width ?? 0,
-        height: img?.height ?? 0,
+        width: newWidth,
+        height: newHeight,
     };
     loadImage(undefined, dimensionsChanged);
 });
@@ -291,12 +296,16 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
 
         minScale.value = scale;
         scaleRatio.value = scale;
+        offsetX.value = 0;
+        offsetY.value = 0;
     }
 
     canvasImageEl.width = width;
     canvasImageEl.height = height;
     canvasHoldsEl.width = width;
     canvasHoldsEl.height = height;
+    imageWidth.value = width;
+    imageHeight.value = height;
 
     const context = canvasImageEl.getContext('2d')!;
 
@@ -487,9 +496,10 @@ defineExpose({
 #canvasLayer,
 #canvasBackground {
     position: absolute;
-    grid-area: content;
-    transform: scale(var(--scale));
-    transform-origin: top left;
+    top: 0;
+    left: 0;
+    width: var(--canvas-w);
+    height: var(--canvas-h);
 }
 
 #canvasBackground {
