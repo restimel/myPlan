@@ -23,7 +23,7 @@ const emit = defineEmits<{
 <style scoped>
 .side-panel {
     position: absolute;
-    z-index: var(--zIndex-menu);
+    z-index: var(--zIndex-panel-menu);
     left: var(--spacing-sm);
     top: 50%;
     transform: translateY(-50%);

@@ -243,7 +243,7 @@ function changeSizeDown() {
 
     aside {
         position: absolute;
-        z-index: var(--zIndex-menu);
+        z-index: var(--zIndex-hold-menu);
         left: var(--x);
         top: var(--y);
         background: var(--color-background);

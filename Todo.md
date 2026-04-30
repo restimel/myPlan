@@ -21,7 +21,7 @@
 ## Improvements
 
 * [ ] On hold menu add the hold number (summary)
-* [ ] z-index (in this list top item should be over bottom items):
+* [x] z-index (in this list top item should be over bottom items):
     * hold menu (which is open by staying on a hold)
     * sliders & panel menus
     * extended menu

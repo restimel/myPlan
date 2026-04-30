@@ -147,6 +147,8 @@
     --zIndex-chronometer: 50;
     --zIndex-message: 100;
     --zIndex-menu: 200;
+    --zIndex-panel-menu: 300;
+    --zIndex-hold-menu: 400;
     --zIndex-error-message: 500;
     --zIndex-main-menu: 700;
     --zIndex-modal: 1000;
