@@ -145,7 +145,7 @@ button.active:not([disabled]):hover,
     background: var(--color-primary-hover);
 }
 
-.btn-secondary {
+.secondary-btn {
     background: var(--color-secondary);
     color: var(--color-txt-secondary);
 }

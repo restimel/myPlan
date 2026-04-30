@@ -7,16 +7,16 @@
             <small>v{{ oldVersion }}{{ newVersion ? ` → v${newVersion}` : ' to a newer version' }}</small>
             <div class="pwa-prompt-actions">
                 <button
-                    class="btn-primary btn-small"
-                    @click="update"
-                >
-                    {{ t('pwa.update') }}
-                </button>
-                <button
                     class="btn-default btn-small"
                     @click="dismiss"
                 >
                     {{ t('pwa.dismiss') }}
+                </button>
+                <button
+                    class="secondary-btn btn-small"
+                    @click="update"
+                >
+                    {{ t('pwa.update') }}
                 </button>
             </div>
         </div>
@@ -80,6 +80,8 @@ function dismiss() {
 .pwa-prompt-actions {
     display: flex;
     gap: var(--spacing-xs);
+    justify-content: space-between;
+    width: 100%;
 }
 
 .pwa-prompt-enter-active,
