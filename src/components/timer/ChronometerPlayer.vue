@@ -51,11 +51,21 @@
                 <MyIcon icon="next" />
             </button>
         </aside>
+        <aside @click.stop>
+            <RouterLink v-if="showClose"
+                to="/chronometerSettings"
+                class="back-btn"
+                :title="t('chronometer.leaveFullscreen')"
+            >
+                <MyIcon icon="cancel" />
+            </RouterLink>
+        </aside>
     </div>
 </template>
 
 <script lang="ts" setup>
 import { computed, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 import {
     continueChrono,
     currentPeriod,
@@ -75,8 +85,11 @@ import CurrentTime from '@/components/timer/CurrentTime.vue';
 import { useElementSize } from '@vueuse/core';
 import MyIcon from '@/components/myIcon.vue';
 
+const { t } = useI18n();
+
 defineProps<{
     showClock?: boolean;
+    showClose?: boolean;
 }>();
 
 const chronometerPlayer = useTemplateRef('chronometerPlayer');
@@ -194,4 +207,23 @@ function restartChrono() {
     z-index: var(--zIndex-chronometer);
 }
 
+.back-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: var(--zIndex-chronometer);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--button-size);
+    height: var(--button-size);
+    border-radius: 50%;
+    color: var(--color-chronometer-text);
+    text-decoration: none;
+    opacity: 0.6;
+}
+
+.back-btn:hover {
+    opacity: 1;
+}
 </style>
