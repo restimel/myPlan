@@ -4,7 +4,7 @@
             class="pwa-prompt"
         >
             <div>{{ t('pwa.updateAvailable') }}</div>
-            <small>v{{ oldVersion }}{{ newVersion ? ` → v${newVersion}` : ' to a newer version' }}</small>
+            <small>{{ updateVersion }}</small>
             <div class="pwa-prompt-actions">
                 <button
                     class="btn-default btn-small"
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { useI18n } from 'vue-i18n';
 
@@ -33,6 +33,16 @@ const { needRefresh, updateServiceWorker } = useRegisterSW();
 
 const oldVersion = __APP_VERSION__;
 const newVersion = ref<string | null>(null);
+
+const updateVersion = computed(() => {
+    const nVersion = newVersion.value;
+
+    if (!nVersion) {
+        return '';
+    }
+
+    return `v${ oldVersion } → v${nVersion}`;
+});
 
 watch(needRefresh, async (value) => {
     if (!value) {
@@ -44,8 +54,11 @@ watch(needRefresh, async (value) => {
         const data = await response.json();
 
         newVersion.value = data.version;
-    } catch {
+    } catch (err) {
         /* ignore, newVersion stays null */
+
+        /* eslint-disable-next-line no-console */
+        console.warn('Failed to load version.json', err);
     }
 }, {immediate: true});
 

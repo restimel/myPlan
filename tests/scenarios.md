@@ -270,8 +270,8 @@ Last test done on version: 0.19.1-test.5
     * [x] All operations (play/stop/restart) should be available
     * [x] A clock should be visible to provide the current time
 19. Click on close
-    * [~] We should be on Chronometer edit view
-    * [~] It should not change the chronometer state (if paused it should stayed paused, if running it should stay running)
+    * [x] We should be on Chronometer edit view
+    * [x] It should not change the chronometer state (if paused it should stayed paused, if running it should stay running)
 
 ## PWA
 
