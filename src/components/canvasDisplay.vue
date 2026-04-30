@@ -64,6 +64,12 @@ const props = defineProps<{
     noGreyFilter?: boolean;
     layerClass?: string | Record<string, boolean>;
     holdTransform?: (point: Point) => Point;
+    /**
+     * When provided, zoom resets only when this key changes (not on dimension
+     * changes). Useful when the image dimensions change for reasons other than
+     * a new photo (e.g. warp sliders), to avoid unwanted zoom resets.
+     */
+    zoomResetKey?: number;
 }>();
 
 const emit = defineEmits<{
@@ -157,24 +163,34 @@ const scrollSize = computed<ScrollSize>(() => {
 });
 
 /*
- * Track image dimensions to detect genuine image changes vs filter-only updates.
- * Only reset zoom when the image dimensions change (i.e. a new photo was loaded).
- * When magic color reapplies a filter on the same image, dimensions are identical
- * and the zoom level should be preserved.
+ * Track state to decide whether to reset zoom on image updates.
+ * When zoomResetKey is provided by the parent, zoom resets only when the key
+ * changes (not on dimension changes). This lets the parent drive resets
+ * explicitly (e.g. only on new photo, not on warp slider moves).
+ * When zoomResetKey is absent, fall back to the dimension-based heuristic:
+ * reset only when width or height change (new photo), not on filter-only updates.
  */
 let prevImageSize = { width: 0, height: 0 };
+let prevZoomResetKey: number | undefined = undefined;
 
 watch(() => props.image, () => {
     const img = props.image;
     const newWidth = img?.width ?? 0;
     const newHeight = img?.height ?? 0;
-    const dimensionsChanged = newWidth !== prevImageSize.width || newHeight !== prevImageSize.height;
+    let resetZoom: boolean;
+
+    if (props.zoomResetKey !== undefined) {
+        resetZoom = props.zoomResetKey !== prevZoomResetKey;
+        prevZoomResetKey = props.zoomResetKey;
+    } else {
+        resetZoom = newWidth !== prevImageSize.width || newHeight !== prevImageSize.height;
+    }
 
     prevImageSize = {
         width: newWidth,
         height: newHeight,
     };
-    loadImage(undefined, dimensionsChanged);
+    loadImage(undefined, resetZoom);
 });
 watch(holdList, () => {
     loadImage(undefined, false);
@@ -289,13 +305,13 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
     }
 
     const { width, height } = imgData;
+    const rect = containerRect.value;
+    const newMinScale = Math.min(rect.width / width, rect.height / height);
+
+    minScale.value = newMinScale;
 
     if (resetZoom) {
-        const rect = containerRect.value;
-        const scale = Math.min(rect.width / width, rect.height / height);
-
-        minScale.value = scale;
-        scaleRatio.value = scale;
+        scaleRatio.value = newMinScale;
         offsetX.value = 0;
         offsetY.value = 0;
     }
@@ -449,13 +465,14 @@ function moveContext(point: Point, fromPoint: Point, distance: number, event: Ev
 }
 
 function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
+    const oldScale = scaleRatio.value;
+
     scaleRatio.value = newRatio;
 
     /*
-     * Apply the scroll delta after the new scale is rendered, and let the
-     * browser clamp it to the valid scroll range. The scroll event then syncs
-     * offsetX/offsetY to the actual scrollLeft/scrollTop, so the overlay math
-     * stays consistent even when the requested delta is out of bounds.
+     * Apply the scroll delta after the new scale is rendered. The requested
+     * ratio may have been clamped (e.g. at max scale = 10), so we correct the
+     * offset proportionally to the actual scale change to avoid over-scrolling.
      */
     nextTick(() => {
         const containerEl = container.value;
@@ -464,8 +481,12 @@ function zoomContext(newRatio: number, offsetDx: number, offsetDy: number) {
             return;
         }
 
-        containerEl.scrollLeft += offsetDx;
-        containerEl.scrollTop += offsetDy;
+        const clampedRatio = scaleRatio.value;
+        const requestedDelta = newRatio - oldScale;
+        const correctionFactor = requestedDelta !== 0 ? (clampedRatio - oldScale) / requestedDelta : 0;
+
+        containerEl.scrollLeft += offsetDx * correctionFactor;
+        containerEl.scrollTop += offsetDy * correctionFactor;
     });
 }
 

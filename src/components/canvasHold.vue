@@ -7,6 +7,7 @@
         :layerClass="{ isDoingMagic: willApplyGrey }"
         :holdTransform="holdTransform"
         :message="t('build.setHolds')"
+        :zoomResetKey="zoomResetKey"
         noGreyFilter
         @canvas="(list) => canvasList = list"
     >
@@ -227,6 +228,7 @@ const { t } = useI18n();
 
 const canvasDisplayRef = useTemplateRef<InstanceType<typeof CanvasDisplay>>('canvasDisplayRef');
 const canvasList = ref<Set<HTMLCanvasElement>>();
+const zoomResetKey = ref(0);
 
 /*
  * Source-space image after brightness/contrast/grey filters. Always has the same
@@ -353,6 +355,7 @@ onMounted(() => {
 
 watch(() => props.image, () => {
     /* It will reset the effect on image and apply the image to canvas */
+    zoomResetKey.value++;
     setGrey();
 });
 

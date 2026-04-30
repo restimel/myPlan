@@ -118,7 +118,7 @@ const style = computed(() => {
     /*
      * Convert hold positions from image space to screen space:
      * multiply by scale (canvas transform) then subtract scroll offset
-     * (canvas-overlay is not scrolled, so menu coordinates must be viewport-relative) 
+     * (canvas-overlay is not scrolled, so menu coordinates must be viewport-relative)
      */
     const positions = hold.position.map((pos) => ({
         x: def(pos[0]) * ratio - props.offsetX,

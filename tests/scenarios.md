@@ -79,7 +79,7 @@ Last test done on version: 0.19.1-test.5
     * [x] numbers should be updated accordingly
 15. With 2 fingers, zoom-in and zoom-out
     * [ ] It should zoom-in and out smoothly
-        * When reaching the max zoom (scale = 10), the image scroll quickly to the bottom right. It seems that scale is correctly stopped but not the offset
+        * [To be retested → 0.19.1-test.6] When reaching the max zoom (scale = 10), the image scroll quickly to the bottom right. It seems that scale is correctly stopped but not the offset
 16. when zoomed-in, scroll the image
     * [x] The image should follow your finger
 17. With 2 fingers, zoom-in, then hold on a hold
@@ -132,7 +132,7 @@ Last test done on version: 0.19.1-test.5
     * [x] The two lines should stay correctly positioned on the image
     * [x] The handle (pill) on each line should remain visible on screen
     * [ ] Moving boundary should update value accordingly
-        * image scale is reset (it also happens when factor slider is changed)
+        * [To be retested → 0.19.1-test.6] image scale is reset (it also happens when factor slider is changed)
 7. Pan (drag) the image while the warp edition panel is open
     * [x] The two lines should follow the image correctly (no offset)
 8. Click cancel (× on the panel)
@@ -204,7 +204,7 @@ Last test done on version: 0.19.1-test.5
 9. When timeout
     * [x] If sound enabled, it should play sound
     * [ ] If vibrate enabled, it should vibrate
-        * no vibration are emitted (even when trying the "test" button)
+        * [issue on 0.19.1-test.5] no vibration are emitted (even when trying the "test" button)
     * Depending on the action selected, it should
         * [x] stop counting (background should be in red)
         * [x] continue counting (background should be in red)
@@ -220,7 +220,6 @@ Last test done on version: 0.19.1-test.5
     * [x] it should displayed a new period to edit bellow all other periods
     * [x] the new period should be expanded (active), previous periods should be collapsed showing only their name and duration
     * [x] If the number of periods is greater than the screen size, we should be able to scroll to see them all.
-        * We cannot scroll
 13. Click on a collapsed period summary
     * [x] it should become the active period and expand
     * [x] the previously active period should collapse to its summary line
@@ -235,7 +234,7 @@ Last test done on version: 0.19.1-test.5
     * [x] The given period should be removed
 17. Click on "Clear all periods"
     * [ ] A confirm system should prevent wrong deletion
-        * periods are deleted straight away
+        * [issue on 0.19.1-test.5] periods are deleted straight away
     * [x] It should reset all periods and display the default one
     * [x] The button should now be disabled
 18. Click on fullscreen
@@ -243,7 +242,7 @@ Last test done on version: 0.19.1-test.5
     * [x] All operations (play/stop/restart) should be available
     * [x] A clock should be visible to provide the current time
     * [ ] We should be available to leave this mode
-        * [ ] I don't see any button to leave fullscreen
+        * [ ] [issue on 0.19.1-test.5] I don't see any button to leave fullscreen
 
 ## PWA
 
