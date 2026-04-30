@@ -39,67 +39,80 @@ Last test done on version: 0.19.1-test.5
 
 1. click on 'Build plan' and have a picture
     * [x] we should be in "set hold" mode
-// add step about manipulating contrast and light
-2. Open menu and use magic color on a hold
+2. Open the image correction panel (image correction button in the action menu)
+    * [x] The panel should appear on the side
+    * [x] 4 controls should be visible: magic color, color margin, contrast, brightness
+3. Click the contrast button and move the slider
+    * [x] The slider should appear (range -100% to +100%)
+    * [x] The image contrast should change in real time
+    * [X] The button should be in active state while the slider is open
+4. Click the brightness button and move the slider
+    * [x] The slider should appear (range -100% to +100%)
+    * [x] The image brightness should change in real time
+    * [x] The button should be in active state while the slider is open
+5. Close the image correction panel
+    * [x] The panel should close
+    * [x] The image should keep the applied contrast and brightness
+6. Open menu and use magic color on a hold
     * [x] The button should be in active state until we select an area
     * [x] It should grey all around holds
     * [x] Keep the holds of correct color in color
     * [x] Color around holds number should be re-enabled.
-3. click on the screen
+7. click on the screen
     * [x] it should add a hold
     * [x] the zoom level should not change (magic color filter is reapplied without resetting zoom)
-4. click on the screen again
+8. click on the screen again
     * [x] it should add a hold (incrementing number)
-5. add several holds
+9. add several holds
     * [x] There should be as many hold as clicks
-6. click on "trash"
+10. click on "trash"
     * [x] the last hold should be removed
     * [x] the zoom level should not change (magic color filter is reapplied without resetting zoom)
-7. double click on the 1st hold
+11. double click on the 1st hold
     * [x] the hold should be double
     * [x] the next holds should have incrementing their number
-8. double click on the 1st hold
+12. double click on the 1st hold
     * [x] the hold should be single
     * [x] the next holds should have decrementing their number
-9. hold on a hold and move it
+13. hold on a hold and move it
     * [x] the hold should be moved
-10. hold on a hold
+14. hold on a hold
     * [x] a menu should appear
-11. click on "Move up"
+    * [x] the hold number should be displayed at the top of the menu
+15. click on "Move up"
     * [x] The number should have been incremented
     * [x] Number of hold with the number just after should have decreased (should also work fo double hold)
-12. click on "Move down"
+16. click on "Move down"
     * [x] The number should have been decremented
     * [x] Number of hold with the number just before should have increased (should also work fo double hold)
-13. click outside menu
+17. click outside menu
     * [x] Menu should close
     * [x] No new hold should have been created
-14. maintain finger on a hold and when menu appears move to another hold
+18. maintain finger on a hold and when menu appears move to another hold
     * [x] it should link the 2 holds
     * [x] numbers should be updated accordingly
-15. With 2 fingers, zoom-in and zoom-out
-    * [ ] It should zoom-in and out smoothly
-        * [To be retested → 0.19.1-test.6] When reaching the max zoom (scale = 10), the image scroll quickly to the bottom right. It seems that scale is correctly stopped but not the offset
-16. when zoomed-in, scroll the image
+19. With 2 fingers, zoom-in and zoom-out
+    * [x] It should zoom-in and out smoothly
+20. when zoomed-in, scroll the image
     * [x] The image should follow your finger
-17. With 2 fingers, zoom-in, then hold on a hold
+21. With 2 fingers, zoom-in, then hold on a hold
     * [x] a menu should appear near the hold (not off-screen)
-18. scroll a little bit to move the hold where the menu was, then hold on the hold
+22. scroll a little bit to move the hold where the menu was, then hold on the hold
     * [x] the menu should appear near the hold, correctly positioned relative to the visible area (different position from previous step)
-19. With 2 fingers, pinch zoom (keep fingers on screen a moment after zooming)
+23. With 2 fingers, pinch zoom (keep fingers on screen a moment after zooming)
     * [x] No hold insertion dialog should appear
     * [x] Zoom level should remain at the adjusted value
-20. Open the holds panel (hold icon) and move the size slider
+24. Open the holds panel (hold icon) and move the size slider
     * [x] All hold sizes should update at once
     * [x] The slider position should reflect the current default hold size
-21. Long press (~0.5s) on an empty area of the canvas (no hold under finger, without moving)
+25. Long press (~0.5s) on an empty area of the canvas (no hold under finger, without moving)
     * [x] A dialog should appear asking for a hold number
     * [x] Default value should be the next available number (last + 1)
     * [x] Entering a number already in use (e.g. 3) and confirming should insert a new hold at that position, shifting existing ones (3→4, 4→5…). It should work when using a number used for double hold.
     * [x] Cancelling should add no hold
-22. Zoom in, then try to zoom out beyond the initial fit-to-viewport level
+26. Zoom in, then try to zoom out beyond the initial fit-to-viewport level
     * [x] It should not be possible to zoom-out below the initial fit level
-23. Zoom in, observe the zoom-reset button (×N.N, bottom-left), then click it
+27. Zoom in, observe the zoom-reset button (×N.N, bottom-left), then click it
     * [x] The button should only appear when zoomed above fit level
     * [x] Clicking it should return to fit-to-viewport and reset scroll to origin
 
@@ -131,8 +144,7 @@ Last test done on version: 0.19.1-test.5
 6. Zoom in and out while the warp edition panel is open
     * [x] The two lines should stay correctly positioned on the image
     * [x] The handle (pill) on each line should remain visible on screen
-    * [ ] Moving boundary should update value accordingly
-        * [To be retested → 0.19.1-test.6] image scale is reset (it also happens when factor slider is changed)
+    * [x] Moving boundary should update value accordingly
 7. Pan (drag) the image while the warp edition panel is open
     * [x] The two lines should follow the image correctly (no offset)
 8. Click cancel (× on the panel)
@@ -175,7 +187,24 @@ Last test done on version: 0.19.1-test.5
     * [x] Holds should be at the correct positions in the exported image
 
 ## Re-use a route
-// todo
+
+1. Have a previously validated route (from earlier sections). Navigate away from "Build plan" then come back.
+    * [x] The app should return directly to "set hold" mode (not camera mode), with the previous image and holds
+2. Navigate to the "View" page, then refresh the browser tab
+    * [x] The route should be restored from storage (image, holds, title, color settings)
+3. On the "View" page, click "Edit"
+    * [x] The app should go to "Build plan" in "set hold" mode with the saved image and holds
+    * [x] No unsaved-changes dialog should appear (nothing was changed yet)
+4. Add or move a hold, then try to navigate to another section (chronometer, about…)
+    * [x] A confirmation dialog should warn about unsaved changes
+    * [x] Cancelling should stay on "Build plan" with holds intact
+    * [x] Confirming should navigate away and discard the changes
+5. Click "take another photo" (recapture button) while holds are present
+    * [x] A confirmation dialog should warn that holds will be lost
+    * [x] Cancelling should stay in "set hold" mode with holds intact
+    * [x] Confirming should reset holds and return to camera mode
+6. Refresh the browser tab while in "Build plan" with unsaved hold changes
+    * [x] The browser should show a native unload warning dialog
 
 ## Chronometer
 1. click on 'Chronometer'
@@ -233,16 +262,16 @@ Last test done on version: 0.19.1-test.5
     * [x] A confirm system should prevent wrong deletion (current implementation is we need to click again on the button)
     * [x] The given period should be removed
 17. Click on "Clear all periods"
-    * [ ] A confirm system should prevent wrong deletion
-        * [issue on 0.19.1-test.5] periods are deleted straight away
+    * [x] A confirm system should prevent wrong deletion
     * [x] It should reset all periods and display the default one
     * [x] The button should now be disabled
 18. Click on fullscreen
     * [x] The timer should be displayed in fullscreen.
     * [x] All operations (play/stop/restart) should be available
     * [x] A clock should be visible to provide the current time
-    * [ ] We should be available to leave this mode
-        * [ ] [issue on 0.19.1-test.5] I don't see any button to leave fullscreen
+19. Click on close
+    * [~] We should be on Chronometer edit view
+    * [~] It should not change the chronometer state (if paused it should stayed paused, if running it should stay running)
 
 ## PWA
 
@@ -250,4 +279,4 @@ Last test done on version: 0.19.1-test.5
     * [x] The message should be fully readable (text wraps on narrow screens, not cut off)
     * [~] The old and new version should be displayed
     * [x] Clicking "Update" should reload the app with the new version
-    * [~] Clicking "Later" should dismiss the banner
+    * [x] Clicking "Later" should dismiss the banner
