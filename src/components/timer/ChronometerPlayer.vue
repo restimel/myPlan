@@ -182,8 +182,8 @@ function restartChrono() {
 }
 .clock-overlay {
     position: absolute;
-    top: 0;
-    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: var(--zIndex-chronometer);
 }
 .period-actions {

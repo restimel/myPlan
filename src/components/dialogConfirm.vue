@@ -4,13 +4,13 @@
             <p class="message">{{ message }}</p>
             <slot />
             <footer>
-                <button class="primary-btn" @click="emit('confirm')">
-                    <MyIcon icon="ok" />
-                    {{ t('action.confirm') }}
-                </button>
                 <button class="btn-outline" @click="emit('cancel')">
                     <MyIcon icon="cancel" />
                     {{ t('action.cancel') }}
+                </button>
+                <button class="primary-btn" @click="emit('confirm')">
+                    <MyIcon icon="ok" />
+                    {{ t('action.confirm') }}
                 </button>
             </footer>
         </aside>
