@@ -8,6 +8,7 @@
         @click.stop="actionButton"
     >
         <MyIcon :icon="icon ?? 'delete'" />
+        <slot />
         <Transition>
             <div v-if="isActive"
                 class="tooltip"

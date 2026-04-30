@@ -52,12 +52,34 @@ export type ActionCb = (action: ScreenAction, point: Point, fromPoint?: Point) =
 const holdMouseDuration = 500;
 const doubleMouseDuration = 200;
 
-export function setup(holds: Hold[], onActions: ActionCb) {
+export function setup(holds: Hold[], onActions: ActionCb, getHoldTransform?: () => ((pos: Point) => Point) | undefined) {
     const actionState = ref<MouseState>('none');
     const holdSelection = ref<Hold | null>(null);
     const holdSelection2 = ref<Hold | null>(null);
     const mousePosition = ref<Point>([0, 0]);
     let timerHold = 0;
+
+    /*
+     * Find the hold at the given point. When a holdTransform is provided
+     * (e.g. warp is active), hold positions are transformed to display space
+     * before comparison so that click detection works in warped coordinates.
+     * The returned hold may be a copy with transformed positions, but retains
+     * the original index so store operations remain correct.
+     */
+    function findHold(point: Point): Hold | null {
+        const transform = getHoldTransform?.();
+
+        if (!transform) {
+            return getHold(point, holds);
+        }
+
+        const displayHolds = holds.map(hold => ({
+            ...hold,
+            position: hold.position.map(transform) as Point[],
+        }));
+
+        return getHold(point, displayHolds);
+    }
 
     function resetAction() {
         actionState.value = 'none';
@@ -71,7 +93,7 @@ export function setup(holds: Hold[], onActions: ActionCb) {
 
         switch (action) {
             case 'none': {
-                const hold = getHold(point, holds);
+                const hold = findHold(point);
 
                 if (hold) {
                     actionState.value = 'target';
@@ -149,7 +171,7 @@ export function setup(holds: Hold[], onActions: ActionCb) {
                 actionState.value = 'menu';
                 break;
             case 'link': {
-                const hold = getHold(point, holds);
+                const hold = findHold(point);
 
                 if (hold) {
                     holdSelection2.value = hold;

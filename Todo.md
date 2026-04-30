@@ -20,12 +20,12 @@
 
 ## Improvements
 
-* [ ] On hold menu add the hold number (summary)
+* [x] On hold menu add the hold number (summary)
 * [x] z-index (in this list top item should be over bottom items):
     * hold menu (which is open by staying on a hold)
     * sliders & panel menus
     * extended menu
-* [ ] In warp edition, it is possible to add new holds (either simple touch or long touch) but not to move or edit hold
+* [x] In warp edition, it is possible to add new holds (either simple touch or long touch) but not to move or edit hold
 
 ## Maybe to be done
 

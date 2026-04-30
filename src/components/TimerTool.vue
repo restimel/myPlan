@@ -28,22 +28,21 @@
                 />
                 {{ t('chronometer.addPeriod') }}
             </button>
-            <button
+            <ConfirmButton
                 class="default-btn"
                 :disabled="isDefaultPeriods"
+                :message="t('chronometer.clearPeriodsConfirm')"
                 @click="clearPeriods"
             >
-                <MyIcon
-                    icon="delete"
-                />
                 {{ t('chronometer.clearPeriods') }}
-            </button>
+            </ConfirmButton>
         </div>
     </main>
 </template>
 
 <script setup lang="ts">
 import MyIcon from '@/components/myIcon.vue';
+import ConfirmButton from '@/components/ConfirmButton.vue';
 import EditPeriod from '@/components/timer/EditPeriod.vue';
 import {
     clearPeriods,

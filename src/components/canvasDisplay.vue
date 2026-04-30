@@ -409,7 +409,7 @@ const screenState = setup(holdList.value, (action: ScreenAction, point: Point, f
     }
 
     props.onAction(action, point, fromPoint);
-});
+}, () => props.holdTransform);
 
 const screenEvent = screenListener({
     rect: canvasRect,

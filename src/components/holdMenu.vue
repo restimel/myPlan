@@ -3,6 +3,9 @@
     :class="{ hidden: measuredHeight === 0 }"
     :style="style"
 >
+    <div class="hold-summary">
+        {{ t('build.holdSummary', { value: holdLabel }) }}
+    </div>
     <div v-if="canMove" class="head">
         <MyIcon icon="link" />
         <span>
@@ -183,6 +186,11 @@ const isDouble = computed(() => {
     return Array.isArray(props.hold.value);
 });
 
+const holdLabel = computed(() => {
+    const val = props.hold.value;
+    return Array.isArray(val) ? `${val[0]}-${val[1]}` : String(val);
+});
+
 watch(() => [props.canMove, isLink.value, isDouble.value], measureHeight, { flush: 'post' });
 
 const canMoveDown = computed(() => {
@@ -264,6 +272,15 @@ function changeSizeDown() {
             opacity: 1;
             transform: scale(1);
         }
+    }
+
+    .hold-summary {
+        text-align: center;
+        font-weight: bold;
+        font-size: var(--font-size-lg);
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-bottom: var(--field-border);
+        color: var(--color-primary);
     }
 
     .head {
