@@ -46,4 +46,4 @@
 * [ ] iPhone/iPad -- seems that application to not work with them
 * [ ] editor mode
     * [ ] during capture, video size may hide menu (needs more details, maybe it appears on mobile?)
-    * [ ] When closing extended menu, sometime it doesn't close. It seems to happen when mouse is clicked for a long time (the button move down, and when mouse is released the event mouseup is no more on the element). → Why the element moves when mousedown? (it should move only when menu is closed)
+    * [x] When closing extended menu, sometime it doesn't close. It seems to happen when mouse is clicked for a long time (the button move down, and when mouse is released the event mouseup is no more on the element). → Why the element moves when mousedown? (it should move only when menu is closed)

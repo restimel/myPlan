@@ -123,6 +123,13 @@ function action(type: string) {
     -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 
+.inner-menu-handle:active:not([disabled]) {
+    /* The global rule sets transform: scale(0.96), which would override the
+     * translate and shift the button away from its position, causing mouseup
+     * to fire outside the element and the menu to never close. */
+    transform: translate(-50%, -100%) scale(0.96);
+}
+
 .slide-up-enter-active,
 .slide-up-leave-active {
     transition: transform var(--transition-normal), opacity var(--transition-normal);
