@@ -1,5 +1,5 @@
-export function getRandomId(): number {
-    return Math.round(Math.random() * 2**50);
+export function getRandomId(): string {
+    return crypto?.randomUUID?.() ?? String(Math.round(Math.random() * 2**50));
 }
 
 export function hasExactlyOne<T>(arr: T[]): arr is [T] {

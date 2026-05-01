@@ -13,7 +13,7 @@ export type PeriodColors = {
 };
 
 export type Period = {
-    id: number;
+    id: string;
     name: string;
     /** In seconds */
     duration: number;

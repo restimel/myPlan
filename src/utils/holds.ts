@@ -276,7 +276,7 @@ export const holdManager: HoldManager = {
 };
 
 export function getHold(point: Point, holds: Hold[]): Hold | null {
-    const distance = Infinity;
+    let distance = Infinity;
     let selectedHold: Hold | null = null;
 
     holds.forEach((hold) => {
@@ -285,6 +285,7 @@ export function getHold(point: Point, holds: Hold[]): Hold | null {
 
             if (dist < hold.size && dist < distance) {
                 selectedHold = hold;
+                distance = dist;
             }
         });
     });

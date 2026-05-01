@@ -19,7 +19,14 @@ import { RouterView } from 'vue-router';
 import DebugMessage from '@/components/debugMessage.vue';
 import AppHeader from '@/components/appHeader.vue';
 import PwaPrompt from '@/components/PwaPrompt.vue';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { locale } = useI18n();
+
+watch(locale, (lang) => {
+    document.documentElement.lang = lang;
+}, { immediate: true });
 
 /* Hides mobile browser's address bar when page is done loading. */
 onMounted(() => {

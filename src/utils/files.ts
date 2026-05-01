@@ -1,7 +1,7 @@
 
 export function exportImage(canvas: HTMLCanvasElement, name: string = 'myPlan.png') {
     if (!name.endsWith('.png')) {
-        name = name + '.npm';
+        name = name + '.png';
     }
 
     const link: HTMLAnchorElement = document.createElement('a');

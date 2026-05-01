@@ -41,6 +41,10 @@ export function getAngle(fromPoint: Point, toPoint: Point): number {
     const dx = x2 - x1;
     const dy = y2 - y1;
 
+    if (!dx && !dy) {
+        return 0;
+    }
+
     const PI2 = 2 * Math.PI;
 
     const angle = Math.atan(dy / dx) + PI2;

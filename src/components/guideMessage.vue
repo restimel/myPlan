@@ -32,6 +32,7 @@ function animation() {
     clearTimeout(timer);
 
     timer = setTimeout(() => {
+        opacity.value = 0.8;
         small.value = true;
     }, ANIMATION_DELAY);
 }

@@ -420,8 +420,10 @@ export function filterToGrey(originImage: ImageData, holds: Hold[], color?: Colo
         const green = def(data[index + 1]);
         const blue = def(data[index + 2]);
         const pixelColor: ColorRGB = [red, green, blue];
+        const shouldApplyGrey = (!color || !isSameHue(pixelColor, hueReference, colorMargin))
+            && !isUnderHold(getXY(index, width), boxes);
 
-        if (!color || !isSameHue(pixelColor, hueReference, colorMargin) && !isUnderHold(getXY(index, width), boxes)) {
+        if (shouldApplyGrey) {
             const meanValue = meanColorValue(pixelColor);
             const newValue = clampValue(meanValue * modification);
 
@@ -454,7 +456,7 @@ export function filterToGrey(originImage: ImageData, holds: Hold[], color?: Colo
 /*
  * WarpZone uses integer storage values: top/bottom are [0, 100] percentages,
  * factor is the stretch multiplier × 100 (e.g. 150 = ×1.5).
- * Conversion to fractions/floats happens inside these functions. 
+ * Conversion to fractions/floats happens inside these functions.
  */
 
 export function warpY(y: number, zone: WarpZone, sourceHeight: number): number {
@@ -478,7 +480,7 @@ export function unwarpY(yw: number, zone: WarpZone, sourceHeight: number): numbe
     const bottom = (zone.bottom / 100) * sourceHeight;
     const factor = zone.factor / 100;
     const stretchedBottom = top + (bottom - top) * factor;
-    
+
     if (yw < top) {
         return yw;
     }
