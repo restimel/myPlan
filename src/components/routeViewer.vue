@@ -105,7 +105,7 @@ props.store.needAction('openSettings', false);
 <style scoped>
 .menu {
     position: absolute;
-    z-index: var(zIndex-menu);
+    z-index: var(--zIndex-menu);
 
     bottom: 0;
     text-align: center;
