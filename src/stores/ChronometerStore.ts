@@ -37,7 +37,7 @@ export const INFORMATION_LAST_SECONDS = 10;
 const defaultPeriodName = 'default period';
 
 export const defaultPeriod: Period = {
-    id: 0,
+    id: '0',
     name: defaultPeriodName,
     duration: 360,
     endEffect: 'stop',

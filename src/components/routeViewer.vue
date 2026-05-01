@@ -1,11 +1,17 @@
 <template>
     <CanvasDisplay
+        ref="canvasDisplayRef"
         :image="store.image"
         details
         :store="store"
         :onAction="onAction"
         message=""
         @canvas="(list) => canvasList = list"
+    />
+    <ZoomResetButton
+        :scaleRatio="scaleRatioValue"
+        :minScale="minScaleValue"
+        @reset="canvasDisplayRef?.resetZoom()"
     />
     <div class="menu">
         <ActionMenu
@@ -29,13 +35,14 @@
     />
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import { useRouter } from 'vue-router';
 import { exportImage } from '@/utils/files';
 import ActionMenu from '@/components/viewer/actionsMenu.vue';
 import RouteSettings from '@/components/routeSettings.vue';
 import type { RouteStore } from '@/stores/RouteStore';
 import CanvasDisplay from '@/components/canvasDisplay.vue';
+import ZoomResetButton from '@/components/ZoomResetButton.vue';
 import { log } from '@/utils/debug';
 import type { ScreenAction } from '@/utils/screenStates';
 import { aggregateCanvas } from '@/utils/image';
@@ -46,7 +53,11 @@ const props = defineProps<{
 
 const router = useRouter();
 
+const canvasDisplayRef = useTemplateRef<InstanceType<typeof CanvasDisplay>>('canvasDisplayRef');
 const canvasList = ref<Set<HTMLCanvasElement>>();
+
+const scaleRatioValue = computed(() => canvasDisplayRef.value?.scaleRatio ?? 1);
+const minScaleValue = computed(() => canvasDisplayRef.value?.minScale ?? 1);
 
 function action(type: string) {
     switch (type) {
