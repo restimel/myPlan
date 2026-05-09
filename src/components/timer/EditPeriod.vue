@@ -40,13 +40,13 @@
                 <legend>
                     {{ t('chronometer.warningTitle') }}
                 </legend>
-                <label :disabled="!isVibrateSupported">
+                <label :class="{ disabled: !isVibrateSupported }">
                     <input v-model="localPeriod.activateVibration"
                         type="checkbox"
-                        :disabled="!localPeriod.activateVibration && !canUseVibration"
+                        :disabled="!isVibrateSupported"
                     >
                     {{ t('chronometer.activateVibration') }}
-                    <MyIcon
+                    <MyIcon v-if="isVibrateSupported"
                         icon="play"
                         :size="10"
                         class="demo-effect"
@@ -132,10 +132,6 @@ const emit = defineEmits<{
 
 const localPeriod = ref<Period>({
     ...defaultPeriod,
-});
-
-const canUseVibration = computed<boolean>(() => {
-    return true;
 });
 
 const formattedDuration = computed(() => {

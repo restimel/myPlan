@@ -57,13 +57,13 @@ export function log(category: Category, message: string) {
         logsValue.set(category, logMessages);
         if (category === 'error') {
             /* eslint-disable-next-line no-console */
-            console.error(category, logMessages.at(-1)!.msg);
+            console.error(category, message);
         } else if (category === 'warning') {
             /* eslint-disable-next-line no-console */
-            console.warn(category, logMessages.at(-1)!.msg);
+            console.warn(category, message);
         } else {
             /* eslint-disable-next-line no-console */
-            console.log(category, logMessages.at(-1)!.msg);
+            console.log(category, message);
         }
 
         if (dbg.logs[category]) {

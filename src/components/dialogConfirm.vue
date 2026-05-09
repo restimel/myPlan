@@ -36,7 +36,10 @@ const { t } = useI18n();
 <style scoped>
 .backdrop {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100dvh;
     background: rgba(0, 0, 0, 0.5);
     z-index: var(--zIndex-modal);
     display: flex;

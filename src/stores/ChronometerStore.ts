@@ -4,6 +4,7 @@ import { useVibrate } from '@vueuse/core';
 import { beepTime, beepTimeout } from '@/utils/sound';
 import { loadTimer, saveTimer } from '@/utils/storage';
 import { requestKeepAwake, releaseKeepAwake } from '@/utils/keepScreenAwake';
+import { log } from '@/utils/debug';
 
 export type PeriodColor = 'default' | string;
 export type PeriodColors = {
@@ -350,6 +351,20 @@ export function stop() {
 /* }}} */
 /* {{{ actions */
 
-export const { vibrate, stop: stopVibrate, isSupported: isVibrateSupported } = useVibrate({ pattern: [300, 100, 300, 100, 300] });
+const VIBRATE_PATTERN = [300, 100, 300, 100, 300];
+const { stop: stopVibrate, isSupported: isVibrateSupported } = useVibrate({ pattern: VIBRATE_PATTERN });
+
+export { stopVibrate, isVibrateSupported };
+
+export function vibrate() {
+    if (!isVibrateSupported.value) {
+        log('warning', '[vibrate] not supported on this device');
+        return;
+    }
+
+    const result = navigator.vibrate(VIBRATE_PATTERN);
+
+    log('information', `[vibrate] result: ${result}`);
+}
 
 /* }}} */
