@@ -18,7 +18,7 @@
     * [ ] create settings template (to re-use previous configuration)
         * [ ] be able to share them to another device
     * [ ] in fullscreen
-        * [ ] allow to display it horizontally (device orientation detection?)
+        * [x] allow to display it horizontally (device orientation detection?)
 
 ## Improvements
 

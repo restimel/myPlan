@@ -3,6 +3,7 @@
         class="chronometer-player"
         :class="{
             timeout: isTimeout,
+            horizontal: props.horizontal,
         }"
         :style="customStyle"
         @click="play"
@@ -90,9 +91,10 @@ import MyIcon from '@/components/myIcon.vue';
 
 const { t } = useI18n();
 
-defineProps<{
+const props = defineProps<{
     showClock?: boolean;
     showClose?: boolean;
+    horizontal?: boolean;
 }>();
 
 const chronometerPlayer = useTemplateRef('chronometerPlayer');
@@ -100,7 +102,8 @@ const { width, height } = useElementSize(chronometerPlayer);
 
 const size = computed(() => {
     const fontRatio = 1.4;
-    const chronoHeight = 5 * height.value / 6;
+    const heightFraction = props.horizontal ? (7 / 8) : (5 / 6);
+    const chronoHeight = heightFraction * height.value;
     const chronoWidth = chronoHeight * fontRatio;
 
     if (chronoWidth < width.value) {
@@ -250,5 +253,13 @@ function restartChrono() {
 
 .back-btn:hover {
     opacity: 1;
+}
+
+.horizontal .period-name {
+    font-size: 0.6em;
+}
+
+.horizontal .period-actions {
+    flex-direction: column;
 }
 </style>
