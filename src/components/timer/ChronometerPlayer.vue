@@ -28,13 +28,13 @@
         <aside class="period-actions">
             <button v-if="isRunning"
                 class="btn-transparent btn-small action"
-                @click.stop.prevent="stop"
+                @click.stop.prevent="handleStop"
             >
                 <MyIcon icon="pause" />
             </button>
             <button v-if="!isRunning"
                 class="btn-transparent btn-small action"
-                @click.stop.prevent="continueChrono"
+                @click.stop.prevent="handlePlay"
             >
                 <MyIcon icon="play" />
             </button>
@@ -75,11 +75,14 @@ import {
     periods,
     restartPeriod,
     setPeriod,
+    settings,
     start,
     stop,
     timerLeftSecond,
     timerSpentSecond,
+    vibrateAction,
 } from '@/stores/ChronometerStore';
+import { beepAction } from '@/utils/sound';
 import ChronometerDisplay from '@/components/timer/ChronometerDisplay.vue';
 import CurrentTime from '@/components/timer/CurrentTime.vue';
 import { useElementSize } from '@vueuse/core';
@@ -130,7 +133,29 @@ const customStyle = computed(() => {
     return styles;
 });
 
+function actionFeedback() {
+    if (settings.value.actionSound) {
+        beepAction();
+    }
+
+    if (settings.value.actionVibration) {
+        vibrateAction();
+    }
+}
+
+function handlePlay() {
+    actionFeedback();
+    continueChrono();
+}
+
+function handleStop() {
+    actionFeedback();
+    stop();
+}
+
 function play() {
+    actionFeedback();
+
     if (isRunning.value) {
         stop();
     } else {

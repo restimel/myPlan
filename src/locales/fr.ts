@@ -48,6 +48,7 @@ export default {
         addPeriod: 'Ajouter une nouvelle période',
         addRange: 'Ajouter une plage',
         addRangeBtn: 'Ajouter',
+        actionFeedbackTitle: 'Retour sonore des actions',
         activateBeepWarning: 'sonneries intermédiaires',
         activateSound: 'sonnerie',
         activateVibration: 'vibrations',

@@ -4,9 +4,9 @@ import {
     table1Dto2D,
     table2Dto1D,
 } from '@/utils/image';
-import { log } from '@/utils/debug';
-import type { Period } from '@/stores/ChronometerStore';
 import { def } from './tools';
+import { log } from '@/utils/debug';
+import type { ChronometerSettings, Period } from '@/stores/ChronometerStore';
 
 type StoredImage = {
     version: number;
@@ -231,6 +231,30 @@ export function loadTimer(): Period[] | null {
         return stored;
     } catch (err) {
         log('warning', `Issue while parsing Timer JSON (error: ${err})`);
+        return null;
+    }
+}
+
+/* }}} */
+/* {{{ Timer settings storage */
+
+const TIMER_SETTINGS_STORAGE_NAME = 'chronometer-settings';
+
+export function saveTimerSettings(settings: ChronometerSettings) {
+    localStorage.setItem(TIMER_SETTINGS_STORAGE_NAME, JSON.stringify(settings));
+}
+
+export function loadTimerSettings(): ChronometerSettings | null {
+    const json = localStorage.getItem(TIMER_SETTINGS_STORAGE_NAME);
+
+    if (!json) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(json) as ChronometerSettings;
+    } catch (err) {
+        log('warning', `Issue while parsing ChronometerSettings JSON (error: ${err})`);
         return null;
     }
 }

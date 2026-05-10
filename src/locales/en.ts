@@ -45,6 +45,7 @@ export default {
         actionRepeat: 'Repeat this period',
         actionStartNext: 'Start next period',
         actionStop: 'Stop timer',
+        actionFeedbackTitle: 'Action feedback',
         activateBeepWarning: 'Intermediate beep',
         activateSound: 'sounds',
         activateVibration: 'vibrations',

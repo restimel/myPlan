@@ -36,6 +36,36 @@
             >
                 {{ t('chronometer.clearPeriods') }}
             </ConfirmButton>
+            <fieldset class="action-feedback">
+                <legend>{{ t('chronometer.actionFeedbackTitle') }}</legend>
+                <label :class="{ disabled: !isVibrateSupported }">
+                    <input
+                        v-model="settings.actionVibration"
+                        type="checkbox"
+                        :disabled="!isVibrateSupported"
+                    >
+                    {{ t('chronometer.activateVibration') }}
+                    <MyIcon v-if="isVibrateSupported"
+                        icon="play"
+                        :size="10"
+                        class="demo-effect"
+                        @click.stop.prevent="vibrateAction()"
+                    />
+                </label>
+                <label>
+                    <input
+                        v-model="settings.actionSound"
+                        type="checkbox"
+                    >
+                    {{ t('chronometer.activateSound') }}
+                    <MyIcon
+                        icon="play"
+                        :size="10"
+                        class="demo-effect"
+                        @click.stop.prevent="beepAction()"
+                    />
+                </label>
+            </fieldset>
         </div>
     </main>
 </template>
@@ -48,10 +78,14 @@ import {
     clearPeriods,
     currentPeriod,
     isDefaultPeriods,
+    isVibrateSupported,
     periods,
     setPeriod,
+    settings,
     updatePeriod,
+    vibrateAction,
 } from '@/stores/ChronometerStore';
+import { beepAction } from '@/utils/sound';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -92,5 +126,27 @@ function onPeriodActive(periodIndex: number) {
 
 .active {
     border: 1px solid var(--color-primary);
+}
+
+.action-feedback {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.action-feedback label {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+}
+
+.action-feedback .demo-effect {
+    cursor: pointer;
+    margin-inline-start: auto;
+}
+
+.disabled {
+    opacity: var(--disabled-opacity);
 }
 </style>

@@ -2,6 +2,10 @@
  * This module provides functions to generate and play sounds with specified duration and frequency.
  */
 
+export function beepAction() {
+    playBeep(1850, 50, 0.3);
+}
+
 export function beepTime() {
     playBeep(1200, 300, 0.4);
 }

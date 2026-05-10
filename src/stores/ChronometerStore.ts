@@ -2,7 +2,7 @@ import { getRandomId } from '@/utils/tools';
 import { computed, ref, watch } from 'vue';
 import { useVibrate } from '@vueuse/core';
 import { beepTime, beepTimeout } from '@/utils/sound';
-import { loadTimer, saveTimer } from '@/utils/storage';
+import { loadTimer, loadTimerSettings, saveTimer, saveTimerSettings } from '@/utils/storage';
 import { requestKeepAwake, releaseKeepAwake } from '@/utils/keepScreenAwake';
 import { log } from '@/utils/debug';
 
@@ -11,6 +11,11 @@ export type PeriodColors = {
     background: PeriodColor;
     txtWarning: PeriodColor;
     timeout: PeriodColor;
+};
+
+export type ChronometerSettings = {
+    actionSound: boolean;
+    actionVibration: boolean;
 };
 
 export type Period = {
@@ -34,6 +39,29 @@ const REFRESH_PERIOD = 200; /* ms */
 export const DEFAULT_WARNING_TIMES: number[] = [60_000, 5_000, 4_000, 3_000, 2_000, 1_000];
 export const INFORMATION_LAST_SECONDS = 10;
 
+/* {{{ settings */
+
+export const defaultSettings: ChronometerSettings = {
+    actionSound: false,
+    actionVibration: false,
+};
+
+export const settings = ref<ChronometerSettings>({ ...defaultSettings });
+
+function initSettings() {
+    const stored = loadTimerSettings();
+
+    if (stored) {
+        settings.value = { ...defaultSettings, ...stored };
+    }
+
+    watch(settings, (value) => {
+        saveTimerSettings(value);
+    }, { deep: true });
+}
+initSettings();
+
+/* }}} */
 /* {{{ manage Periods */
 
 const defaultPeriodName = 'default period';
@@ -351,6 +379,7 @@ export function stop() {
 /* {{{ actions */
 
 const VIBRATE_PATTERN = [300, 100, 300, 100, 300];
+const ACTION_VIBRATE_PATTERN = [80];
 const { stop: stopVibrate, isSupported: isVibrateSupported } = useVibrate({ pattern: VIBRATE_PATTERN });
 
 export { stopVibrate, isVibrateSupported };
@@ -364,6 +393,14 @@ export function vibrate() {
     const result = navigator.vibrate(VIBRATE_PATTERN);
 
     log('information', `[vibrate] result: ${result}`);
+}
+
+export function vibrateAction() {
+    if (!isVibrateSupported.value) {
+        return;
+    }
+
+    navigator.vibrate(ACTION_VIBRATE_PATTERN);
 }
 
 /* }}} */
