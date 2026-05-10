@@ -22,6 +22,8 @@ export type Period = {
     activateVibration: boolean;
     activateSound: boolean;
     soundWarning: boolean;
+    /** Time before end (in ms) at which intermediate beeps trigger. Uses DEFAULT_WARNING_TIMES if absent. */
+    warningTimes?: number[];
     colors: PeriodColors;
     /** If true, pressing reset also jumps back to period 1 */
     resetToPeriod1?: boolean;
@@ -29,8 +31,7 @@ export type Period = {
 
 const REFRESH_PERIOD = 200; /* ms */
 
-const WARNING_MINUTE = 60_000; /* ms */
-const WARNING_LAST_SECONDS = 5_000; /* ms */
+export const DEFAULT_WARNING_TIMES: number[] = [60_000, 5_000, 4_000, 3_000, 2_000, 1_000];
 export const INFORMATION_LAST_SECONDS = 10;
 
 /* {{{ manage Periods */
@@ -215,23 +216,21 @@ export const isTimeout = computed<boolean>(() => {
     return time >= period;
 });
 
-const nextWarningTime = computed<number>(() => {
-    const timeLeft = timerLeft.value;
+const sortedWarningTimes = computed<number[]>(() => {
+    const warningTimes = currentPeriod.value.warningTimes ?? DEFAULT_WARNING_TIMES;
 
-    return getNextWarning(timeLeft);
+    return [...warningTimes].sort((a, b) => b - a);
 });
 
-function getNextWarning(value: number): number {
-    if (value > WARNING_MINUTE) {
-        return WARNING_MINUTE / 1000;
-    }
+const nextWarningTime = computed<number>(() => {
+    return getNextWarning(timerLeft.value, sortedWarningTimes.value);
+});
 
-    if (value > WARNING_LAST_SECONDS) {
-        return WARNING_LAST_SECONDS / 1000;
-    }
-
-    if (value > 0) {
-        return Math.floor(value / 1000);
+function getNextWarning(timeLeftMs: number, warningTimes: number[]): number {
+    for (const wt of warningTimes) {
+        if (wt <= timeLeftMs) {
+            return wt;
+        }
     }
 
     return 0;
@@ -282,7 +281,7 @@ watch(isTimeout, () => {
 watch(nextWarningTime, (nextTime) => {
     const period = currentPeriod.value;
     const soundWarning = period.soundWarning && period.activateSound;
-    const maxWarningValue = getNextWarning(period.duration * 1_000);
+    const maxWarningValue = getNextWarning(period.duration * 1_000, sortedWarningTimes.value);
 
     if (soundWarning && isRunning.value && nextTime !== maxWarningValue) {
         beepTime();
@@ -318,7 +317,7 @@ function updateTick() {
     timerSpent.value += spent;
 
     const remainingTime = timerLeft.value;
-    const nextPeriodTimeLeft = remainingTime - nextWarningTime.value * 1000;
+    const nextPeriodTimeLeft = remainingTime - nextWarningTime.value;
 
     if (nextPeriodTimeLeft < REFRESH_PERIOD && remainingTime >= 0) {
         setTimeout(updateTick, nextPeriodTimeLeft);

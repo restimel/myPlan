@@ -70,6 +70,10 @@
                         type="checkbox"
                     >
                     {{ t('chronometer.activateBeepWarning') }}
+                    <EditWarningTimes
+                        v-model:soundWarning="localPeriod.soundWarning"
+                        v-model:warningTimes="localPeriod.warningTimes"
+                    />
                     <MyIcon
                         icon="play"
                         :size="10"
@@ -117,6 +121,7 @@ import DurationEditor from '@/components/timer/DurationEditor.vue';
 import MyIcon from '../myIcon.vue';
 import { beepTime, beepTimeout } from '@/utils/sound';
 import EditColors from './EditColors.vue';
+import EditWarningTimes from './EditWarningTimes.vue';
 
 const { t } = useI18n();
 

@@ -73,6 +73,10 @@ textarea:focus {
     outline: none;
 }
 
+input[type="number"] {
+    padding: var(--field-padding) var(--spacing-xs);
+}
+
 input[type="checkbox"],
 input[type="radio"] {
     min-height: auto;

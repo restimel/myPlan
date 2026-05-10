@@ -58,6 +58,10 @@ const { t } = useI18n();
     overflow-y: auto;
 }
 
+.large .modal {
+    max-width: 90vw;
+}
+
 .message {
     font-size: var(--font-size-lg);
     text-align: center;

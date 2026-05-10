@@ -14,7 +14,7 @@
 * [ ] Add a guide page to explain how to use the application
 * [ ] Chronometer
     * [ ] Allow to add bip or vibrate on starting/stopping action (like a real chronometer to feedback that action has been done). Sound should be shorter than intermediate bip.
-    * [ ] Allow to parameter intermediate bip (at which times it sounds)
+    * [x] Allow to parameter intermediate bip (at which times it sounds)
     * [ ] create settings template (to re-use previous configuration)
         * [ ] be able to share them to another device
     * [ ] in fullscreen

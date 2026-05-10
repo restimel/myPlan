@@ -229,7 +229,16 @@ Last test done on version: 0.19.1-test.5
     * [x] timer should continue from previous value
     * [x] it should not lock when timer is enabled
     * [x] when there are less than 10s, digits should be in red (blink)
-    * [x] If "intermediate beep" enabled, it should play beep at 1min, 10s (each second less than 10s)
+    * [~] If "intermediate beep" enabled, it should play beep at configured times (default: 1min, 5s, 4s, 3s, 2s, 1s)
+8. Click the settings icon (cog) next to "intermediate beep"
+    * [~] A dialog should appear showing the list of configured beep times as chips
+    * [~] The enable/disable toggle should reflect the current "intermediate beep" state
+    * [~] Clicking the play icon should trigger a test beep
+    * [~] Clicking × on a chip should remove that time from the list
+    * [~] Entering a value in the single-time input and clicking + should add it to the list
+    * [~] Opening "Add a range" and entering from/to/every values should generate and add all corresponding times
+    * [~] Clicking Cancel should discard all changes and leave settings unchanged
+    * [~] Clicking Confirm should save the new list; timer should now beep at those times only
 9. When timeout
     * [x] If sound enabled, it should play sound
     * [ ] If vibrate enabled, it should vibrate
