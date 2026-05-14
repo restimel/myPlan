@@ -1,10 +1,24 @@
 import { getRandomId } from '@/utils/tools';
 import { computed, ref, watch } from 'vue';
-import { useVibrate } from '@vueuse/core';
 import { beepTime, beepTimeout } from '@/utils/sound';
-import { loadTimer, loadTimerSettings, saveTimer, saveTimerSettings } from '@/utils/storage';
+import {
+    loadTemplates,
+    loadTimer,
+    loadTimerSettings,
+    saveTemplates,
+    saveTimer,
+    saveTimerSettings,
+} from '@/utils/storage';
 import { requestKeepAwake, releaseKeepAwake } from '@/utils/keepScreenAwake';
 import { log } from '@/utils/debug';
+
+export type ChronometerTemplate = {
+    /** Deterministic hash of serialized periods content (without period ids). */
+    id: string;
+    name: string;
+    periods: Period[];
+    createdAt: number;
+};
 
 export type PeriodColor = 'default' | string;
 export type PeriodColors = {
@@ -60,6 +74,25 @@ function initSettings() {
     }, { deep: true });
 }
 initSettings();
+
+/* }}} */
+/* {{{ templates */
+
+export function computeTemplateId(periods: Period[]): string {
+    const normalized = periods.map((period) =>
+        Object.fromEntries(Object.entries(period).filter(([key]) => key !== 'id'))
+    );
+    const json = JSON.stringify(normalized);
+    /* djb2 hash: initial value 5381 is a well-known prime seed for this algorithm. */
+    let hash = 5381;
+
+    for (let index = 0; index < json.length; index++) {
+        hash = ((hash << 5) + hash) ^ json.charCodeAt(index);
+    }
+
+    /* >>> 0 reinterprets the signed 32-bit result as unsigned, avoiding a negative string. */
+    return (hash >>> 0).toString(36);
+}
 
 /* }}} */
 /* {{{ manage Periods */
@@ -207,6 +240,62 @@ export function deletePeriod(index: number) {
 export function clearPeriods() {
     periods.value = [];
     updatePeriod(-1);
+}
+
+/* }}} */
+/* {{{ template state */
+
+export const templates = ref<ChronometerTemplate[]>([]);
+
+function initTemplates() {
+    const stored = loadTemplates();
+
+    if (stored) {
+        templates.value = stored;
+    }
+
+    watch(templates, (value) => saveTemplates(value), { deep: true });
+}
+initTemplates();
+
+export function saveAsTemplate(name: string): ChronometerTemplate {
+    const newTemplate: ChronometerTemplate = {
+        id: computeTemplateId(periods.value),
+        name,
+        periods: periods.value.map((period) => ({ ...period })),
+        createdAt: Date.now(),
+    };
+
+    if (!templates.value.find((template) => template.id === newTemplate.id)) {
+        templates.value = [...templates.value, newTemplate];
+    }
+
+    return newTemplate;
+}
+
+export function deleteTemplate(id: string): void {
+    templates.value = templates.value.filter((template) => template.id !== id);
+}
+
+export function loadTemplate(templateId: string): boolean {
+    const template = templates.value.find((tpl) => tpl.id === templateId);
+
+    if (!template) {
+        return false;
+    }
+
+    periods.value = template.periods.map((period, index) => cleanPeriod({ ...period }, index));
+    setPeriod(0);
+
+    return true;
+}
+
+export function importTemplates(incoming: ChronometerTemplate[]): void {
+    for (const template of incoming) {
+        if (!templates.value.find((existing) => existing.id === template.id)) {
+            templates.value = [...templates.value, template];
+        }
+    }
 }
 
 /* }}} */
@@ -380,14 +469,22 @@ export function stop() {
 
 const VIBRATE_PATTERN = [300, 100, 300, 100, 300];
 const ACTION_VIBRATE_PATTERN = [80];
-const { stop: stopVibrate, isSupported: isVibrateSupported } = useVibrate({ pattern: VIBRATE_PATTERN });
 
-export { stopVibrate, isVibrateSupported };
+export const isVibrateSupported = 'vibrate' in navigator;
+const likelyHasVibrationHardware = navigator.maxTouchPoints > 0;
+
+export function stopVibrate() {
+    navigator.vibrate(0);
+}
 
 export function vibrate() {
-    if (!isVibrateSupported.value) {
-        log('warning', '[vibrate] not supported on this device');
+    if (!isVibrateSupported) {
+        log('warning', '[vibrate] navigator.vibrate not available');
         return;
+    }
+
+    if (!likelyHasVibrationHardware) {
+        log('warning', '[vibrate] API present but device likely has no vibration hardware');
     }
 
     const result = navigator.vibrate(VIBRATE_PATTERN);
@@ -396,7 +493,7 @@ export function vibrate() {
 }
 
 export function vibrateAction() {
-    if (!isVibrateSupported.value) {
+    if (!isVibrateSupported || !likelyHasVibrationHardware) {
         return;
     }
 

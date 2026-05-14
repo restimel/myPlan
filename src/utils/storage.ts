@@ -6,7 +6,11 @@ import {
 } from '@/utils/image';
 import { def } from './tools';
 import { log } from '@/utils/debug';
-import type { ChronometerSettings, Period } from '@/stores/ChronometerStore';
+import type {
+    ChronometerSettings,
+    ChronometerTemplate,
+    Period,
+} from '@/stores/ChronometerStore';
 
 type StoredImage = {
     version: number;
@@ -231,6 +235,37 @@ export function loadTimer(): Period[] | null {
         return stored;
     } catch (err) {
         log('warning', `Issue while parsing Timer JSON (error: ${err})`);
+        return null;
+    }
+}
+
+/* }}} */
+/* {{{ Templates storage */
+
+const TEMPLATES_STORAGE_NAME = 'chronometer-templates';
+
+export function saveTemplates(templates: ChronometerTemplate[]): void {
+    localStorage.setItem(TEMPLATES_STORAGE_NAME, JSON.stringify(templates));
+}
+
+export function loadTemplates(): ChronometerTemplate[] | null {
+    const json = localStorage.getItem(TEMPLATES_STORAGE_NAME);
+
+    if (!json) {
+        return null;
+    }
+
+    try {
+        const stored = JSON.parse(json);
+
+        if (!Array.isArray(stored)) {
+            log('information', 'Storage: invalid templates data');
+            return null;
+        }
+
+        return stored as ChronometerTemplate[];
+    } catch (err) {
+        log('warning', `Issue while parsing ChronometerTemplates JSON (error: ${err})`);
         return null;
     }
 }
