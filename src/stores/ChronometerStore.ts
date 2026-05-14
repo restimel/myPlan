@@ -73,6 +73,7 @@ function initSettings() {
         saveTimerSettings(value);
     }, { deep: true });
 }
+
 initSettings();
 
 /* }}} */
@@ -197,6 +198,7 @@ function initPeriods() {
         saveTimer(value);
     }, { deep: true });
 }
+
 initPeriods();
 
 export function updatePeriod(index: number, period: Period = defaultPeriod) {
@@ -211,9 +213,11 @@ export function updatePeriod(index: number, period: Period = defaultPeriod) {
     }
 
     copyPeriod.id = getRandomId();
+
     if (copyPeriod.name === defaultPeriodName) {
         copyPeriod.name = `period ${periodsValue.length + 1}`;
     }
+
     periodsValue.push(copyPeriod);
     periods.value = periodsValue;
 
@@ -256,6 +260,7 @@ function initTemplates() {
 
     watch(templates, (value) => saveTemplates(value), { deep: true });
 }
+
 initTemplates();
 
 export function saveAsTemplate(name: string): ChronometerTemplate {
@@ -336,7 +341,7 @@ export const isTimeout = computed<boolean>(() => {
 const sortedWarningTimes = computed<number[]>(() => {
     const warningTimes = currentPeriod.value.warningTimes ?? DEFAULT_WARNING_TIMES;
 
-    return [...warningTimes].sort((a, b) => b - a);
+    return [...warningTimes].sort((time1, time2) => time2 - time1);
 });
 
 const nextWarningTime = computed<number>(() => {
@@ -384,6 +389,7 @@ watch(isTimeout, () => {
             case 'stop':
                 stop();
                 break;
+
             case 'startNext': {
                 nextPeriod();
                 start();

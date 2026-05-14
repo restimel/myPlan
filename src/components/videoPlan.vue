@@ -159,6 +159,7 @@ async function startVideo() {
     }
 
     videoEl.srcObject = stream;
+
     videoEl.onloadedmetadata = () => {
         videoEl.play();
     };
@@ -225,6 +226,7 @@ function loadFile(event: Event) {
 
                 getImage(canvasEl, context);
             };
+
             img.src = data;
         };
 

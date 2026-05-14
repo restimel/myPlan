@@ -53,15 +53,15 @@ function dataToString(data: Uint8ClampedArray<ArrayBufferLike>): string {
     const text: string[] = [];
 
     for (let idx = 0; idx + 2 < length; idx = idx + 4) {
-        const r = def(data[idx]);
-        const g = def(data[idx + 1]);
-        const b = def(data[idx + 2]);
+        const red = def(data[idx]);
+        const green = def(data[idx + 1]);
+        const blue = def(data[idx + 2]);
 
         text.push(
             String.fromCharCode(
-                r + CHAR_OFFSET,
-                g + CHAR_OFFSET,
-                b + CHAR_OFFSET
+                red + CHAR_OFFSET,
+                green + CHAR_OFFSET,
+                blue + CHAR_OFFSET
             )
         );
     }

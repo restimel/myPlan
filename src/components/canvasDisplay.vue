@@ -333,6 +333,7 @@ function loadImage(data?: ImageData | null, resetZoom = true) {
     }
 
     drawRoute();
+
     if (props.details) {
         drawDetails();
     }

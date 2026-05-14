@@ -116,6 +116,7 @@ export function setup(holds: Hold[], onActions: ActionCb, getHoldTransform?: () 
 
                 break;
             }
+
             case 'active':
                 clearTimeout(timerHold);
                 actionState.value = 'zoom';
@@ -170,6 +171,7 @@ export function setup(holds: Hold[], onActions: ActionCb, getHoldTransform?: () 
             case 'selection':
                 actionState.value = 'menu';
                 break;
+
             case 'link': {
                 const hold = findHold(point);
 
@@ -181,6 +183,7 @@ export function setup(holds: Hold[], onActions: ActionCb, getHoldTransform?: () 
                 resetAction();
                 break;
             }
+
             case 'zoom':
             default:
                 resetAction();

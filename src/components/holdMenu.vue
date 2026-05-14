@@ -95,6 +95,7 @@ const measuredHeight = ref(0);
 
 function measureHeight() {
     const el = instance?.proxy?.$el as HTMLElement | undefined;
+
     if (el) {
         measuredHeight.value = el.offsetHeight;
     }
@@ -129,22 +130,26 @@ const style = computed(() => {
     }));
 
     let pMinX = Infinity, pMaxX = -Infinity, pMinY = Infinity, pMaxY = -Infinity, sumX = 0, sumY = 0;
-    for (const p of positions) {
-        if (p.x < pMinX) {
-            pMinX = p.x;
-        }
-        if (p.x > pMaxX) {
-            pMaxX = p.x;
-        }
-        if (p.y < pMinY) {
-            pMinY = p.y;
-        }
-        if (p.y > pMaxY) {
-            pMaxY = p.y;
+
+    for (const pst of positions) {
+        if (pst.x < pMinX) {
+            pMinX = pst.x;
         }
 
-        sumX += p.x;
-        sumY += p.y;
+        if (pst.x > pMaxX) {
+            pMaxX = pst.x;
+        }
+
+        if (pst.y < pMinY) {
+            pMinY = pst.y;
+        }
+
+        if (pst.y > pMaxY) {
+            pMaxY = pst.y;
+        }
+
+        sumX += pst.x;
+        sumY += pst.y;
     }
 
     const groupMinX = pMinX - holdRadius;
@@ -170,7 +175,7 @@ const style = computed(() => {
         { x: clampedX, y: groupMinY - menuHeight, valid: groupMinY - menuHeight >= minY },
     ];
 
-    const best = candidates.find((c) => c.valid) ?? candidates[0]!;
+    const best = candidates.find((candidate) => candidate.valid) ?? candidates[0]!;
 
     return `
         --x: ${best.x}px;

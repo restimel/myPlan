@@ -117,8 +117,8 @@ function getBoxPosition(boxWidth: number, boxHeight: number, holds: Hold[], canv
     const margin = 5;
     const maxWidth = canvasEl.width;
     const maxHeight = canvasEl.height;
-    const w = boxWidth;
-    const h = boxHeight;
+    const width = boxWidth;
+    const height = boxHeight;
     let x = margin;
     let y = margin;
     let isOk = true;
@@ -126,7 +126,7 @@ function getBoxPosition(boxWidth: number, boxHeight: number, holds: Hold[], canv
     const checkBottom = preferences.position === 'bottom';
 
     function haveSpace(x: number, y: number): boolean {
-        const holdInArea = getHoldInArea([x, y], [x + w, y + h], holds);
+        const holdInArea = getHoldInArea([x, y], [x + width, y + height], holds);
 
         const hasOtherBox = preferences.area ? crossRect(
             [
@@ -141,45 +141,45 @@ function getBoxPosition(boxWidth: number, boxHeight: number, holds: Hold[], canv
         return !holdInArea.length && !hasOtherBox;
     }
 
-    if (checkBottom && haveSpace(maxWidth / 2 - w / 2, maxHeight - margin - h)) {
+    if (checkBottom && haveSpace(maxWidth / 2 - width / 2, maxHeight - margin - height)) {
         /* Bottom center */
-        x = maxWidth / 2 - w / 2;
-        y = maxHeight - margin - h;
-    } else if (checkBottom && haveSpace(margin, maxHeight - margin - h)) {
+        x = maxWidth / 2 - width / 2;
+        y = maxHeight - margin - height;
+    } else if (checkBottom && haveSpace(margin, maxHeight - margin - height)) {
         /* Bottom left */
         x = margin;
-        y = maxHeight - margin - h;
-    } else if (checkBottom && haveSpace(maxWidth - margin - w, maxHeight - margin - h)) {
+        y = maxHeight - margin - height;
+    } else if (checkBottom && haveSpace(maxWidth - margin - width, maxHeight - margin - height)) {
         /* Bottom right */
-        x = maxWidth - margin - w;
-        y = maxHeight - margin - h;
+        x = maxWidth - margin - width;
+        y = maxHeight - margin - height;
     } else if (haveSpace(margin, margin)) {
         /* Top left */
         x = margin;
         y = margin;
-    } else if (haveSpace(maxWidth - margin - w, margin)) {
+    } else if (haveSpace(maxWidth - margin - width, margin)) {
         /* Top right */
-        x = maxWidth - margin - w;
+        x = maxWidth - margin - width;
         y = margin;
-    } else if (haveSpace(maxWidth / 2 - w / 2, margin)) {
+    } else if (haveSpace(maxWidth / 2 - width / 2, margin)) {
         /* Top middle */
-        x = maxWidth / 2 - w / 2;
+        x = maxWidth / 2 - width / 2;
         y = margin;
-    } else if (haveSpace(margin, maxHeight /2 - h / 2)) {
+    } else if (haveSpace(margin, maxHeight /2 - height / 2)) {
         /* middle left */
         x = margin;
-        y = maxHeight /2 - h / 2;
-    } else if (haveSpace(maxWidth - margin - w, maxHeight /2 - h / 2)) {
+        y = maxHeight /2 - height / 2;
+    } else if (haveSpace(maxWidth - margin - width, maxHeight /2 - height / 2)) {
         /* middle right */
-        x = maxWidth - margin - w;
-        y = maxHeight /2 - h / 2;
+        x = maxWidth - margin - width;
+        y = maxHeight /2 - height / 2;
     } else {
         log('information', 'box position is default :/');
         isOk = false;
 
         if (checkBottom) {
-            x = maxWidth / 2 - w / 2;
-            y = maxHeight - margin - h;
+            x = maxWidth / 2 - width / 2;
+            y = maxHeight - margin - height;
         } else {
             x = margin;
             y = margin;
@@ -190,7 +190,7 @@ function getBoxPosition(boxWidth: number, boxHeight: number, holds: Hold[], canv
 }
 
 function drawBoxText(text: string, isOk: boolean, box: Box, size: number, context: CanvasRenderingContext2D) {
-    const [x, y, w, h] = box;
+    const [x, y, width, height] = box;
 
     context.save();
 
@@ -202,7 +202,7 @@ function drawBoxText(text: string, isOk: boolean, box: Box, size: number, contex
         context.globalAlpha = 0.5;
     }
 
-    context.rect(x, y, w, h);
+    context.rect(x, y, width, height);
 
     context.fill();
     context.stroke();
@@ -211,7 +211,7 @@ function drawBoxText(text: string, isOk: boolean, box: Box, size: number, contex
     context.textAlign = 'center';
     context.fillStyle = borderHoldColor;
 
-    context.fillText(text, x + w / 2, y + h / 2, w);
+    context.fillText(text, x + width / 2, y + height / 2, width);
     context.restore();
 }
 

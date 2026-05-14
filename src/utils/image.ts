@@ -134,25 +134,25 @@ export function reduceSize(image: ColorRGB[][], reduceRatio: number): ColorRGB[]
             const c01: ColorRGB = def(image[x1]?.[y2]);
             const c11: ColorRGB = def(image[x2]?.[y2]);
 
-            const r: number = interpolate(
+            const red: number = interpolate(
                 interpolate(c00[0], c10[0], dx),
                 interpolate(c01[0], c11[0], dx),
                 dy
             );
 
-            const g: number = interpolate(
+            const green: number = interpolate(
                 interpolate(c00[1], c10[1], dx),
                 interpolate(c01[1], c11[1], dx),
                 dy
             );
 
-            const b: number = interpolate(
+            const blue: number = interpolate(
                 interpolate(c00[2], c10[2], dx),
                 interpolate(c01[2], c11[2], dx),
                 dy
             );
 
-            newImage[x]![y] = [Math.round(r), Math.round(g), Math.round(b)];
+            newImage[x]![y] = [Math.round(red), Math.round(green), Math.round(blue)];
         }
     }
 
@@ -191,30 +191,30 @@ const HUE = 0;
  */
 
 function rgbToHsl(color: ColorRGB): ColorHSL {
-    const [r, g, b] = color;
+    const [red, green, blue] = color;
 
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
+    const max = Math.max(red, green, blue);
+    const min = Math.min(red, green, blue);
     const delta = max - min;
     /* [0, 255] */
-    const l = (max + min) / 2;
+    const light = (max + min) / 2;
     /* [0, 255] */
-    const s = delta / (255 - Math.abs(2 * l - 255));
+    const saturation = delta / (255 - Math.abs(2 * light - 255));
 
     /* [0, 360] */
-    let h = 0;
+    let hue = 0;
 
-    if (max === r) {
-        h = ((g - b) / delta) * 60;
-    } else if (max === g) {
-        h = ((b - r) / delta) * 60 + 120;
+    if (max === red) {
+        hue = ((green - blue) / delta) * 60;
+    } else if (max === green) {
+        hue = ((blue - red) / delta) * 60 + 120;
     } else {
-        h = ((r - g) / delta) * 60 + 240;
+        hue = ((red - green) / delta) * 60 + 240;
     }
 
-    h = (h + 360) % 360;
+    hue = (hue + 360) % 360;
 
-    return [h, s, l];
+    return [hue, saturation, light];
 }
 
 function meanColorValue(color?: ColorRGB): number {
@@ -226,9 +226,9 @@ function meanColorValue(color?: ColorRGB): number {
 }
 
 function isSameHue(pixel: ColorRGB, hueReference: number, margin = 15): boolean {
-    const [h] = rgbToHsl(pixel);
+    const [hue] = rgbToHsl(pixel);
 
-    return isAround(h, hueReference, margin, 360);
+    return isAround(hue, hueReference, margin, 360);
 }
 
 type HoldBox = {
@@ -241,6 +241,7 @@ type HoldBox = {
 };
 
 const MARGIN_SIZE = 5;
+
 function isUnderHold([x, y]: [number, number], holds: HoldBox[]): boolean {
     return holds.some((box) => {
         if (x < box.xMin || x > box.xMax || y < box.yMin || y > box.yMax) {

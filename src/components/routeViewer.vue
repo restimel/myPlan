@@ -71,6 +71,7 @@ function action(type: string) {
             router.push('/build');
 
             break;
+
         case 'exportFile': {
             const canvasEl = aggregateCanvas(canvasList.value!);
             const routeName = props.store.settings.routeName;
@@ -79,6 +80,7 @@ function action(type: string) {
             exportImage(canvasEl, fileName);
             break;
         }
+
         case 'settings':
             showSettings.value = true;
             break;

@@ -182,6 +182,7 @@ function restartChrono() {
     if (currentPeriod.value.resetToPeriod1) {
         setPeriod(0);
     }
+
     restartPeriod();
 }
 

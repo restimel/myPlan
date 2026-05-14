@@ -525,11 +525,13 @@ function onCanvasAction(action: ScreenAction, point: Point, fromPoint?: Point) {
         case 'setHold':
             setHold(pt);
             break;
+
         case 'doubleHold': {
             const holdIndex = canvasDisplayRef.value?.selectHold?.index ?? 0;
             props.store.doubleHold(holdIndex);
             break;
         }
+
         case 'linkHolds': {
             const originHold = canvasDisplayRef.value?.selectHold;
             const targetHold = canvasDisplayRef.value?.selectHold2;
@@ -537,21 +539,26 @@ function onCanvasAction(action: ScreenAction, point: Point, fromPoint?: Point) {
             if (originHold && targetHold) {
                 props.store.linkHolds(originHold.index, targetHold.index);
             }
+
             break;
         }
+
         case 'moveHold': {
             const hold = canvasDisplayRef.value?.selectHold;
 
             if (hold) {
                 props.store.moveHold(hold.index, fromPt ?? pt, pt);
             }
+
             break;
         }
+
         case 'longPress':
             if (!willApplyGrey.value) {
                 insertPending.value = pt;
                 insertValue.value = props.store.top;
             }
+
             break;
         case 'scroll':
             log('error', 'Scroll: should be managed by another route');
@@ -587,6 +594,7 @@ function refreshImage() {
     } else {
         filteredImage.value = correctedImage;
     }
+
     updateActiveImage();
 }
 

@@ -39,6 +39,7 @@ export function resetDebug() {
 }
 
 let lastTime = 0;
+
 export function log(category: Category, message: string) {
     const dbg = debug.value;
 
@@ -49,12 +50,14 @@ export function log(category: Category, message: string) {
 
         const logsValue = logs.value;
         const logMessages = logsValue.get(category) ?? [];
+
         logMessages.push({
             msg: message,
             ts: time,
         });
 
         logsValue.set(category, logMessages);
+
         if (category === 'error') {
             /* eslint-disable-next-line no-console */
             console.error(category, message);

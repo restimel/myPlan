@@ -50,6 +50,7 @@ export function hysterisPoint(point: Point) {
         if (distance < oldDistance * threshold) {
             debugState.dropped = true;
             debugState.drops++;
+
             return [0, 0];
         }
 
@@ -60,7 +61,7 @@ export function hysterisPoint(point: Point) {
         lastAngle = angle;
 
         return [deltaX, deltaY];
-    };
+    }
 
     movePoint.reset = (point: Point) => {
         lastPoint = point;

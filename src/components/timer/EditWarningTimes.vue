@@ -129,7 +129,7 @@ const rangeTo = ref<number>(1);
 const rangeEvery = ref<number>(1);
 
 const sortedDisplayTimes = computed(() => {
-    return [...new Set(localTimes.value)].sort((a, b) => b - a);
+    return [...new Set(localTimes.value)].sort((time1, time2) => time2 - time1);
 });
 
 const rangePreview = computed<number[]>(() => {
