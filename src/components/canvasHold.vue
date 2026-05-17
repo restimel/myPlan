@@ -797,7 +797,7 @@ function removeWarp() {
     color: #fff;
     font-family: monospace;
     font-size: 11px;
-    padding: 4px;
+    padding: var(--field-padding-sm);
     pointer-events: none;
     white-space: pre;
 }

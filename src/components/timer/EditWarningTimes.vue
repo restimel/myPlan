@@ -252,9 +252,9 @@ label {
 .chip {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--field-padding-sm);
     padding: 2px 6px;
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     background-color: var(--color-background-soft);
     border: 1px solid var(--color-border);
     font-size: 0.9em;
@@ -322,7 +322,7 @@ label {
 .range-inputs-row label {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: var(--field-padding-sm);
 }
 
 .range-preview {

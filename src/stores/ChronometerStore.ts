@@ -289,7 +289,13 @@ export function loadTemplate(templateId: string): boolean {
         return false;
     }
 
-    periods.value = template.periods.map((period, index) => cleanPeriod({ ...period }, index));
+    periods.value = template.periods.map((period, index) => {
+        const cleaned = cleanPeriod({ ...period }, index);
+
+        cleaned.id = getRandomId();
+
+        return cleaned;
+    });
     setPeriod(0);
 
     return true;

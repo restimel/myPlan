@@ -282,6 +282,76 @@ Last test done on version: 0.19.1-test.5
     * [x] We should be on Chronometer edit view
     * [x] It should not change the chronometer state (if paused it should stayed paused, if running it should stay running)
 
+## Chronometer templates
+
+### Collapsible section
+
+1. Navigate to the Chronometer page
+    * [~] A "Templates" section should be visible, collapsed by default
+2. Click on the "Templates" section header
+    * [~] The section should expand and show its content
+    * [~] The expand/collapse icon should change accordingly
+3. Click the header again
+    * [~] The section should collapse and hide its content
+
+### Save as template
+
+4. Set up one or more periods, then expand Templates and click "Save as template"
+    * [~] A prompt dialog should appear asking for a name
+5. Enter a name and confirm
+    * [~] The template should appear in the list
+    * [~] Its name should be displayed in the list
+    * [~] The Load button for this template should be disabled (it is already loaded)
+    * [~] The template name should be highlighted (active state)
+6. Modify a period setting (e.g. change the duration)
+    * [~] The Load button for the previously saved template should now be enabled
+    * [~] The active highlight should no longer be shown (current state differs from saved template)
+
+### Load template
+
+7. With a template saved and current periods modified, click Load on that template
+    * [~] A confirmation dialog should appear
+8. Confirm the load
+    * [~] All period settings should be restored exactly (name, duration, sounds, colors, warning times, etc.)
+    * [~] The Load button for that template should become disabled again (active state restored)
+9. Modify periods, click Load on the template — the current state should be auto-saved first
+    * [~] After confirming, a new template with an auto-generated name should appear in the list
+    * [~] The loaded template should become active
+
+### Delete template
+
+10. Click the delete button (trash icon) on a template
+    * [~] A tooltip/confirm should appear (first click shows confirmation, second click deletes)
+11. Click the delete button a second time within the timeout
+    * [~] The template should be removed from the list
+12. Click the delete button once and wait for the timeout to expire without clicking again
+    * [~] Nothing should be deleted; the confirmation should disappear
+
+### QR code sharing
+
+13. Click the "QR" button on a template
+    * [~] A dialog should appear showing a QR code and the full URL below it
+14. Scan the QR code with another device (or copy the URL and open it in a new tab)
+    * [~] The chronometer page should open with a confirmation dialog proposing to import the template
+    * [~] The dialog should show a pre-filled name (e.g. "Import — <date>")
+15. Change the name in the dialog and confirm
+    * [~] The imported template should appear in the template list with the given name
+    * [~] The periods should match the original template exactly
+16. Scan/open the same QR code again (template already imported)
+    * [~] The confirmation dialog should warn that a template with the same content already exists
+
+### File export and import
+
+17. Click the export (save) button on a template
+    * [~] A JSON file should be downloaded with the template name as filename
+    * [~] The file content should be valid JSON representing the template
+18. Click "Export all templates"
+    * [~] A single JSON file named "chronometer-templates.json" should be downloaded containing all templates
+19. Click "Import" and select a previously exported single-template JSON file
+    * [~] The template should be added to the list (or merged if already present)
+20. Click "Import" and select a previously exported multi-template JSON file
+    * [~] All templates from the file should be added to the list
+
 ## PWA
 
 1. When a new version is deployed, the update banner appears

@@ -36,6 +36,7 @@
             >
                 {{ t('chronometer.clearPeriods') }}
             </ConfirmButton>
+            <TemplatesSection />
             <fieldset class="action-feedback">
                 <legend>{{ t('chronometer.actionFeedbackTitle') }}</legend>
                 <label :class="{ disabled: !isVibrateSupported }">
@@ -74,6 +75,7 @@
 import MyIcon from '@/components/myIcon.vue';
 import ConfirmButton from '@/components/ConfirmButton.vue';
 import EditPeriod from '@/components/timer/EditPeriod.vue';
+import TemplatesSection from '@/components/timer/TemplatesSection.vue';
 import {
     clearPeriods,
     currentPeriod,
