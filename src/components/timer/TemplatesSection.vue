@@ -122,7 +122,7 @@ const qrTitle = computed(() => qrTemplate.value?.name ?? '');
 async function showQrCode(tpl: ChronometerTemplate) {
     const payload = await encodePeriodsToUrl(tpl.periods);
 
-    qrUrl.value = `${window.location.origin}${window.location.pathname}#/chronometerSettings?template=${payload}`;
+    qrUrl.value = `${window.location.origin}${window.location.pathname}#/chronometerSettings?template=${payload}&name=${encodeURIComponent(tpl.name)}`;
     qrTemplateId.value = tpl.id;
 }
 

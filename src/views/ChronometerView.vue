@@ -36,6 +36,9 @@ import TimerTool from '@/components/TimerTool.vue';
 import {
     computeTemplateId,
     importTemplates,
+    isDefaultPeriods,
+    loadTemplate,
+    saveAsTemplate,
     templates,
     type ChronometerTemplate,
     type Period,
@@ -73,12 +76,18 @@ onMounted(async () => {
         return;
     }
 
+    const nameParam = route.query.name as string | undefined;
+
     pendingImport.value = decodedPeriods;
-    pendingImportName.value = `Import — ${new Date().toLocaleString()}`;
+    pendingImportName.value = nameParam ?? `Import — ${new Date().toLocaleString()}`;
 });
 
 function confirmImport() {
     if (pendingImport.value && pendingImportName.value.trim()) {
+        if (!isDefaultPeriods.value) {
+            saveAsTemplate(t('chronometer.templateAutoSaveName', { date: new Date().toLocaleString() }));
+        }
+
         const newTemplate: ChronometerTemplate = {
             id: computeTemplateId(pendingImport.value),
             name: pendingImportName.value.trim(),
@@ -87,6 +96,7 @@ function confirmImport() {
         };
 
         importTemplates([newTemplate]);
+        loadTemplate(newTemplate.id);
     }
 
     pendingImport.value = null;
