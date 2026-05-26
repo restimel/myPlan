@@ -8,6 +8,7 @@ export type Category =
     | 'time'
     | 'save'
     | 'zoom'
+    | 'sound'
 ;
 
 type Logs = Record<Category, boolean>;

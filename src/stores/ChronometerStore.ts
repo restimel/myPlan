@@ -381,6 +381,14 @@ export function setPeriod(index: number) {
     }
 }
 
+watch(periodSelected, () => {
+    restartPeriod();
+});
+
+watch(() => currentPeriod.value.duration, () => {
+    restartPeriod();
+});
+
 watch(isTimeout, () => {
     if (isTimeout.value && isRunning.value) {
         const period = currentPeriod.value;
@@ -407,12 +415,12 @@ watch(isTimeout, () => {
     }
 });
 
-watch(nextWarningTime, (nextTime) => {
+watch(nextWarningTime, (_newTime, oldTime) => {
     const period = currentPeriod.value;
     const soundWarning = period.soundWarning && period.activateSound;
-    const maxWarningValue = getNextWarning(period.duration * 1_000, sortedWarningTimes.value);
+    const durationMs = period.duration * 1_000;
 
-    if (soundWarning && isRunning.value && nextTime !== maxWarningValue) {
+    if (soundWarning && isRunning.value && oldTime !== durationMs && oldTime > 0) {
         beepTime();
     }
 });
@@ -461,7 +469,7 @@ export function continueChrono() {
     timeReference = performance.now();
     clearInterval(chronometerTimer.value);
     requestKeepAwake();
-    chronometerTimer.value = setInterval(updateTick, REFRESH_PERIOD);
+    chronometerTimer.value = window.setInterval(updateTick, REFRESH_PERIOD);
 }
 
 export function start() {

@@ -56,6 +56,7 @@ const categories: Category[] = [
     'time',
     'save',
     'zoom',
+    'sound',
 ];
 
 const see = ref<Category | null>(null);
