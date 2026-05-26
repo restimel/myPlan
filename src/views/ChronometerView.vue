@@ -5,25 +5,25 @@
         </h1>
         <ChronometerPlayer />
         <TimerTool />
+        <DialogConfirm
+            v-if="pendingImport !== null"
+            :message="pendingImportMessage"
+            @confirm="confirmImport"
+            @cancel="pendingImport = null"
+        >
+            <p v-if="pendingImportAlreadyExists" class="import-already-exists">
+                {{ t('chronometer.templateAlreadyExists') }}
+            </p>
+            <label class="import-name-label">
+                {{ t('chronometer.templateNamePrompt') }}
+                <input
+                    v-model="pendingImportName"
+                    type="text"
+                    class="import-name-input"
+                >
+            </label>
+        </DialogConfirm>
     </div>
-    <DialogConfirm
-        v-if="pendingImport !== null"
-        :message="pendingImportMessage"
-        @confirm="confirmImport"
-        @cancel="pendingImport = null"
-    >
-        <p v-if="pendingImportAlreadyExists" class="import-already-exists">
-            {{ t('chronometer.templateAlreadyExists') }}
-        </p>
-        <label class="import-name-label">
-            {{ t('chronometer.templateNamePrompt') }}
-            <input
-                v-model="pendingImportName"
-                type="text"
-                class="import-name-input"
-            >
-        </label>
-    </DialogConfirm>
 </template>
 
 <script lang="ts" setup>

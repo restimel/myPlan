@@ -12,11 +12,11 @@
         * [x] Manage (all) hold size ? (not really related to image...)
     * [x] add a button to zoom to view port
 * [ ] Add a guide page to explain how to use the application
-* [ ] Chronometer
+* [x] Chronometer
     * [x] Allow to add bip or vibrate on starting/stopping action (like a real chronometer to feedback that action has been done). Sound should be shorter than intermediate bip.
     * [x] Allow to parameter intermediate bip (at which times it sounds)
-    * [ ] create settings template (to re-use previous configuration)
-        * [ ] be able to share them to another device
+    * [x] create settings template (to re-use previous configuration)
+        * [x] be able to share them to another device
     * [x] in fullscreen
         * [x] allow to display it horizontally (device orientation detection?)
 
