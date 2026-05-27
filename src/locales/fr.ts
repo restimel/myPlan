@@ -49,6 +49,8 @@ export default {
         addRange: 'Ajouter une plage',
         addRangeBtn: 'Ajouter',
         actionFeedbackTitle: 'Retour sonore des actions',
+        keepAwakeOnPage: 'Garder l\'écran allumé sur les pages chronomètre',
+        screenTitle: 'Écran',
         activateBeepWarning: 'sonneries intermédiaires',
         activateSound: 'sonnerie',
         activateVibration: 'vibrations',

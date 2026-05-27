@@ -3,12 +3,13 @@ import type { Period, PeriodColor } from '@/stores/ChronometerStore';
 type EndEffect = Period['endEffect'];
 const END_EFFECT_INDEX: Record<EndEffect, number> = { stop: 0, startNext: 1, restart: 2, continue: 3 };
 const END_EFFECT_FROM_INDEX: EndEffect[] = ['stop', 'startNext', 'restart', 'continue'];
-const CURRENT_VERSION = '1';
-
 /*
- * URL payload format: <version><base64(deflate-raw(JSON))>
+ * URL payload format: <version><base64url(payload)>
  *
- * version  — single character, currently '1'. Bump when the compact schema changes.
+ * version  — single character (digit or letter, alphabetically ordered).
+ *             '0' = raw JSON (no compression), v1 compact schema
+ *             '1' = deflate-raw compressed JSON, v1 compact schema
+ *             Encoder picks whichever produces a shorter output.
  *
  * JSON     — top-level 2-element array: [templateName, periodsArray]
  *            templateName  string  (kept in payload to avoid URI-encoding overhead for accented chars)
@@ -185,17 +186,33 @@ function compactToPeriod(row: unknown[]): Period {
     };
 }
 
+function toBase64Url(data: string): string {
+    return btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g, (_match, hex) => String.fromCharCode(parseInt(hex, 16))))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
+}
+
+function fromBase64Url(base64: string): string {
+    const binary = atob(base64.replace(/-/g, '+').replace(/_/g, '/'));
+
+    return decodeURIComponent(Array.from(binary, (char) => '%' + char.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
+}
+
 export async function encodeTemplateToUrl(name: string, periods: Period[]): Promise<string> {
     const compact = periods.map(periodToCompact);
     const json = JSON.stringify([name, compact]);
-    const compressed = await compressToBase64(json);
+    const raw = '0' + toBase64Url(json);
+    const compressed = '1' + await compressToBase64(json);
 
-    return CURRENT_VERSION + compressed;
+    return raw.length <= compressed.length ? raw : compressed;
 }
 
 export async function decodeTemplateFromUrl(payload: string): Promise<{ name: string; periods: Period[] } | null> {
     try {
-        const json = await decompressFromBase64(payload.slice(1));
+        const version = payload[0];
+        const data = payload.slice(1);
+        const json = version === '0' ? fromBase64Url(data) : await decompressFromBase64(data);
         const [name, compact] = JSON.parse(json) as [string, unknown[][]];
 
         return { name, periods: compact.map(compactToPeriod) };

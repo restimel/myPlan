@@ -46,6 +46,8 @@ export default {
         actionStartNext: 'Start next period',
         actionStop: 'Stop timer',
         actionFeedbackTitle: 'Action feedback',
+        keepAwakeOnPage: 'Keep screen awake on chronometer pages',
+        screenTitle: 'Screen',
         activateBeepWarning: 'Intermediate beep',
         activateSound: 'sounds',
         activateVibration: 'vibrations',

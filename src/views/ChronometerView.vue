@@ -45,9 +45,12 @@ import {
 } from '@/stores/ChronometerStore';
 import { decodeTemplateFromUrl } from '@/utils/templateUrl';
 import { getRandomId } from '@/utils/tools';
+import { useChronoPageWakelock } from '@/composables/useChronoPageWakelock';
 
 const { t } = useI18n();
 const route = useRoute();
+
+useChronoPageWakelock();
 
 const pendingImport = ref<Period[] | null>(null);
 const pendingImportName = ref('');

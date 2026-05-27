@@ -8,8 +8,11 @@
 import { onMounted, onBeforeUnmount } from 'vue';
 import ChronometerPlayer from '@/components/timer/ChronometerPlayer.vue';
 import { useMediaQuery } from '@vueuse/core';
+import { useChronoPageWakelock } from '@/composables/useChronoPageWakelock';
 
 const isLandscape = useMediaQuery('(orientation: landscape)');
+
+useChronoPageWakelock();
 
 onMounted(async () => {
     try {

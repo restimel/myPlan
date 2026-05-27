@@ -38,6 +38,16 @@
             </ConfirmButton>
             <TemplatesSection />
             <fieldset class="action-feedback">
+                <legend>{{ t('chronometer.screenTitle') }}</legend>
+                <label>
+                    <input
+                        v-model="settings.keepAwakeOnPage"
+                        type="checkbox"
+                    >
+                    {{ t('chronometer.keepAwakeOnPage') }}
+                </label>
+            </fieldset>
+            <fieldset class="action-feedback">
                 <legend>{{ t('chronometer.actionFeedbackTitle') }}</legend>
                 <label :class="{ disabled: !isVibrateSupported }">
                     <input

@@ -32,6 +32,7 @@ export type PeriodColors = {
 export type ChronometerSettings = {
     actionSound: boolean;
     actionVibration: boolean;
+    keepAwakeOnPage: boolean;
 };
 
 export type Period = {
@@ -60,6 +61,7 @@ export const INFORMATION_LAST_SECONDS = 10;
 export const defaultSettings: ChronometerSettings = {
     actionSound: false,
     actionVibration: false,
+    keepAwakeOnPage: false,
 };
 
 export const settings = ref<ChronometerSettings>({ ...defaultSettings });
