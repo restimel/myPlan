@@ -13,6 +13,8 @@ import { requestKeepAwake, releaseKeepAwake } from '@/utils/keepScreenAwake';
 import { log } from '@/utils/debug';
 
 export type ChronometerTemplate = {
+    /** Stable unique identifier per list entry (independent of content). */
+    uid: string;
     /** Deterministic hash of serialized periods content (without period ids). */
     id: string;
     name: string;
@@ -250,12 +252,14 @@ export function clearPeriods() {
 /* {{{ template state */
 
 export const templates = ref<ChronometerTemplate[]>([]);
+export const activeTemplate = ref<ChronometerTemplate | null>(null);
 
 function initTemplates() {
     const stored = loadTemplates();
 
     if (stored) {
-        templates.value = stored;
+        // Migrate templates created before uid was introduced
+        templates.value = stored.map((tpl) => (tpl.uid ? tpl : { ...tpl, uid: getRandomId() }));
     }
 
     watch(templates, (value) => saveTemplates(value), { deep: true });
@@ -263,27 +267,58 @@ function initTemplates() {
 
 initTemplates();
 
-export function saveAsTemplate(name: string): ChronometerTemplate {
+// force=true skips content dedup — use for explicit user copies; leave false for auto-saves
+export function saveAsTemplate(name: string, force = false): ChronometerTemplate {
     const newTemplate: ChronometerTemplate = {
+        uid: getRandomId(),
         id: computeTemplateId(periods.value),
         name,
         periods: periods.value.map((period) => ({ ...period })),
         createdAt: Date.now(),
     };
 
-    if (!templates.value.find((template) => template.id === newTemplate.id)) {
+    if (force || !templates.value.find((template) => template.id === newTemplate.id)) {
         templates.value = [...templates.value, newTemplate];
     }
+
+    activeTemplate.value = newTemplate;
 
     return newTemplate;
 }
 
-export function deleteTemplate(id: string): void {
-    templates.value = templates.value.filter((template) => template.id !== id);
+export function replaceTemplate(uid: string, name: string): ChronometerTemplate {
+    const newTemplate: ChronometerTemplate = {
+        uid,
+        id: computeTemplateId(periods.value),
+        name,
+        periods: periods.value.map((period) => ({ ...period })),
+        createdAt: Date.now(),
+    };
+
+    templates.value = templates.value.map((tpl) => (tpl.uid === uid ? newTemplate : tpl));
+    activeTemplate.value = newTemplate;
+
+    return newTemplate;
 }
 
-export function loadTemplate(templateId: string): boolean {
-    const template = templates.value.find((tpl) => tpl.id === templateId);
+export function renameTemplate(uid: string, newName: string): void {
+    templates.value = templates.value.map((tpl) => (tpl.uid === uid ? { ...tpl, name: newName } : tpl));
+
+    if (activeTemplate.value?.uid === uid) {
+        activeTemplate.value = { ...activeTemplate.value, name: newName };
+    }
+}
+
+export function deleteTemplate(uid: string): void {
+    templates.value = templates.value.filter((template) => template.uid !== uid);
+
+    if (activeTemplate.value?.uid === uid) {
+        activeTemplate.value = null;
+    }
+}
+
+export function loadTemplate(uid: string): boolean {
+    const template = templates.value.find((tpl) => tpl.uid === uid);
 
     if (!template) {
         return false;
@@ -297,6 +332,7 @@ export function loadTemplate(templateId: string): boolean {
         return cleaned;
     });
     setPeriod(0);
+    activeTemplate.value = template;
 
     return true;
 }
@@ -304,7 +340,8 @@ export function loadTemplate(templateId: string): boolean {
 export function importTemplates(incoming: ChronometerTemplate[]): void {
     for (const template of incoming) {
         if (!templates.value.find((existing) => existing.id === template.id)) {
-            templates.value = [...templates.value, template];
+            // Ensure imported templates have a uid (may be absent in older exports)
+            templates.value = [...templates.value, { ...template, uid: template.uid ?? getRandomId() }];
         }
     }
 }

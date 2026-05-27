@@ -8,14 +8,24 @@
             <legend>
                 {{ t('chronometer.templatesTitle') }}
             </legend>
-            <button class="primary-btn" @click="openSavePrompt">
-                {{ t('chronometer.saveAsTemplate') }}
-            </button>
+            <div class="save-row">
+                <button class="primary-btn save-main" @click="openSavePrompt">
+                    <MyIcon icon="add" />
+                    {{ t('chronometer.saveAsTemplate') }}
+                </button>
+                <button v-if="canQuickUpdate"
+                    class="primary-btn save-update"
+                    @click="quickUpdate"
+                >
+                    <MyIcon icon="edit" />
+                    {{ t('chronometer.updateTemplate', { name: activeTemplate?.name }) }}
+                </button>
+            </div>
             <div v-if="templates.length > 0"
                 class="template-list"
             >
                 <div v-for="tpl of templates"
-                    :key="tpl.id"
+                    :key="tpl.uid"
                     class="template-row"
                     :class="{ active: tpl.id === currentTemplateId }"
                 >
@@ -25,7 +35,7 @@
                     <button
                         class="btn-outline btn-small"
                         :disabled="tpl.id === currentTemplateId"
-                        @click="safeLoadTemplate(tpl.id)"
+                        @click="safeLoadTemplate(tpl.uid)"
                     >
                         {{ t('chronometer.loadTemplate') }}
                     </button>
@@ -44,7 +54,7 @@
                     <ConfirmButton
                         class="default-btn btn-small"
                         :message="t('chronometer.templateDeleteConfirm')"
-                        @click="deleteTemplate(tpl.id)"
+                        @click="deleteTemplate(tpl.uid)"
                     />
                 </div>
             </div>
@@ -84,6 +94,16 @@
         @confirm="confirmLoad"
         @cancel="cancelLoad"
     />
+    <DialogConfirm v-if="pendingReplaceId !== null"
+        :message="t('chronometer.templateNameConflict')"
+        @confirm="confirmReplace"
+        @cancel="cancelReplace"
+    />
+    <DialogConfirm v-if="pendingDuplicateUid !== null"
+        :message="t('chronometer.templateSameContent', { name: pendingDuplicateExistingName, newName: pendingDuplicateName })"
+        @confirm="confirmDuplicateRename"
+        @cancel="confirmDuplicateCopy"
+    />
 </template>
 
 <script setup lang="ts">
@@ -95,35 +115,45 @@ import ModalPrompt from '@/components/modalPrompt.vue';
 import MyIcon from '@/components/myIcon.vue';
 import QrCodeDialog from '@/components/timer/QrCodeDialog.vue';
 import {
+    activeTemplate,
     computeTemplateId,
     deleteTemplate,
     importTemplates,
     isDefaultPeriods,
     loadTemplate,
     periods,
+    renameTemplate,
+    replaceTemplate,
     saveAsTemplate,
     templates,
     type ChronometerTemplate,
 } from '@/stores/ChronometerStore';
-import { encodePeriodsToUrl } from '@/utils/templateUrl';
+import { encodeTemplateToUrl } from '@/utils/templateUrl';
 
 const { t } = useI18n();
 
 const collapsed = ref(true);
 const showSavePrompt = ref(false);
 const pendingLoadId = ref<string | null>(null);
+const pendingReplaceId = ref<string | null>(null);
+const pendingReplaceName = ref('');
+const pendingDuplicateUid = ref<string | null>(null);
+const pendingDuplicateName = ref('');
+const pendingDuplicateExistingName = ref('');
 const qrTemplateId = ref<string | null>(null);
-const currentTemplateId = computed(() => computeTemplateId(periods.value));
 
-const qrTemplate = computed(() => templates.value.find((tpl) => tpl.id === qrTemplateId.value) ?? null);
+const currentTemplateId = computed(() => computeTemplateId(periods.value));
+const canQuickUpdate = computed(() => activeTemplate.value !== null && currentTemplateId.value !== activeTemplate.value.id);
+
+const qrTemplate = computed(() => templates.value.find((tpl) => tpl.uid === qrTemplateId.value) ?? null);
 const qrUrl = ref('');
 const qrTitle = computed(() => qrTemplate.value?.name ?? '');
 
 async function showQrCode(tpl: ChronometerTemplate) {
-    const payload = await encodePeriodsToUrl(tpl.periods);
+    const payload = await encodeTemplateToUrl(tpl.name, tpl.periods);
 
-    qrUrl.value = `${window.location.origin}${window.location.pathname}#/chronometerSettings?template=${payload}&name=${encodeURIComponent(tpl.name)}`;
-    qrTemplateId.value = tpl.id;
+    qrUrl.value = `${window.location.origin}${window.location.pathname}#/chronometerSettings?template=${payload}`;
+    qrTemplateId.value = tpl.uid;
 }
 
 function openSavePrompt() {
@@ -132,27 +162,91 @@ function openSavePrompt() {
 
 function onSavePromptClose(result: Record<string, string | number> | undefined) {
     showSavePrompt.value = false;
+
     const name = result?.name;
 
-    if (typeof name === 'string' && name.trim()) {
-        saveAsTemplate(name.trim());
+    if (typeof name !== 'string' || !name.trim()) {
+        return;
+    }
+
+    const trimmedName = name.trim();
+    const contentHash = currentTemplateId.value;
+    const sameName = templates.value.find((tpl) => tpl.name === trimmedName);
+    const sameContent = templates.value.find((tpl) => tpl.id === contentHash);
+
+    if (sameName) {
+        if (sameName.id === contentHash) {
+            // Same name + same content → already saved, no-op
+            return;
+        }
+
+        // Same name + different content → ask to replace
+        pendingReplaceId.value = sameName.uid;
+        pendingReplaceName.value = trimmedName;
+        return;
+    }
+
+    if (sameContent) {
+        // Different name + same content → ask to rename or copy
+        pendingDuplicateUid.value = sameContent.uid;
+        pendingDuplicateName.value = trimmedName;
+        pendingDuplicateExistingName.value = sameContent.name;
+        return;
+    }
+
+    saveAsTemplate(trimmedName);
+}
+
+function confirmReplace() {
+    if (pendingReplaceId.value !== null) {
+        replaceTemplate(pendingReplaceId.value, pendingReplaceName.value);
+    }
+
+    pendingReplaceId.value = null;
+    pendingReplaceName.value = '';
+}
+
+function cancelReplace() {
+    pendingReplaceId.value = null;
+    pendingReplaceName.value = '';
+}
+
+function confirmDuplicateRename() {
+    if (pendingDuplicateUid.value !== null) {
+        renameTemplate(pendingDuplicateUid.value, pendingDuplicateName.value);
+    }
+
+    pendingDuplicateUid.value = null;
+    pendingDuplicateName.value = '';
+    pendingDuplicateExistingName.value = '';
+}
+
+function confirmDuplicateCopy() {
+    if (pendingDuplicateName.value) {
+        saveAsTemplate(pendingDuplicateName.value, true);
+    }
+
+    pendingDuplicateUid.value = null;
+    pendingDuplicateName.value = '';
+    pendingDuplicateExistingName.value = '';
+}
+
+function quickUpdate() {
+    if (activeTemplate.value !== null) {
+        replaceTemplate(activeTemplate.value.uid, activeTemplate.value.name);
     }
 }
 
 function safeLoadTemplate(templateId: string) {
-    if (!isDefaultPeriods.value) {
-        const autoName = t('chronometer.templateAutoSaveName', {
-            date: new Date().toLocaleString(),
-        });
-
-        saveAsTemplate(autoName);
-    }
-
     pendingLoadId.value = templateId;
 }
 
 function confirmLoad() {
     if (pendingLoadId.value !== null) {
+        if (!isDefaultPeriods.value) {
+            saveAsTemplate(t('chronometer.templateAutoSaveName', { date: new Date().toLocaleString() }));
+        }
+
         loadTemplate(pendingLoadId.value);
         pendingLoadId.value = null;
     }
@@ -257,6 +351,24 @@ function onImportFile(event: Event) {
 
 .template-name {
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.save-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--field-margin);
+}
+
+.save-main {
+    flex: 2;
+}
+
+.save-update {
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

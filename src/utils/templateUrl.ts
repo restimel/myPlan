@@ -1,4 +1,4 @@
-import type { Period } from '@/stores/ChronometerStore';
+import type { Period, PeriodColor } from '@/stores/ChronometerStore';
 
 type EndEffect = Period['endEffect'];
 const END_EFFECT_INDEX: Record<EndEffect, number> = { stop: 0, startNext: 1, restart: 2, continue: 3 };
@@ -10,24 +10,55 @@ const CURRENT_VERSION = '1';
  *
  * version  — single character, currently '1'. Bump when the compact schema changes.
  *
- * JSON     — array of compact period arrays, one entry per period:
+ * JSON     — top-level 2-element array: [templateName, periodsArray]
+ *            templateName  string  (kept in payload to avoid URI-encoding overhead for accented chars)
+ *            periodsArray  array of compact period arrays, one entry per period:
  *
  *   [0]  name           string
  *   [1]  duration       number (seconds)
- *   [2]  endEffect      0=stop · 1=startNext · 2=restart · 3=continue  (default 0)
- *   [3]  vibration      0|1                                             (default 1)
- *   [4]  sound          0|1                                             (default 1)
- *   [5]  soundWarning   0|1                                             (default 1)
- *   [6]  bgColor        string | null  (null = "default")
- *   [7]  warnColor      string | null  (null = "default")
- *   [8]  timeoutColor   string | null  (null = "default")
- *   [9]  warningTimes   number[] | null  (null = use DEFAULT_WARNING_TIMES)
- *   [10] resetToPeriod1 1 | absent
+ *   [2]  flags          bitmask (default 0, absent = 0):
+ *                         bits 0-1: endEffect  0=stop · 1=startNext · 2=restart · 3=continue
+ *                         bit 2:    noVibration   (0 = vibration on = default)
+ *                         bit 3:    noSound        (0 = sound on = default)
+ *                         bit 4:    noSoundWarning (0 = soundWarning on = default)
+ *                         bit 5:    resetToPeriod1 (0 = false = default)
+ *   [3]  bgColor        number | string | null  (null = "default"; #rrggbb stored as hex integer)
+ *   [4]  warnColor      number | string | null
+ *   [5]  timeoutColor   number | string | null
+ *   [6]  warningTimes   number[] in seconds | null  (null = use DEFAULT_WARNING_TIMES)
  *
+ * Colors in #rrggbb format are stored as their integer value (e.g. "#ff0000" → 16711680).
+ * Other color formats are kept as strings.
  * Trailing fields are omitted when they match their defaults.
- * [2]–[5] are only included when at least one is non-default or [6]+ are present.
- * [6]–[8] are only included when at least one color is non-default or [9]+ are present.
+ * [2] is omitted when 0 and no field after it is present.
+ * [3]–[5] are only included when at least one color is non-default or [6] is present.
  */
+
+function encodeColor(color: PeriodColor): number | string | null {
+    if (color === 'default') {
+        return null;
+    }
+
+    // Store #rrggbb as integer: saves 2 chars per color over the quoted-string form
+    if (/^#[0-9a-fA-F]{6}$/.test(color)) {
+        return parseInt(color.slice(1), 16);
+    }
+
+    return color;
+}
+
+function decodeColor(value: number | string | null | undefined): PeriodColor {
+    if (value == null) {
+        return 'default';
+    }
+
+    if (typeof value === 'number') {
+        return '#' + value.toString(16).padStart(6, '0');
+    }
+
+    return value;
+}
+
 async function compressToBase64(data: string): Promise<string> {
     const encoded = new TextEncoder().encode(data);
     const stream = new CompressionStream('deflate-raw');
@@ -99,82 +130,75 @@ async function decompressFromBase64(base64: string): Promise<string> {
 }
 
 function periodToCompact(period: Period): unknown[] {
-    const bgColor = period.colors.background === 'default' ? null : period.colors.background;
-    const warnColor = period.colors.txtWarning === 'default' ? null : period.colors.txtWarning;
-    const timeoutColor = period.colors.timeout === 'default' ? null : period.colors.timeout;
-    const warningTimes = period.warningTimes ?? null;
+    const bgColor = encodeColor(period.colors.background);
+    const warnColor = encodeColor(period.colors.txtWarning);
+    const timeoutColor = encodeColor(period.colors.timeout);
+    // warningTimes is optional (undefined = absent); null means "use defaults" in the URL schema
+    const warningTimes = period.warningTimes !== undefined ? period.warningTimes.map((ms) => ms / 1000) : null;
     const hasColors = bgColor !== null || warnColor !== null || timeoutColor !== null;
     const hasWarningTimes = warningTimes !== null;
-    const hasReset = period.resetToPeriod1 === true;
-    const hasExtended = hasColors || hasWarningTimes || hasReset;
-    const endEffectVal = END_EFFECT_INDEX[period.endEffect];
-    const vibration = period.activateVibration ? 1 : 0;
-    const sound = period.activateSound ? 1 : 0;
-    const soundWarning = period.soundWarning ? 1 : 0;
+    // Bitmask layout: bits 0-1 endEffect, bit 2 noVibration, bit 3 noSound, bit 4 noSoundWarning, bit 5 resetToPeriod1
+    const flags =
+        END_EFFECT_INDEX[period.endEffect] |
+        (period.activateVibration ? 0 : 1 << 2) |
+        (period.activateSound ? 0 : 1 << 3) |
+        (period.soundWarning ? 0 : 1 << 4) |
+        (period.resetToPeriod1 ? 1 << 5 : 0);
     const row: unknown[] = [period.name, period.duration];
 
-    if (hasExtended) {
-        row.push(endEffectVal, vibration, sound, soundWarning, bgColor, warnColor, timeoutColor);
-    } else if (endEffectVal !== 0 || vibration !== 1 || sound !== 1 || soundWarning !== 1) {
-        row.push(endEffectVal);
-
-        if (vibration !== 1 || sound !== 1 || soundWarning !== 1) {
-            row.push(vibration);
-        }
-
-        if (sound !== 1 || soundWarning !== 1) {
-            row.push(sound);
-        }
-
-        if (soundWarning !== 1) {
-            row.push(soundWarning);
-        }
+    if (flags !== 0 || hasColors || hasWarningTimes) {
+        row.push(flags);
     }
 
-    if (hasWarningTimes || hasReset) {
+    if (hasColors || hasWarningTimes) {
+        row.push(bgColor, warnColor, timeoutColor);
+    }
+
+    if (hasWarningTimes) {
         row.push(warningTimes);
-    }
-
-    if (hasReset) {
-        row.push(1);
     }
 
     return row;
 }
 
 function compactToPeriod(row: unknown[]): Period {
+    // Bitmask layout: bits 0-1 endEffect, bit 2 noVibration, bit 3 noSound, bit 4 noSoundWarning, bit 5 resetToPeriod1
+    const flags = (row[2] as number | undefined) ?? 0;
+    const warningTimesSec = row[6] as number[] | null | undefined;
+
     return {
         id: '',
         name: row[0] as string,
         duration: row[1] as number,
-        endEffect: END_EFFECT_FROM_INDEX[(row[2] as number | undefined) ?? 0] ?? 'stop',
-        activateVibration: row[3] == null ? true : row[3] === 1,
-        activateSound: row[4] == null ? true : row[4] === 1,
-        soundWarning: row[5] == null ? true : row[5] === 1,
+        endEffect: END_EFFECT_FROM_INDEX[flags & 3] ?? 'stop',
+        activateVibration: (flags & (1 << 2)) === 0,
+        activateSound: (flags & (1 << 3)) === 0,
+        soundWarning: (flags & (1 << 4)) === 0,
         colors: {
-            background: (row[6] as string | null | undefined) ?? 'default',
-            txtWarning: (row[7] as string | null | undefined) ?? 'default',
-            timeout: (row[8] as string | null | undefined) ?? 'default',
+            background: decodeColor(row[3] as number | string | null | undefined),
+            txtWarning: decodeColor(row[4] as number | string | null | undefined),
+            timeout: decodeColor(row[5] as number | string | null | undefined),
         },
-        warningTimes: row[9] != null ? row[9] as number[] : undefined,
-        resetToPeriod1: row[10] === 1 ? true : undefined,
+        // != catches both null (explicit default) and undefined (absent field) — both mean "no custom times"
+        warningTimes: warningTimesSec != null ? warningTimesSec.map((sec) => sec * 1000) : undefined,
+        resetToPeriod1: (flags & (1 << 5)) !== 0 ? true : undefined,
     };
 }
 
-export async function encodePeriodsToUrl(periods: Period[]): Promise<string> {
+export async function encodeTemplateToUrl(name: string, periods: Period[]): Promise<string> {
     const compact = periods.map(periodToCompact);
-    const json = JSON.stringify(compact);
+    const json = JSON.stringify([name, compact]);
     const compressed = await compressToBase64(json);
 
     return CURRENT_VERSION + compressed;
 }
 
-export async function decodePeriodsFromUrl(payload: string): Promise<Period[] | null> {
+export async function decodeTemplateFromUrl(payload: string): Promise<{ name: string; periods: Period[] } | null> {
     try {
         const json = await decompressFromBase64(payload.slice(1));
-        const compact = JSON.parse(json) as unknown[][];
+        const [name, compact] = JSON.parse(json) as [string, unknown[][]];
 
-        return compact.map(compactToPeriod);
+        return { name, periods: compact.map(compactToPeriod) };
     } catch {
         return null;
     }

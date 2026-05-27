@@ -43,7 +43,8 @@ import {
     type ChronometerTemplate,
     type Period,
 } from '@/stores/ChronometerStore';
-import { decodePeriodsFromUrl } from '@/utils/templateUrl';
+import { decodeTemplateFromUrl } from '@/utils/templateUrl';
+import { getRandomId } from '@/utils/tools';
 
 const { t } = useI18n();
 const route = useRoute();
@@ -70,16 +71,14 @@ onMounted(async () => {
         return;
     }
 
-    const decodedPeriods = await decodePeriodsFromUrl(payload);
+    const decoded = await decodeTemplateFromUrl(payload);
 
-    if (!decodedPeriods) {
+    if (!decoded) {
         return;
     }
 
-    const nameParam = route.query.name as string | undefined;
-
-    pendingImport.value = decodedPeriods;
-    pendingImportName.value = nameParam ?? `Import — ${new Date().toLocaleString()}`;
+    pendingImport.value = decoded.periods;
+    pendingImportName.value = decoded.name;
 });
 
 function confirmImport() {
@@ -89,6 +88,7 @@ function confirmImport() {
         }
 
         const newTemplate: ChronometerTemplate = {
+            uid: getRandomId(),
             id: computeTemplateId(pendingImport.value),
             name: pendingImportName.value.trim(),
             periods: pendingImport.value,
@@ -96,7 +96,7 @@ function confirmImport() {
         };
 
         importTemplates([newTemplate]);
-        loadTemplate(newTemplate.id);
+        loadTemplate(newTemplate.uid);
     }
 
     pendingImport.value = null;
