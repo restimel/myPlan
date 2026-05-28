@@ -56,7 +56,7 @@ export function screenListener(options: ScreenEventOption) {
     function startMove() {
         clearTimeout(timer);
         isMoving = true;
-        timer = setTimeout(stopMove, 100);
+        timer = window.setTimeout(stopMove, 100);
     }
 
     function isUnderMinDistance(distance: number, touch: Touch, resizeArea = 1): boolean {

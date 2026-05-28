@@ -99,14 +99,14 @@ export function setup(holds: Hold[], onActions: ActionCb, getHoldTransform?: () 
                     actionState.value = 'target';
                     holdSelection.value = hold;
 
-                    timerHold = setTimeout(() => {
+                    timerHold = window.setTimeout(() => {
                         actionState.value = 'selection';
                         log('interaction', `setTimeout: → ${actionState.value}`);
                     }, holdMouseDuration);
                 } else {
                     actionState.value = 'active';
 
-                    timerHold = setTimeout(() => {
+                    timerHold = window.setTimeout(() => {
                         onActions('longPress', point);
                         resetAction();
                     }, holdMouseDuration);
@@ -155,7 +155,7 @@ export function setup(holds: Hold[], onActions: ActionCb, getHoldTransform?: () 
             case 'target':
                 clearTimeout(timerHold);
                 actionState.value = 'double';
-                timerHold = setTimeout(() => {
+                timerHold = window.setTimeout(() => {
                     onActions('setHold', point);
                     resetAction();
                 }, doubleMouseDuration);

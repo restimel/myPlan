@@ -496,7 +496,7 @@ function updateTick() {
     const nextPeriodTimeLeft = remainingTime - nextWarningTime.value;
 
     if (nextPeriodTimeLeft < REFRESH_PERIOD && remainingTime >= 0) {
-        setTimeout(updateTick, nextPeriodTimeLeft);
+        window.setTimeout(updateTick, nextPeriodTimeLeft);
     }
 }
 

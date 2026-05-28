@@ -29,13 +29,13 @@ function videoPlay() {
     }
 
     videoElement.value?.play();
-    awakeTimer = setTimeout(videoPause, AWAKE_RUN);
+    awakeTimer = window.setTimeout(videoPause, AWAKE_RUN);
 }
 
 function videoPause() {
     clearTimeout(awakeTimer);
     videoElement.value?.pause();
-    awakeTimer = setTimeout(videoPlay, AWAKE_SLEEP);
+    awakeTimer = window.setTimeout(videoPlay, AWAKE_SLEEP);
 }
 
 function attachVideo(video: HTMLVideoElement) {
