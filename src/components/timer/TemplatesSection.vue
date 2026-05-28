@@ -17,7 +17,7 @@
                     class="primary-btn save-update"
                     @click="quickUpdate"
                 >
-                    <MyIcon icon="edit" />
+                    <MyIcon icon="save" />
                     {{ t('chronometer.updateTemplate', { name: activeTemplate?.name }) }}
                 </button>
             </div>
