@@ -15,6 +15,16 @@ export default defineConfig({
         __CONTEXT__: '"Test"',
     },
     plugins: [
+        {
+            name: 'version-json',
+            generateBundle() {
+                this.emitFile({
+                    type: 'asset',
+                    fileName: 'version.json',
+                    source: JSON.stringify({ version: pkg.version }),
+                });
+            },
+        },
         vue(),
         vueDevTools(),
         VitePWA({
